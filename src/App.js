@@ -54,7 +54,7 @@ function App() {
       <Route path="/" element={<SignIn />} />
       
       {/* Explicit route for SignIn */}
-      <Route path="/signin" element={<SignIn />} />
+      <Route path="/SignIn" element={<SignIn />} />
 
       {/* Route for SignUp (old value is /signup) */} 
       
