@@ -28,7 +28,7 @@
       { "route": "/_bookReservation", "rewrite": "/index.html" },
       { "route": "/_laptopReservation", "rewrite": "/index.html" },
       { "route": "/_calculatorReservation", "rewrite": "/index.html" },
-      { "route": "/{*all}", "rewrite": "/index.html" }
+      { "route": "/{*.all}", "rewrite": "/index.html" }
     ]
   }
   
