@@ -1,0 +1,13 @@
+{
+    "routes": [
+      {
+        "route": "/SignUp",
+        "rewrite": "/index.html"
+      },
+      {
+        "route": "/{*all}",
+        "rewrite": "/index.html"
+      }
+    ]
+  }
+  
