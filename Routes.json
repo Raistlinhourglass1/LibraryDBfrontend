@@ -1,0 +1,17 @@
+{
+    "routes": [
+      {
+        "route": "/SignUp",
+        "rewrite": "/index.html"
+      },
+      {
+        "route": "/SignIn",
+        "rewrite": "/index.html"
+      },
+      {
+        "route": "/*",
+        "rewrite": "/index.html"
+      }
+    ]
+  }
+  
