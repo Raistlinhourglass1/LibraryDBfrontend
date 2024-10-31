@@ -66,7 +66,6 @@ function App() {
       <Route path="/StudentBookRentals" element={<StudentBookRentals />} />
       <Route path="/Nice" element={<Nice />} />
       <Route path="/StudentRoomReservationTable" element={<StudentRoomReservationTable />} />
-
       <Route path="/create-room" element={<CreateRoom />} />
       <Route path="/reserve-room" element={<RoomReservation />} />
       <Route path="/feedback" element={<Feedback />} />
