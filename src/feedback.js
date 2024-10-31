@@ -12,7 +12,7 @@ import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import AppTheme from './AppTheme';
 import ColorModeSelect from './ColorModeSelect';
-import NavBar from './Navbar';
+
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -128,7 +128,6 @@ function Feedback(props) {
 
   return (
     <div>
-      <NavBar />
       <AppTheme {...props}>
         <CssBaseline enableColorScheme />
         <FeedbackContainer direction="column">

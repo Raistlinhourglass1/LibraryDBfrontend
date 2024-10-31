@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import NavBar from './Navbar';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const BookReservationForm = () => {
@@ -95,7 +94,6 @@ const BookReservationForm = () => {
 
   return (
     <div>
-      <NavBar />
       <div style={{ padding: '20px', maxWidth: '500px', margin: '0 auto', background: '#fff', borderRadius: '8px', boxShadow: '0 0 10px rgba(0,0,0,0.1)' }}>
         <h2 style={{ textAlign: 'center', color: '#333' }}>Book Reservation</h2>
         

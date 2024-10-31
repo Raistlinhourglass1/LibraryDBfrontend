@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import styled from 'styled-components';
-import NavBar from './Navbar';
 
 
 const AppContainer = styled.div`
@@ -163,7 +162,6 @@ const LaptopEntry = () => {
 
   return (
     <AppContainer>
-    <NavBar />
   <MainContent>
     <FormTitle>Laptop Entry</FormTitle>
     <Form onSubmit={handleSubmit}>

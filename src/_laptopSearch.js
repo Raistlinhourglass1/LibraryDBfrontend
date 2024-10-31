@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import NavBar from './Navbar';
 
 const MainContent = styled.div`
   max-width-xl p-6 mx-auto bg-white rounded-lg shadow-md
@@ -115,7 +114,6 @@ const LaptopSearch = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <NavBar />
       <MainContent>
         <h2 className="text-2xl font-bold mb-6">Laptop Search</h2>
         <p className="mb-4 text-gray-600">Search by any combination of criteria below:</p>

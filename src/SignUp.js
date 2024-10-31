@@ -148,7 +148,7 @@ export default function SignUp() {
     }
 
     try {
-      const response = await fetch('https://librarydbbackend.onrender.com/SignUp', {
+      const response = await fetch('http://localhost:5000/SignUp', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

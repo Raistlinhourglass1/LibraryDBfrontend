@@ -15,7 +15,6 @@ function NavBar() {
             <Nav.Link href="/search">Search</Nav.Link>
             <Nav.Link href="/reserve-room">Room reservation</Nav.Link>
             <Nav.Link href="/feedback">Book Reviews</Nav.Link>
-            <Nav.Link href="/_bookReservation">Book Reservation</Nav.Link>
             <NavDropdown title="Rent Device" id="basic-nav-dropdown">
               <NavDropdown.Item href="/_laptopReservation">Laptops</NavDropdown.Item>
               <NavDropdown.Item href="/_calculatorReservation">

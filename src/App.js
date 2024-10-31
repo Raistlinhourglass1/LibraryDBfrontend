@@ -48,13 +48,15 @@ const Layout = () => (
 function App() {
   return (
     <Router>
+      {/* Navbar appears on all pages */}
+      <Navbar />
     <Routes>
       <Route path="/home" element={<Home />} />
       {/* Default route to display SignIn when the user goes to "/" */}
       <Route path="/" element={<SignIn />} />
       
       {/* Explicit route for SignIn */}
-      <Route path="/SignIn" element={<SignIn />} />
+      <Route path="/signin" element={<SignIn />} />
 
       {/* Route for SignUp (old value is /signup) */} 
       
@@ -66,6 +68,7 @@ function App() {
       <Route path="/StudentBookRentals" element={<StudentBookRentals />} />
       <Route path="/Nice" element={<Nice />} />
       <Route path="/StudentRoomReservationTable" element={<StudentRoomReservationTable />} />
+
       <Route path="/create-room" element={<CreateRoom />} />
       <Route path="/reserve-room" element={<RoomReservation />} />
       <Route path="/feedback" element={<Feedback />} />

@@ -94,7 +94,7 @@ export default function ProfilePage2(props) {
   const fetchProfileData = () => {
     const token = localStorage.getItem('token');
     axios
-      .get('https://librarydbbackend.onrender.com/ProfilePage2', {
+      .get('http://localhost:5000/ProfilePage2', {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
@@ -132,7 +132,7 @@ export default function ProfilePage2(props) {
   const handleSave = () => {
     const token = localStorage.getItem('token');
     axios
-      .put('https://librarydbbackend.onrender.com/ProfilePage2', editedInfo, {
+      .put('http://localhost:5000/ProfilePage2', editedInfo, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then(() => {
@@ -147,7 +147,7 @@ export default function ProfilePage2(props) {
   const handleDeleteProfile = () => {
     const token = localStorage.getItem('token');
     axios
-      .delete('https://librarydbbackend.onrender.com/DeleteProfile', {
+      .delete('http://localhost:5000/DeleteProfile', {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then(() => {
@@ -172,196 +172,225 @@ export default function ProfilePage2(props) {
 
   return (
     <AppTheme {...props}>
-      <CssBaseline enableColorScheme />
-      <SignInContainer direction="column" justifyContent="space-between">
-        <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
-        <MuiCard variant="outlined">
-          <Paper elevation={0} sx={{ p: 3, width: '1500px', height: '700px', bgcolor: 'background.paper' }}> 
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={4}>
-                <Paper elevation={1} sx={{ p: 2, textAlign: 'center', height: '650px' }}>
-                  <Avatar
-                    alt="Profile Picture"
-                    src="/static/images/avatar/2.jpg" // Replace with dynamic image path
-                    sx={{ width: 150, height: 150, mb: 2 }}
-                  />
-                  <Button variant="contained" component="label" fullWidth>
-                    Change Photo
-                    <input type="file" hidden />
-                  </Button>
-                  <Box mt={4} sx={{ textAlign: 'left' }}>
-                    <Typography variant="h6" gutterBottom>
-                      Additional Links
-                    </Typography>
-                    <Box mt={2}>
-                      <Link href="/SignIn" variant="body1" display="block" gutterBottom>
-                        Sign out
+  <CssBaseline enableColorScheme />
+  <SignInContainer direction="column" justifyContent="space-between">
+    <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
+    <MuiCard variant="outlined">
+      <Paper
+        elevation={0}
+        sx={{
+          p: 3,
+          width: { xs: '95vw', sm: '90vw', md: '85vw', lg: '80vw' },
+          maxWidth: '1500px',
+          height: { xs: '85vh', md: '80vh' },
+          maxHeight: '700px',
+          minHeight: '500px',
+          bgcolor: 'background.paper',
+        }}
+      >
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={4}>
+            <Paper
+              elevation={1}
+              sx={{
+                p: 2,
+                textAlign: 'center',
+                height: '100%',
+                minHeight: '500px',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'space-around',
+              }}
+            >
+              <Avatar
+                alt="Profile Picture"
+                src="/static/images/avatar/2.jpg" // Replace with dynamic image path
+                sx={{ width: 150, height: 150, mb: 2 }}
+              />
+              <Button variant="contained" component="label" fullWidth>
+                Change Photo
+                <input type="file" hidden />
+              </Button>
+              <Box mt={4} sx={{ textAlign: 'left', width: '100%' }}>
+                <Typography variant="h6" gutterBottom>
+                  Additional Links
+                </Typography>
+                <Box mt={2}>
+                  <Link href="/SignIn" variant="body1" display="block" gutterBottom>
+                    Sign out
+                  </Link>
+                  <Link href="/Feedback" variant="body2" display="block" gutterBottom>
+                    Feedback
+                  </Link>
+                  <Link href="/reserve-room" variant="body2" display="block" gutterBottom>
+                    Room Reservation
+                  </Link>
+                  <Link href="/create-room" variant="body2" display="block" gutterBottom>
+                    Create Room
+                  </Link>
+                  {(userInfo.user_level === 'Staff' || userInfo.user_level === 'Admin') && (
+                    <>
+                      <Link href="http://localhost:3000/Nice" variant="body2" display="block" gutterBottom>
+                        Nice
                       </Link>
-                      <br />
-                      <Link href="/Feedback" variant="body2" display="block" gutterBottom>
-                        Feedback
+                      <Link href="/Reports" variant="body2" display="block" gutterBottom>
+                        Reports
                       </Link>
-                      <br />
-                      <Link href="/reserve-room" variant="body2" display="block" gutterBottom>
-                        Room Reservation
-                      </Link>
-                      <br />
-                      <Link href="/create-room" variant="body2" display="block" gutterBottom>
-                        Create Room
-                      </Link>
-                      <br />
-                      {(userInfo.user_level === 'Staff' || userInfo.user_level === 'Admin') && (
-                        <>
-                          <Link href="https://librarydbbackend.onrender.com/Nice" variant="body2" display="block" gutterBottom>
-                            Nice
-                          </Link>
-                          <br />
-                          <Link href="/Reports" variant="body2" display="block" gutterBottom>
-                            Reports
-                          </Link>
-                        </>
-                      )}
-                    </Box>
-                  </Box>
-                </Paper>
-              </Grid>
+                    </>
+                  )}
+                </Box>
+              </Box>
+            </Paper>
+          </Grid>
 
-              <Grid item xs={12} md={8}>
-                <Paper elevation={1} sx={{ p: 3, height: '650px', width: '1250px' }}>
-                  <Grid container justifyContent="space-between">
+          <Grid item xs={12} md={8}>
+            <Paper
+              elevation={1}
+              sx={{
+                p: 3,
+                height: '100%',
+                minHeight: '500px',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+              }}
+            >
+              <Grid container justifyContent="space-between">
+                <Box>
+                  {isEditing ? (
                     <Box>
-                      {isEditing ? (
-                        <Box>
-                          <TextField
-                            label="First Name"
-                            name="first_name"
-                            value={editedInfo.first_name}
-                            onChange={handleInputChange}
-                            fullWidth
-                            margin="normal"
-                          />
-                          <TextField
-                            label="Last Name"
-                            name="last_name"
-                            value={editedInfo.last_name}
-                            onChange={handleInputChange}
-                            fullWidth
-                            margin="normal"
-                          />
-                        </Box>
-                      ) : (
-                        <Box>
-                          <Typography variant="h4">
-                            {userInfo.first_name} {userInfo.last_name}
-                          </Typography>
-                          <Typography color="primary">{userInfo.user_level} at University of Houston</Typography>
-                        </Box>
-                      )}
+                      <TextField
+                        label="First Name"
+                        name="first_name"
+                        value={editedInfo.first_name}
+                        onChange={handleInputChange}
+                        fullWidth
+                        margin="normal"
+                      />
+                      <TextField
+                        label="Last Name"
+                        name="last_name"
+                        value={editedInfo.last_name}
+                        onChange={handleInputChange}
+                        fullWidth
+                        margin="normal"
+                      />
                     </Box>
-                    {isEditing ? (
-                      <Box>
-                        <Button variant="outlined" color="primary" onClick={handleSave} sx={{ ml: 2 }}>
-                          Save
-                        </Button>
-                        <Button variant="outlined" color="secondary" onClick={handleEditToggle} sx={{ ml: 2 }}>
-                          Cancel
-                        </Button>
-                        <Button variant="contained" color="error" onClick={openDeleteConfirmDialog} sx={{ ml: 2 }}>
-                          Delete Profile
-                        </Button>
-                      </Box>
-                    ) : (
-                      <Button variant="outlined" color="primary" onClick={handleEditToggle}>
-                        Edit Profile
-                      </Button>
-                    )}
-                  </Grid>
-
-                  <Dialog
-                    open={openConfirmDialog}
-                    onClose={closeDeleteConfirmDialog}
-                  >
-                    <DialogTitle>Confirm Delete</DialogTitle>
-                    <DialogContent>
-                      <DialogContentText>Are you sure you want to delete your profile?</DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                      <Button onClick={closeDeleteConfirmDialog} color="secondary">Cancel</Button>
-                      <Button onClick={handleDeleteProfile} color="error">Yes, Delete</Button>
-                    </DialogActions>
-                  </Dialog>
-
-                  <Box mt={3}>
-                    <Box sx={{ width: '100%' }}>
-                      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-                          <Tab label="Profile Details" {...a11yProps(0)} />
-                          <Tab label="Book Rentals" {...a11yProps(1)} />
-                          <Tab label="Laptop Rentals" {...a11yProps(2)} />
-                          <Tab label="Calculator Rentals" {...a11yProps(3)} />
-                          <Tab label="Reservations" {...a11yProps(4)} />
-                          <Tab label="Fines Due" {...a11yProps(5)} />
-                        </Tabs>
-                      </Box>
-
-                      <CustomTabPanel value={value} index={0}>
-                        <Box>
-                          <Grid container spacing={4}>
-                            <Grid item xs={12} sm={6}>
-                              <Typography variant="body1">First Name</Typography>
-                              <br />
-                              <Typography variant="body1">Last Name</Typography>
-                              <br />
-                              <Typography variant="body1">Email</Typography>
-                              <br />
-                              <Typography variant="body1">User ID</Typography>
-                              <br />
-                              <Typography variant="body1">Max Books Allowed</Typography>
-                            </Grid>
-
-                            <Grid item xs={12} sm={8}>
-                              <Typography variant="body2" color="primary">{userInfo.first_name}</Typography>
-                              <br />
-                              <Typography variant="body2" color="primary">{userInfo.last_name}</Typography>
-                              <br />
-                              <Typography variant="body2" color="primary">{userInfo.email}</Typography>
-                              <br />
-                              <Typography variant="body2" color="primary">{userInfo.user_ID}</Typography>
-                              <br />
-                              <Typography variant="body2" color="primary">{getMaxBooksAllowed(userInfo.user_level)}</Typography>
-                              <br />
-                            </Grid>
-                          </Grid>
-                        </Box>
-                      </CustomTabPanel>
-
-                      <CustomTabPanel value={value} index={1}>
-                        <StudentBookRentals />
-                      </CustomTabPanel>
-
-                      <CustomTabPanel value={value} index={2}>
-                        <StudentLaptopRentals />
-                      </CustomTabPanel>
-
-                      <CustomTabPanel value={value} index={3}>
-                        <StudentCalculatorRentals />
-                      </CustomTabPanel>
-
-                      <CustomTabPanel value={value} index={4}>
-                        <RoomReserveTable/>
-                      </CustomTabPanel>
-
-                      <CustomTabPanel value={value} index={5}>
-                        Fines Due
-                      </CustomTabPanel>
+                  ) : (
+                    <Box>
+                      <Typography variant="h4">
+                        {userInfo.first_name} {userInfo.last_name}
+                      </Typography>
+                      <Typography color="primary">{userInfo.user_level} at University of Houston</Typography>
                     </Box>
+                  )}
+                </Box>
+                {isEditing ? (
+                  <Box>
+                    <Button variant="outlined" color="primary" onClick={handleSave} sx={{ ml: 2 }}>
+                      Save
+                    </Button>
+                    <Button variant="outlined" color="secondary" onClick={handleEditToggle} sx={{ ml: 2 }}>
+                      Cancel
+                    </Button>
+                    <Button variant="contained" color="error" onClick={openDeleteConfirmDialog} sx={{ ml: 2 }}>
+                      Delete Profile
+                    </Button>
                   </Box>
-                </Paper>
+                ) : (
+                  <Button variant="outlined" color="primary" onClick={handleEditToggle}>
+                    Edit Profile
+                  </Button>
+                )}
               </Grid>
-            </Grid>
-          </Paper>
-        </MuiCard>
-      </SignInContainer>
-    </AppTheme>
+
+              <Dialog
+                open={openConfirmDialog}
+                onClose={closeDeleteConfirmDialog}
+              >
+                <DialogTitle>Confirm Delete</DialogTitle>
+                <DialogContent>
+                  <DialogContentText>Are you sure you want to delete your profile?</DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={closeDeleteConfirmDialog} color="secondary">Cancel</Button>
+                  <Button onClick={handleDeleteProfile} color="error">Yes, Delete</Button>
+                </DialogActions>
+              </Dialog>
+
+              <Box mt={3}>
+                <Box sx={{ width: '100%' }}>
+                  <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                    <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+                      <Tab label="Profile Details" {...a11yProps(0)} />
+                      <Tab label="Book Rentals" {...a11yProps(1)} />
+                      <Tab label="Laptop Rentals" {...a11yProps(2)} />
+                      <Tab label="Calculator Rentals" {...a11yProps(3)} />
+                      <Tab label="Reservations" {...a11yProps(4)} />
+                      <Tab label="Fines Due" {...a11yProps(5)} />
+                    </Tabs>
+                  </Box>
+
+                  <CustomTabPanel value={value} index={0}>
+                    <Box>
+                      <Grid container spacing={4}>
+                        <Grid item xs={12} sm={6}>
+                          <Typography variant="body1">First Name</Typography>
+                          <br />
+                          <Typography variant="body1">Last Name</Typography>
+                          <br />
+                          <Typography variant="body1">Email</Typography>
+                          <br />
+                          <Typography variant="body1">User ID</Typography>
+                          <br />
+                          <Typography variant="body1">Max Books Allowed</Typography>
+                        </Grid>
+
+                        <Grid item xs={12} sm={8}>
+                          <Typography variant="body2" color="primary">{userInfo.first_name}</Typography>
+                          <br />
+                          <Typography variant="body2" color="primary">{userInfo.last_name}</Typography>
+                          <br />
+                          <Typography variant="body2" color="primary">{userInfo.email}</Typography>
+                          <br />
+                          <Typography variant="body2" color="primary">{userInfo.user_ID}</Typography>
+                          <br />
+                          <Typography variant="body2" color="primary">{getMaxBooksAllowed(userInfo.user_level)}</Typography>
+                          <br />
+                        </Grid>
+                      </Grid>
+                    </Box>
+                  </CustomTabPanel>
+
+                  <CustomTabPanel value={value} index={1}>
+                    <StudentBookRentals />
+                  </CustomTabPanel>
+
+                  <CustomTabPanel value={value} index={2}>
+                    <StudentLaptopRentals />
+                  </CustomTabPanel>
+
+                  <CustomTabPanel value={value} index={3}>
+                    <StudentCalculatorRentals />
+                  </CustomTabPanel>
+
+                  <CustomTabPanel value={value} index={4}>
+                    <RoomReserveTable/>
+                  </CustomTabPanel>
+
+                  <CustomTabPanel value={value} index={5}>
+                    Fines Due
+                  </CustomTabPanel>
+                </Box>
+              </Box>
+            </Paper>
+          </Grid>
+        </Grid>
+      </Paper>
+    </MuiCard>
+  </SignInContainer>
+</AppTheme>
+
   );
 }

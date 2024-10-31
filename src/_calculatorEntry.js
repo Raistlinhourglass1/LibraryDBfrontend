@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import NavBar from './Navbar';
+
 
 const AppContainer = styled.div`
   font-family: Arial, sans-serif;
@@ -173,7 +173,6 @@ const CalculatorEntry = () => {
 
   return (
     <AppContainer>
-      <NavBar />
       <MainContent>
         <FormTitle>Calculator Entry</FormTitle>
         <Form onSubmit={handleSubmit}>

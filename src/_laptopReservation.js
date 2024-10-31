@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import NavBar from './Navbar';
+
 
 
 const LaptopReservationForm = () => {
@@ -61,8 +61,6 @@ const LaptopReservationForm = () => {
 
   return (
     <div>
-    <NavBar />
-
   <div style={{ padding: '20px', maxWidth: '500px', margin: '0 auto', background: '#fff', borderRadius: '8px', boxShadow: '0 0 10px rgba(0,0,0,0.1)' }}>
     <h2 style={{ textAlign: 'center', color: '#333' }}>Laptop Reservation</h2>
     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
