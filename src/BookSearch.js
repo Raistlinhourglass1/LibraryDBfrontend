@@ -15,7 +15,7 @@ function BookSearch() {
         console.log('Search initiated with term:', term);
         setBooks([]); 
         try {
-            const response = await fetch(`http://localhost:5000/search?term=${encodeURIComponent(term)}`);
+            const response = await fetch(`https://librarydbbackend.onrender.com/search?term=${encodeURIComponent(term)}`);
             console.log('Response received:', response);
             if (!response.ok) {
                 throw new Error('Network response was not ok');

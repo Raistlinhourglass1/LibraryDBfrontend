@@ -130,7 +130,7 @@ const LaptopEntry = () => {
     if (Object.keys(validationErrors).length === 0) {
       try {
         setSubmitStatus('submitting');
-        const response = await fetch('http://localhost:5000/_laptopEntry', {
+        const response = await fetch('https://librarydbbackend.onrender.com/_laptopEntry', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

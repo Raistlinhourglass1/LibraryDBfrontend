@@ -85,7 +85,7 @@ export default function RoomReserveTable(props) {
 
     // Step 2: Send a GET request to the '/ProfilePage2' endpoint with the token in the Authorization header
     console.log('Sending request to /RoomReserveTable with Authorization header');
-    axios.get('http://localhost:5000/RoomReserveTable', {
+    axios.get('https://librarydbbackend.onrender.com/RoomReserveTable', {
       //headers: { Authorization: `Bearer ${token}` },
     })
       .then((response) => {

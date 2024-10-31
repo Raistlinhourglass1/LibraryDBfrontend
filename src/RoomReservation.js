@@ -65,7 +65,7 @@ function RoomReservation(props) {
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const response = await fetch('http://localhost:5000/get-rooms');
+        const response = await fetch('https://librarydbbackend.onrender.com/get-rooms');
         const data = await response.json();
         setRooms(data);
       } catch (error) {
@@ -100,7 +100,7 @@ function RoomReservation(props) {
   
     const reservationDateTime = `${reservationDate}T${reservationTime}`;
     try {
-      const response = await fetch('http://localhost:5000/reserve-room', {
+      const response = await fetch('https://librarydbbackend.onrender.com/reserve-room', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',

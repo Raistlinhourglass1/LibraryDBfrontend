@@ -32,7 +32,7 @@ const LaptopReservationForm = () => {
     const token = localStorage.getItem('token'); // fetch the token
 
     try{
-      const response = await fetch('http://localhost:5000/_laptopReservation', {
+      const response = await fetch('https://librarydbbackend.onrender.com/_laptopReservation', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

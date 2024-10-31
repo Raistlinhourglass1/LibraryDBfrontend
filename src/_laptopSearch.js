@@ -86,7 +86,7 @@ const LaptopSearch = () => {
         if (value) queryParams.append(key, value);
       });
 
-      const response = await fetch(`http://localhost:5000/_laptopSearch?${queryParams.toString()}`);
+      const response = await fetch(`https://librarydbbackend.onrender.com/_laptopSearch?${queryParams.toString()}`);
       
       if (!response.ok) {
         throw new Error('Search failed');

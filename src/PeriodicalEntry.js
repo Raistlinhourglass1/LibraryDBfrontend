@@ -90,7 +90,7 @@ function PeriodicalEntry() {
         console.log('Original formData:', formData);
 
         try {
-            const response = await fetch('http://localhost:5000/catalog-entry/periodical', {
+            const response = await fetch('https://librarydbbackend.onrender.com/catalog-entry/periodical', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

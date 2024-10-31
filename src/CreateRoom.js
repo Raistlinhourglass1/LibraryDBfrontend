@@ -73,7 +73,7 @@ export default function CreateRoom(props) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await fetch('http://localhost:5000/create-room', {
+      const response = await fetch('https://librarydbbackend.onrender.com/create-room', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

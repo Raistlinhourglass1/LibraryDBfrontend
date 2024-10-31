@@ -80,7 +80,7 @@ function BookEntry() {
         };
         console.log('Original formData:', sanitizedData);
         try {
-            const response = await fetch('http://localhost:5000/book-entry', {
+            const response = await fetch('https://librarydbbackend.onrender.com/book-entry', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

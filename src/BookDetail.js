@@ -23,7 +23,7 @@ function BookDetail() {
   useEffect(() => {
     const fetchBook = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/books/${book_id}`); // searches specific book id
+        const response = await fetch(`https://librarydbbackend.onrender.com/books/${book_id}`); // searches specific book id
         if (!response.ok) throw new Error('Book not found');
         const data = await response.json();
         setBook(data);

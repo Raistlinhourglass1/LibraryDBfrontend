@@ -87,7 +87,7 @@ const CalculatorSearch = () => {
         if (value) queryParams.append(key, value);
       });
 
-      const response = await fetch(`http://localhost:5000/_calculatorSearch?${queryParams.toString()}`);
+      const response = await fetch(`https://librarydbbackend.onrender.com/_calculatorSearch?${queryParams.toString()}`);
       
       if (!response.ok) {
         throw new Error('Search failed');

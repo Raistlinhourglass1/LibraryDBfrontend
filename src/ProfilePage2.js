@@ -94,7 +94,7 @@ export default function ProfilePage2(props) {
   const fetchProfileData = () => {
     const token = localStorage.getItem('token');
     axios
-      .get('http://localhost:5000/ProfilePage2', {
+      .get('https://librarydbbackend.onrender.com/ProfilePage2', {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
@@ -132,7 +132,7 @@ export default function ProfilePage2(props) {
   const handleSave = () => {
     const token = localStorage.getItem('token');
     axios
-      .put('http://localhost:5000/ProfilePage2', editedInfo, {
+      .put('https://librarydbbackend.onrender.com/ProfilePage2', editedInfo, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then(() => {
@@ -147,7 +147,7 @@ export default function ProfilePage2(props) {
   const handleDeleteProfile = () => {
     const token = localStorage.getItem('token');
     axios
-      .delete('http://localhost:5000/DeleteProfile', {
+      .delete('https://librarydbbackend.onrender.com/DeleteProfile', {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then(() => {
@@ -231,7 +231,7 @@ export default function ProfilePage2(props) {
                   </Link>
                   {(userInfo.user_level === 'Staff' || userInfo.user_level === 'Admin') && (
                     <>
-                      <Link href="http://localhost:3000/Nice" variant="body2" display="block" gutterBottom>
+                      <Link href="https://librarydbbackend.onrender.com/Nice" variant="body2" display="block" gutterBottom>
                         Nice
                       </Link>
                       <Link href="/Reports" variant="body2" display="block" gutterBottom>
