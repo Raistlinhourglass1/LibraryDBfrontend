@@ -232,7 +232,7 @@ export default function ProfilePage2(props) {
                       <Link href="https://librarydbbackend.onrender.com/Nice" variant="body2" display="block" gutterBottom>
                         Nice
                       </Link>
-                      <Link href="/Reports" variant="body2" display="block" gutterBottom>
+                      <Link href="/reports" variant="body2" display="block" gutterBottom>
                         Reports
                       </Link>
                       <Link href="/create-room" variant="body2" display="block" gutterBottom>

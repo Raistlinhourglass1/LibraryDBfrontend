@@ -13,7 +13,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import RoomReservation from './RoomReservation';
 import Feedback from './feedback';
 import CreateRoom from './CreateRoom';
-import Reports from './Reports';
+import reports from './Reports';
 import BookSearchResults from './BookSearchResults';
 import BookDetail from './BookDetail';
 import PeriodicalEntry from './PeriodicalEntry';
@@ -72,7 +72,7 @@ function App() {
       <Route path="/create-room" element={<CreateRoom />} />
       <Route path="/reserve-room" element={<RoomReservation />} />
       <Route path="/feedback" element={<Feedback />} />
-      <Route path="/Reports" element={<Reports />} />
+      <Route path="/reports" element={<Reports />} />
       <Route path="/catalog-entry/book" element={<BookEntry />} />
       <Route path="/catalog-entry/audiobook" element={<AudioBookEntry />} />
       <Route path="/catalog-entry/ebook" element={<EBookEntry />} />
