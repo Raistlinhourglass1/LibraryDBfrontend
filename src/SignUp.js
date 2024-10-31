@@ -148,7 +148,7 @@ export default function SignUp() {
     }
 
     try {
-      const response = await fetch('https://library-db-backend.azurewebsites.net/SignUp', {
+      const response = await fetch('https://librarydbbackend.onrender.com', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
