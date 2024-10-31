@@ -13,7 +13,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import RoomReservation from './RoomReservation';
 import Feedback from './feedback';
 import CreateRoom from './CreateRoom';
-import reports from './Reports';
+import Reports from './Reports';
 import BookSearchResults from './BookSearchResults';
 import BookDetail from './BookDetail';
 import PeriodicalEntry from './PeriodicalEntry';
