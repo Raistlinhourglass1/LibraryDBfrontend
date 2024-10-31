@@ -148,7 +148,7 @@ export default function SignUp() {
     }
 
     try {
-      const response = await fetch('https://librarydbbackend.onrender.com', {
+      const response = await fetch('https://librarydbbackend.onrender.com/SignUp', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
