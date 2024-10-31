@@ -220,8 +220,8 @@ export default function ProfilePage2(props) {
                   <Link href="/SignIn" variant="body1" display="block" gutterBottom>
                     Sign out
                   </Link>
-                  <Link href="/Feedback" variant="body2" display="block" gutterBottom>
-                    Feedback
+                  <Link href="/feedback" variant="body2" display="block" gutterBottom>
+                    Book Reviews
                   </Link>
                   <Link href="/reserve-room" variant="body2" display="block" gutterBottom>
                     Room Reservation
@@ -237,6 +237,22 @@ export default function ProfilePage2(props) {
                       </Link>
                       <Link href="/create-room" variant="body2" display="block" gutterBottom>
                         Create Room
+                      </Link>
+                      <Link href="/catalog-entry/book" variant="body2" display="block" gutterBottom>
+                        Add Book
+                      </Link>
+                      <Link href="/catalog-entry/ebook" variant="body2" display="block" gutterBottom>
+                        Add E-Book
+                      </Link>
+                      <Link href="/catalog-entry/audiobook" variant="body2" display="block" gutterBottom>
+                        Add Audiobook
+                      </Link>
+                      <Link href="/catalog-entry/periodical" variant="body2" display="block" gutterBottom>
+                        Add Periodical
+                      </Link><Link href="/_laptopEntry" variant="body2" display="block" gutterBottom>
+                        Add laptop
+                      </Link><Link href="/_calculatorEntry" variant="body2" display="block" gutterBottom>
+                        Add Calculator
                       </Link>
 
                     </>
