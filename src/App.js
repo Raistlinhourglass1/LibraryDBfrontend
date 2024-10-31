@@ -72,7 +72,7 @@ function App() {
       <Route path="/create-room" element={<CreateRoom />} />
       <Route path="/reserve-room" element={<RoomReservation />} />
       <Route path="/feedback" element={<Feedback />} />
-      <Route path="/reports" element={<Reports />} />
+      <Route path="/Reports" element={<Reports />} />
       <Route path="/catalog-entry/book" element={<BookEntry />} />
       <Route path="/catalog-entry/audiobook" element={<AudioBookEntry />} />
       <Route path="/catalog-entry/ebook" element={<EBookEntry />} />
