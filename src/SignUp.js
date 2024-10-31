@@ -13,7 +13,7 @@ import Stack from '@mui/material/Stack';
 import MuiCard from '@mui/material/Card';
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import getSignUpTheme from './getSignUpTheme';
-import { CogIcon, FacebookIcon, SitemarkIcon } from './CustomIcons';
+import { CogIcon } from './CustomIcons';
 import TemplateFrame from './TemplateFrame';
 
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -165,6 +165,10 @@ export default function SignUp() {
           email: '',
           password: '',
         });
+        setTimeout(() => {
+          setMessage('');
+          setMessageType('');
+        }, 2000);
       } else if (response.status === 400) {
         const errorData = await response.json();
         setMessage(errorData.message);
@@ -208,45 +212,49 @@ export default function SignUp() {
             >
               Sign up
             </Typography>
+            {message && (
+              <div className={`alert alert-${messageType} mt-3`} role="alert">
+                {message}
+              </div>
+            )}
             <Box
               component="form"
               onSubmit={handleSubmit}
               sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
             >
               <FormControl>
-                  <FormLabel htmlFor="first_name">First name</FormLabel>
-                  <TextField
-                    autoComplete="given-name"
-                    name="first_name"
-                    required
-                    fullWidth
-                    id="first_name"
-                    placeholder="John"
-                    error={nameError}
-                    helperText={nameErrorMessage}
-                    color={nameError ? 'error' : 'primary'}
-                    onChange={handleChange}
-                    value={formData.first_name}
-                  />
-                </FormControl>
+                <FormLabel htmlFor="first_name">First name</FormLabel>
+                <TextField
+                  autoComplete="given-name"
+                  name="first_name"
+                  required
+                  fullWidth
+                  id="first_name"
+                  placeholder="John"
+                  error={nameError}
+                  helperText={nameErrorMessage}
+                  color={nameError ? 'error' : 'primary'}
+                  onChange={handleChange}
+                  value={formData.first_name}
+                />
+              </FormControl>
 
-                <FormControl>
-                  <FormLabel htmlFor="last_name">Last name</FormLabel>
-                  <TextField
-                    autoComplete="family-name"
-                    name="last_name"
-                    required
-                    fullWidth
-                    id="last_name"
-                    placeholder="Snow"
-                    error={nameError}
-                    helperText={nameErrorMessage}
-                    color={nameError ? 'error' : 'primary'}
-                    onChange={handleChange}
-                    value={formData.last_name}
-                  />
-                </FormControl>
-
+              <FormControl>
+                <FormLabel htmlFor="last_name">Last name</FormLabel>
+                <TextField
+                  autoComplete="family-name"
+                  name="last_name"
+                  required
+                  fullWidth
+                  id="last_name"
+                  placeholder="Snow"
+                  error={nameError}
+                  helperText={nameErrorMessage}
+                  color={nameError ? 'error' : 'primary'}
+                  onChange={handleChange}
+                  value={formData.last_name}
+                />
+              </FormControl>
 
               <FormControl>
                 <FormLabel htmlFor="email">Email</FormLabel>
