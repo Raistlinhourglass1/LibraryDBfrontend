@@ -26,10 +26,6 @@ function NavBar() {
               <NavDropdown.Item href="/_calculatorReservation">
                 Calculator
               </NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item href="#action/3.4">
-                Schedule return
-              </NavDropdown.Item>
             </NavDropdown>
           </Nav>
         </Navbar.Collapse>

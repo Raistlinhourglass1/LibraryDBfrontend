@@ -204,7 +204,7 @@ export default function ProfilePage2(props) {
                   <Link href="/SignIn" variant="body1" display="block" gutterBottom>
                     Sign out
                   </Link>
-                  <Link href="/Feedback" variant="body2" display="block" gutterBottom>
+                  <Link href="/feedback" variant="body2" display="block" gutterBottom>
                     Feedback
                   </Link>
                   <Link href="/reserve-room" variant="body2" display="block" gutterBottom>
@@ -215,7 +215,7 @@ export default function ProfilePage2(props) {
                   </Link>
                   {(userInfo.user_level === 'Staff' || userInfo.user_level === 'Admin') && (
                     <>
-                      <Link href="http://localhost:3000/Nice" variant="body2" display="block" gutterBottom>
+                      <Link href="/Nice" variant="body2" display="block" gutterBottom>
                         Nice
                       </Link>
                       <Link href="/reports" variant="body2" display="block" gutterBottom>
