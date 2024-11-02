@@ -174,7 +174,7 @@ export default function ProfilePage2(props) {
         <MuiCard variant="outlined" sx={{ width: '100%', maxWidth: 1200 }}>
           <Paper elevation={0} sx={{ p: 3, bgcolor: 'background.paper', display: 'flex', flexDirection: 'row' }}>
             {/* Left Panel */}
-            <Grid2 item xs={12} md={4} sx={{ mr: 2 }}>
+            <Grid2 item sx={{ width: 250, minWidth: 250, mr: 2 }}>
               <Paper
                 elevation={1}
                 sx={{
@@ -197,7 +197,7 @@ export default function ProfilePage2(props) {
                     <input type="file" hidden />
                   </Button>
                 </Box>
-                <Box mt={4} sx={{ textAlign: 'left' }}>
+                <Box mt={4} sx={{ textAlign: 'left', overflowY: 'auto', maxHeight: '50vh' }}>
                   <Typography variant="h6" gutterBottom>
                     Additional Links
                   </Typography>
