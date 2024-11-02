@@ -2,7 +2,7 @@ import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
-
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 
 
 
@@ -10,8 +10,20 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 
 function NavBar() {
   
+  const location = useLocation();
+  
+  // Paths where NavBar should be hidden
+  const hiddenNavPaths = ['/signin', '/signup'];
+  const shouldHideNav = hiddenNavPaths.includes(location.pathname);
+
   return (
-    <Navbar expand="lg" className="bg-body-tertiary" bg="dark" data-bs-theme="dark">
+    <div>
+      {/* Render NavBar only if the path is not in hiddenNavPaths */}
+      {!shouldHideNav && <NavBar />}
+      
+      {/* Your other content and routing components go here */}
+
+      <Navbar expand="lg" className="bg-body-tertiary" bg="dark" data-bs-theme="dark">
       <Container>
         <Navbar.Brand href="#home">Library</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -26,15 +38,16 @@ function NavBar() {
               <NavDropdown.Item href="/_calculatorReservation">
                 Calculator
               </NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item href="#action/3.4">
-                Schedule return
-              </NavDropdown.Item>
             </NavDropdown>
           </Nav>
         </Navbar.Collapse>
       </Container>
     </Navbar>
+
+
+
+
+    </div>
   );
 }
 
