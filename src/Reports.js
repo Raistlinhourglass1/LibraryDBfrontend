@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -12,7 +12,6 @@ import { styled } from '@mui/material/styles';
 import AppTheme from './AppTheme';
 import ColorModeSelect from './ColorModeSelect';
 
-
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
@@ -21,7 +20,7 @@ const Card = styled(MuiCard)(({ theme }) => ({
   padding: theme.spacing(4),
   gap: theme.spacing(2),
   margin: 'auto',
-  maxWidth: '100%', // allow the card to expand based on content
+  maxWidth: '100%',
   boxShadow:
     'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px',
   ...theme.applyStyles('dark', {
@@ -51,7 +50,7 @@ const ReportsContainer = styled(Stack)(({ theme }) => ({
 
 const TableContainer = styled(Box)(({ theme }) => ({
   overflowX: 'auto',
-  maxHeight: '400px', // making table scrollable if it grows too tall
+  maxHeight: '400px',
   width: '100%',
   marginTop: theme.spacing(3),
   borderRadius: theme.shape.borderRadius,
@@ -82,8 +81,26 @@ function Reports(props) {
   const [reportData, setReportData] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
 
+  // Clear irrelevant filters when the specification changes
+  useEffect(() => {
+    setDate('');
+    setUserId('');
+    setStaffId('');
+    setBookName('');
+    setBookIsbn('');
+  }, [specification]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Prepare the payload based on the selected specification
+    const payload = { specification, date };
+    if (specification === 'users') payload.user_id = userId;
+    if (specification === 'staff') payload.staff_id = staffId;
+    if (specification === 'books') {
+      payload.book_name = bookName;
+      payload.book_isbn = bookIsbn;
+    }
+
     try {
       const response = await fetch('https://librarydbbackend.onrender.com/get-reports', {
         method: 'POST',
@@ -177,15 +194,16 @@ function Reports(props) {
                   <option value="laptops">Laptops</option>
                   <option value="calculators">Calculators</option>
                   <option value="books">Books</option>
-                  <option value="audio_books">Audio Books</option>
-                  <option value="library card">Library Card</option>
+                  <option value="audiobooks">Audio Books</option>
+                   <option value="book reservations">Book Reservations</option>
                   <option value="room reservations">Room Reservations</option>
-                  <option value="feedback">Feedback</option>
+                  <option value="feedback">Book Reviews</option>
                   <option value="users">Users</option>
                   <option value="staff">Staff</option>
                 </TextField>
-
               </FormControl>
+
+              {/* Date Filter - Always shown */}
               <FormControl>
                 <FormLabel htmlFor="date">By Date (optional, YYYY-MM-DD)</FormLabel>
                 <TextField
@@ -197,56 +215,65 @@ function Reports(props) {
                   variant="outlined"
                 />
               </FormControl>
-              <FormControl>
-                <FormLabel htmlFor="userId">By User ID (optional)</FormLabel>
-                <TextField
-                  id="userId"
-                  name="userId"
-                  value={userId}
-                  onChange={(e) => setUserId(e.target.value)}
-                  fullWidth
-                  variant="outlined"
-                />
-              </FormControl>
 
-              <FormControl>
-                <FormLabel htmlFor="staffId">By Staff ID (optional)</FormLabel>
-                <TextField
-                  id="staffId"
-                  name="staffId"
-                  value={staffId}
-                  onChange={(e) => setStaffId(e.target.value)}
-                  fullWidth
-                  variant="outlined"
-                />
-              </FormControl>
+              {/* Conditional filters based on selected specification */}
+              {(specification === 'users') && (
+                <FormControl>
+                  <FormLabel htmlFor="userId">By User ID (optional)</FormLabel>
+                  <TextField
+                    id="userId"
+                    name="userId"
+                    value={userId}
+                    onChange={(e) => setUserId(e.target.value)}
+                    fullWidth
+                    variant="outlined"
+                  />
+                </FormControl>
+              )}
 
-              <FormControl>
-                <FormLabel htmlFor="bookName">By Book Name (optional)</FormLabel>
-                <TextField
-                  id="bookName"
-                  name="bookName"
-                  value={bookName}
-                  onChange={(e) => setBookName(e.target.value)}
-                  fullWidth
-                  variant="outlined"
-                />
-              </FormControl>
+              {(specification === 'staff') && (
+                <FormControl>
+                  <FormLabel htmlFor="staffId">By Staff ID (optional)</FormLabel>
+                  <TextField
+                    id="staffId"
+                    name="staffId"
+                    value={staffId}
+                    onChange={(e) => setStaffId(e.target.value)}
+                    fullWidth
+                    variant="outlined"
+                  />
+                </FormControl>
+              )}
 
-              <FormControl>
-                <FormLabel htmlFor="bookIsbn">By Book ISBN (optional)</FormLabel>
-                <TextField
-                  id="bookIsbn"
-                  name="bookIsbn"
-                  value={bookIsbn}
-                  onChange={(e) => setBookIsbn(e.target.value)}
-                  fullWidth
-                  variant="outlined"
-                />
-              </FormControl>
+              {(specification === 'books' || specification === 'audiobooks' || specification === 'book reservations') && (
+                <>
+                  <FormControl>
+                    <FormLabel htmlFor="bookName">By Book Name (optional)</FormLabel>
+                    <TextField
+                      id="bookName"
+                      name="bookName"
+                      value={bookName}
+                      onChange={(e) => setBookName(e.target.value)}
+                      fullWidth
+                      variant="outlined"
+                    />
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel htmlFor="bookIsbn">By Book ISBN (optional)</FormLabel>
+                    <TextField
+                      id="bookIsbn"
+                      name="bookIsbn"
+                      value={bookIsbn}
+                      onChange={(e) => setBookIsbn(e.target.value)}
+                      fullWidth
+                      variant="outlined"
+                    />
+                  </FormControl>
+                </>
+              )}
 
               <Button type="submit" fullWidth variant="contained">
-                Submit
+                Generate
               </Button>
             </Box>
             <Typography variant="h6" mt={4}>Report Data:</Typography>
@@ -257,7 +284,9 @@ function Reports(props) {
                   <tbody>{renderTableRows()}</tbody>
                 </StyledTable>
               ) : (
-                <Typography>No data available</Typography>
+                <Typography variant="body1" mt={2}>
+                  No data available for the selected specification.
+                </Typography>
               )}
             </TableContainer>
           </Card>
