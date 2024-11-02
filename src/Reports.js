@@ -75,9 +75,14 @@ function Reports(props) {
   const [specification, setSpecification] = useState('');
   const [date, setDate] = useState('');
   const [userId, setUserId] = useState('');
+  const [laptopId, setLaptopId] = useState('');
+  const [calcId, setCalcId] = useState('');
+  const [periodType, setPeriodType] = useState('');
   const [staffId, setStaffId] = useState('');
+  const [teachEmail, setTeachEmail] = useState('');
   const [bookName, setBookName] = useState('');
   const [bookIsbn, setBookIsbn] = useState('');
+  const [roomNum, setRoomNum] = useState('');
   const [reportData, setReportData] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -86,8 +91,13 @@ function Reports(props) {
     setDate('');
     setUserId('');
     setStaffId('');
+    setCalcId('');
+    setTeachEmail('');
     setBookName('');
     setBookIsbn('');
+    setLaptopId('');
+    setPeriodType('');
+    setRoomNum('');
   }, [specification]);
 
   const handleSubmit = async (e) => {
@@ -96,6 +106,11 @@ function Reports(props) {
     const payload = { specification, date };
     if (specification === 'users') payload.user_id = userId;
     if (specification === 'staff') payload.staff_id = staffId;
+    if (specification === 'teacher') payload.teach_email = teachEmail;
+    if (specification === 'laptops') payload.laptop_id = laptopId;
+    if (specification === 'calculators') payload.calc_id = calcId;
+    if (specification === 'periodical') payload.period_type = periodType;
+    if (specification === 'room reservations') payload.room_num = roomNum;
     if (specification === 'books') {
       payload.book_name = bookName;
       payload.book_isbn = bookIsbn;
@@ -107,7 +122,7 @@ function Reports(props) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ specification, date, user_id: userId, book_name: bookName, book_isbn: bookIsbn, staff_id: staffId }),
+        body: JSON.stringify({ specification, date, user_id: userId, book_name: bookName, book_isbn: bookIsbn, staff_id: staffId, teach_email: teachEmail, laptop_id: laptopId, calc_id: calcId, period_type: periodType, room_num: roomNum }),
       });
       if (!response.ok) {
         throw new Error('Error fetching reports');
@@ -195,11 +210,14 @@ function Reports(props) {
                   <option value="calculators">Calculators</option>
                   <option value="books">Books</option>
                   <option value="audiobooks">Audio Books</option>
-                   <option value="book reservations">Book Reservations</option>
+                  <option value="periodical">Periodicals</option>
+                  <option value="ebook">Ebooks</option>
+                  <option value="book reservations">Book Reservations</option>
                   <option value="room reservations">Room Reservations</option>
                   <option value="feedback">Book Reviews</option>
                   <option value="users">Users</option>
                   <option value="staff">Staff</option>
+                  <option value="teacher">Teacher</option>
                 </TextField>
               </FormControl>
 
@@ -245,7 +263,64 @@ function Reports(props) {
                 </FormControl>
               )}
 
-              {(specification === 'books' || specification === 'audiobooks' || specification === 'book reservations') && (
+              {(specification === 'teacher') && (
+                <FormControl>
+                  <FormLabel htmlFor="teachEmail">By Teacher Email (optional)</FormLabel>
+                  <TextField
+                    id="teachEmail"
+                    name="teachEmail"
+                    value={teachEmail}
+                    onChange={(e) => setTeachEmail(e.target.value)}
+                    fullWidth
+                    variant="outlined"
+                  />
+                </FormControl>
+              )}
+
+              {(specification === 'laptops') && (
+                <FormControl>
+                  <FormLabel htmlFor="laptopId">By Laptop ID (optional)</FormLabel>
+                  <TextField
+                    id="laptopId"
+                    name="laptopId"
+                    value={laptopId}
+                    onChange={(e) => setLaptopId(e.target.value)}
+                    fullWidth
+                    variant="outlined"
+                  />
+                </FormControl>
+              )}
+
+              {(specification === 'calculators') && (
+                <FormControl>
+                  <FormLabel htmlFor="calcId">By Calculator ID (optional)</FormLabel>
+                  <TextField
+                    id="calcId"
+                    name="calcId"
+                    value={calcId}
+                    onChange={(e) => setCalcId(e.target.value)}
+                    fullWidth
+                    variant="outlined"
+                  />
+                </FormControl>
+              )}
+
+              {(specification === 'periodical') && (
+                <FormControl>
+                  <FormLabel htmlFor="periodType">By Periodical Type (newspaper/journal/magazine)</FormLabel>
+                  <TextField
+                    id="periodType"
+                    name="periodType"
+                    value={periodType}
+                    onChange={(e) => setPeriodType(e.target.value)}
+                    fullWidth
+                    variant="outlined"
+                  />
+                </FormControl>
+              )}
+
+
+              {(specification === 'books' || specification === 'audiobooks' || specification === 'book reservations' || specification === 'ebook') && (
                 <>
                   <FormControl>
                     <FormLabel htmlFor="bookName">By Book Name (optional)</FormLabel>
@@ -270,6 +345,20 @@ function Reports(props) {
                     />
                   </FormControl>
                 </>
+              )}
+
+              {(specification === 'room reservations') && (
+                <FormControl>
+                  <FormLabel htmlFor="roomNum">By Room Number</FormLabel>
+                  <TextField
+                    id="roomNum"
+                    name="roomNum"
+                    value={roomNum}
+                    onChange={(e) => setRoomNum(e.target.value)}
+                    fullWidth
+                    variant="outlined"
+                  />
+                </FormControl>
               )}
 
               <Button type="submit" fullWidth variant="contained">
