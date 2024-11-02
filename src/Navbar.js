@@ -36,7 +36,7 @@ function NavBar() {
             <NavDropdown title="Rent Device" id="basic-nav-dropdown">
               <NavDropdown.Item href="/_laptopReservation">Laptops</NavDropdown.Item>
               <NavDropdown.Item href="/_calculatorReservation">
-                Calculator
+                calculator
               </NavDropdown.Item>
             </NavDropdown>
           </Nav>
