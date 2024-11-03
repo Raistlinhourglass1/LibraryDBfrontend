@@ -37,7 +37,7 @@ const RoomReserveTable = (props) => {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    axios.get('http://localhost:5000/RoomReserveTable', {
+    axios.get('https://librarydbbackend.onrender.com/RoomReserveTable', {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((response) => {
@@ -55,7 +55,7 @@ const RoomReserveTable = (props) => {
   const handleCancelReservation = async (reservationId, roomId) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.post('http://localhost:5000/cancel-reservation', {
+      await axios.post('https://librarydbbackend.onrender.com/cancel-reservation', {
         reservationId,
         roomId
       }, {
@@ -63,7 +63,7 @@ const RoomReserveTable = (props) => {
       });
 
       // Fetch updated reservations after cancellation
-      const response = await axios.get('http://localhost:5000/RoomReserveTable', {
+      const response = await axios.get('https://librarydbbackend.onrender.com/RoomReserveTable', {
         headers: { Authorization: `Bearer ${token}` },
       });
       setRows(response.data); // Update rows state with fresh data
