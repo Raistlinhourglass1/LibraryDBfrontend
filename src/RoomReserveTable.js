@@ -32,7 +32,7 @@ const calculateTimeDue = (reservationDateTime, reservationDuration, status) => {
   }
 };
 
-const RoomReserveTable = (props) => {
+const RoomReserveTable = ({ userId, ...props }) => {
   const [rows, setRows] = useState([]);
 
   useEffect(() => {
@@ -41,8 +41,9 @@ const RoomReserveTable = (props) => {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((response) => {
-        console.log('Fetched rows:', response.data); // Debugging statement
-        setRows(response.data);
+        // Filter rows to include only those matching the userId
+        const userRows = response.data.filter((row) => row.user_id === userId);
+        setRows(userRows);
       })
       .catch((error) => {
         console.error('Error fetching data:', error);
@@ -50,7 +51,7 @@ const RoomReserveTable = (props) => {
           console.warn('Unauthorized access - possibly due to an invalid token.');
         }
       });
-  }, []);
+  }, [userId]);
 
   const handleCancelReservation = async (reservationId, roomId) => {
     try {
@@ -66,8 +67,9 @@ const RoomReserveTable = (props) => {
       const response = await axios.get('https://librarydbbackend.onrender.com/RoomReserveTable', {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setRows(response.data); // Update rows state with fresh data
-      console.log(`Reservation ${reservationId} canceled successfully`, response.data); // Debugging statement
+      const userRows = response.data.filter((row) => row.user_id === userId);
+      setRows(userRows);
+      console.log(`Reservation ${reservationId} canceled successfully`);
     } catch (error) {
       console.error('Error cancelling reservation:', error);
     }
@@ -98,7 +100,7 @@ const RoomReserveTable = (props) => {
         <Button
           variant="outlined"
           color="secondary"
-          onClick={() => handleCancelReservation(params.row.reservation_id, params.row.room_number)} // Pass the room ID
+          onClick={() => handleCancelReservation(params.row.reservation_id, params.row.room_number)}
         >
           Cancel
         </Button>

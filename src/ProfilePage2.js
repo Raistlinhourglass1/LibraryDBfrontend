@@ -342,7 +342,7 @@ export default function ProfilePage2(props) {
                   <StudentLaptopRentals userId={userInfo.user_ID} />
                   </CustomTabPanel>
                   <CustomTabPanel value={value} index={3}>
-                    <StudentCalculatorRentals />
+                  <StudentCalculatorRentals userId={userInfo.user_ID} />
                   </CustomTabPanel>
                   <CustomTabPanel value={value} index={4}>
                     <RoomReserveTable />
