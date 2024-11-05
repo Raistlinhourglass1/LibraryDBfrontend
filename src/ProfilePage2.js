@@ -345,7 +345,7 @@ export default function ProfilePage2(props) {
                   <StudentCalculatorRentals userId={userInfo.user_ID} />
                   </CustomTabPanel>
                   <CustomTabPanel value={value} index={4}>
-                    <RoomReserveTable />
+                    <RoomReserveTable userId={userInfo.user_ID} />
                   </CustomTabPanel>
                   <CustomTabPanel value={value} index={5}>
                     <Typography>Fines Due</Typography>
