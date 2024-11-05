@@ -6,7 +6,6 @@ import axios from 'axios';
 import AppTheme from './AppTheme';
 import { addDays, differenceInDays } from 'date-fns';
 
-// Function to render status based on whether the reservation is overdue
 function renderStatus(status) {
   const colors = {
     Early: 'success',
@@ -15,11 +14,10 @@ function renderStatus(status) {
   return <Chip label={status} color={colors[status]} size="small" />;
 }
 
-// Calculate time due based on a due date set to 2 weeks after reservation_date_time
 const calculateTimeDue = (reservationDateTime) => {
   const now = new Date();
   const reservationDate = new Date(reservationDateTime);
-  const dueDate = addDays(reservationDate, 14); // Set due date to 14 days after reservationDate
+  const dueDate = addDays(reservationDate, 14);
   const daysDifference = differenceInDays(now, dueDate);
 
   if (daysDifference > 0) {
@@ -31,13 +29,11 @@ const calculateTimeDue = (reservationDateTime) => {
   }
 };
 
-// Calculate the amount due based on overdue days
 const calculateAmountDue = (overdueDays) => {
   const ratePerDay = 20;
   return overdueDays * ratePerDay;
 };
 
-// Define columns for the DataGrid
 const columns = [
   { field: 'reservation_id', headerName: 'Reservation ID', width: 150 },
   { field: 'laptop_id', headerName: 'Laptop ID', width: 150 },
@@ -80,17 +76,18 @@ const columns = [
   },
 ];
 
-export default function LaptopReserveTable(props) {
+export default function LaptopReserveTable({ userId, ...props }) {
   const [rows, setRows] = useState([]);
 
   useEffect(() => {
-    // Fetch data from the backend for laptop reservations
     const token = localStorage.getItem('token');
     axios.get('https://librarydbbackend.onrender.com/laptop_reservations', {
       headers: { Authorization: `Bearer ${token}` },
     })
     .then((response) => {
-      setRows(response.data); // Set the fetched data as rows for the table
+      // Filter rows to include only those matching the userId
+      const userRows = response.data.filter((row) => row.user_id === userId);
+      setRows(userRows);
     })
     .catch((error) => {
       console.error('Error fetching data:', error);
@@ -98,7 +95,7 @@ export default function LaptopReserveTable(props) {
         console.warn('Unauthorized access - possibly due to an invalid token.');
       }
     });
-  }, []);
+  }, [userId]);
 
   return (
     <AppTheme {...props}>
@@ -116,7 +113,7 @@ export default function LaptopReserveTable(props) {
         <DataGrid
           rows={rows}
           columns={columns}
-          getRowId={(row) => row.reservation_id} // Specify reservation_id as the unique identifier
+          getRowId={(row) => row.reservation_id}
           initialState={{
             pagination: {
               paginationModel: {

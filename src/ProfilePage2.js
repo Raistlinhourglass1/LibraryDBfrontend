@@ -12,7 +12,7 @@ import {
   Grid2,
   Avatar,
   Paper,
-  Tabs,
+  Tabs, 
   Tab,
   Dialog,
   DialogActions,
@@ -339,7 +339,7 @@ export default function ProfilePage2(props) {
                     <StudentBookRentals />
                   </CustomTabPanel>
                   <CustomTabPanel value={value} index={2}>
-                    <StudentLaptopRentals />
+                  <StudentLaptopRentals userId={userInfo.user_ID} />
                   </CustomTabPanel>
                   <CustomTabPanel value={value} index={3}>
                     <StudentCalculatorRentals />
