@@ -117,7 +117,15 @@ function RoomReservation(props) {
       const result = await response.json();
       if (response.ok) {
         setSuccessMessage(result.message);
-        
+        setTimeout(() => {
+          setPartySize(0);
+          setDuration(0);
+          setReservationTime('');
+          setReservationDate('');
+          setSelectedRoomCapacity(0);
+          setSelectedRoom('');
+          setSuccessMessage('');
+        }, 2000);
       } else {
         setErrorMessage(result.message || 'Error making reservation. Please try again.');
       }
