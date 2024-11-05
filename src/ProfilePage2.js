@@ -210,9 +210,6 @@ export default function ProfilePage2(props) {
                   <Link href="/reserve-room" variant="body2" display="block" gutterBottom>
                     Room Reservation
                   </Link>
-                  <Link href="/create-room" variant="body2" display="block" gutterBottom>
-                    Create Room
-                  </Link>
                   {(userInfo.user_level === 'Staff' || userInfo.user_level === 'Admin') && (
                     <>
                       <Link href="/Nice" variant="body2" display="block" gutterBottom>

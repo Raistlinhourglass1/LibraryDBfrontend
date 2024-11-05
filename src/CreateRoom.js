@@ -204,7 +204,6 @@ export default function CreateRoom(props) {
                   onChange={handleChange}
                   placeholder="Enter room description"
                   multiline
-                  rows={4}
                   required
                   fullWidth
                   variant="outlined"
