@@ -37,7 +37,6 @@ const calculateAmountDue = (overdueDays) => {
 const columns = [
   { field: 'reservation_id', headerName: 'Reservation ID', width: 150 },
   { field: 'calculator_id', headerName: 'Calculator ID', width: 150 },
-  { field: 'user_id', headerName: 'User ID', width: 150 },
   { field: 'calc_type', headerName: 'Calculator Type', width: 150 },
   { field: 'model_name', headerName: 'Model Name', width: 150 },
   {

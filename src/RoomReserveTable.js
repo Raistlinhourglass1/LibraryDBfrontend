@@ -77,7 +77,6 @@ const RoomReserveTable = ({ userId, ...props }) => {
 
   const columns = [
     { field: 'reservation_id', headerName: 'Reservation ID', width: 110 },
-    { field: 'user_id', headerName: 'User ID', width: 110 },
     {
       field: 'reservation_status',
       headerName: 'Status',
