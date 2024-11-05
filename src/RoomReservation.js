@@ -117,6 +117,7 @@ function RoomReservation(props) {
       const result = await response.json();
       if (response.ok) {
         setSuccessMessage(result.message);
+        
       } else {
         setErrorMessage(result.message || 'Error making reservation. Please try again.');
       }
