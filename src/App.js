@@ -32,6 +32,7 @@ import _calculatorSearch from './_calculatorSearch'
 import _laptopEntry from './_laptopEntry'
 import Navbar from './Navbar'
 import Home from './HomePage'
+import TestBookSearch from './TestBookSearch'
 
 const Layout = () => (
   <div>
@@ -68,7 +69,7 @@ function App() {
       <Route path="/StudentBookRentals" element={<StudentBookRentals />} />
       <Route path="/Nice" element={<Nice />} />
       <Route path="/StudentRoomReservationTable" element={<StudentRoomReservationTable />} />
-
+      <Route path="/TestBookSearch" element={<TestBookSearch />} />
       <Route path="/create-room" element={<CreateRoom />} />
       <Route path="/reserve-room" element={<RoomReservation />} />
       <Route path="/feedback" element={<Feedback />} />
