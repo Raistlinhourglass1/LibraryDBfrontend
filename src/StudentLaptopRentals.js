@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import jwt_decode from 'jwt-decode';  // Import the decoding library
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
 import Chip from '@mui/material/Chip';
@@ -76,77 +77,52 @@ const columns = [
 
 export default function LaptopReserveTable({ userId, ...props }) {
   const [rows, setRows] = useState([]);
-
-  const sendOverdueEmail = (userEmail, reservationDetails) => {
-    // Log data before sending
-    console.log("Sending overdue email with data:", { userEmail, reservationDetails });
-
-    if (!userEmail || !reservationDetails || !reservationDetails.reservation_id || reservationDetails.overdueDays == null) {
-      console.error("Invalid data: Missing userEmail, reservation_id, or overdueDays.");
-      return;
-    }
   
-    return axios.post('https://librarydbbackend.onrender.com/send-overdue-email', { userEmail, reservationDetails })
-      .then(() => console.log('Overdue email sent'))
-      .catch((error) => console.error('Error sending overdue email:', error));
-};
+  const token = localStorage.getItem('token');
+  const decodedToken = jwt_decode(token);
+  const userEmail = decodedToken.email;  // Extract email from the decoded token
+
+  const sendOverdueEmail = (reservationDetails) => {
+    return axios.post('https://librarydbbackend.onrender.com/send-overdue-email', { 
+      userEmail, 
+      reservationDetails 
+    })
+    .then(() => console.log('Overdue email sent'))
+    .catch((error) => console.error('Error sending overdue email:', error));
+  };
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
     axios.get('https://librarydbbackend.onrender.com/laptop_reservations', {
       headers: { Authorization: `Bearer ${token}` },
     })
     .then((response) => {
-      // Filter rows to include only those matching the userId
       const userRows = response.data.filter((row) => row.user_id === userId);
       setRows(userRows);
 
-      // Check for "Late" reservations and send an email if needed
       const lateEmails = userRows.map(async (row) => {
         const { status, overdueDays } = calculateTimeDue(row.reservation_date_time);
-        
-        // Send email only if the item is "Late" and hasn't been notified yet
         if (status === 'Late' && !row.notified) {
-          await sendOverdueEmail(row.user_email, { reservation_id: row.reservation_id, overdueDays });
-          row.notified = true; // Mark as notified (ideally update this on the backend as well)
+          await sendOverdueEmail({ reservation_id: row.reservation_id, overdueDays });
+          row.notified = true;
         }
       });
 
-      // Execute all the emails concurrently
-      Promise.all(lateEmails).then(() => setRows([...userRows])); // Update the rows to reflect notified status
-
+      Promise.all(lateEmails).then(() => setRows([...userRows]));
     })
     .catch((error) => {
       console.error('Error fetching data:', error);
-      if (error.response && error.response.status === 401) {
-        console.warn('Unauthorized access - possibly due to an invalid token.');
-      }
     });
-  }, [userId]);
+  }, [userId, token]);
 
   return (
     <AppTheme {...props}>
-      <Box
-        sx={{
-          height: 390,
-          width: '100%',
-          display: 'flex',
-          boxShadow: 3,
-          borderRadius: 2,
-          padding: 1,
-          bgcolor: 'background.paper',
-        }}
-      >
+      <Box sx={{ height: 390, width: '100%', display: 'flex', boxShadow: 3, borderRadius: 2, padding: 1, bgcolor: 'background.paper' }}>
         <DataGrid
           rows={rows}
           columns={columns}
           getRowId={(row) => row.reservation_id}
           initialState={{
-            pagination: {
-              paginationModel: {
-                pageSize: 10,
-              },
-            },
+            pagination: { paginationModel: { pageSize: 10 } },
           }}
           pageSizeOptions={[5, 10]}
           checkboxSelection
