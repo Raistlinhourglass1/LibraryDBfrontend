@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import jwt_decode from 'jwt-decode';  // Import the decoding library
+import { decode as jwt_decode } from 'jwt-decode';
+
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
 import Chip from '@mui/material/Chip';
