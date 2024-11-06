@@ -66,7 +66,7 @@ function RoomReservation(props) {
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const response = await fetch('http://localhost:5000/get-rooms');
+        const response = await fetch('https://librarydbbackend.onrender.com/get-rooms');
         const data = await response.json();
         setRooms(data);
       } catch (error) {
