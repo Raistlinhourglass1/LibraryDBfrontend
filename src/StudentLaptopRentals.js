@@ -77,6 +77,12 @@ const columns = [
 export default function LaptopReserveTable({ userId, ...props }) {
   const [rows, setRows] = useState([]);
 
+  const sendOverdueEmail = (userEmail, reservationDetails) => {
+    axios.post('https://librarydbbackend.onrender.com/send-overdue-email', { userEmail, reservationDetails })
+      .then(() => console.log('Overdue email sent'))
+      .catch((error) => console.error('Error sending overdue email:', error));
+  };
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     axios.get('https://librarydbbackend.onrender.com/laptop_reservations', {
@@ -86,6 +92,18 @@ export default function LaptopReserveTable({ userId, ...props }) {
       // Filter rows to include only those matching the userId
       const userRows = response.data.filter((row) => row.user_id === userId);
       setRows(userRows);
+
+      // Check for "Late" reservations and send an email if needed
+      userRows.forEach((row) => {
+        const { status, overdueDays } = calculateTimeDue(row.reservation_date_time);
+        if (status === 'Late' && !row.notified) {
+          sendOverdueEmail(row.user_email, { laptop_id: row.laptop_id, overdueDays });
+        }
+      });
+
+
+
+      
     })
     .catch((error) => {
       console.error('Error fetching data:', error);
