@@ -73,18 +73,36 @@ function Feedback(props) {
   }, []);
 
   const handleChange = (e) => {
+    const { name, value } = e.target;
+    const updatedValue = name === 'bookName' || name === 'bookAuthor' ? capitalizeWords(value) : value;
+  
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: updatedValue,
     });
   };
 
+  // Helper function to capitalize each word in a string
+const capitalizeWords = (str) => {
+  return str
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+};
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Capitalize the book name and author before submitting
+    const updatedFormData = {
+      ...formData,
+      bookName: capitalizeWords(formData.bookName),
+      bookAuthor: capitalizeWords(formData.bookAuthor),
+    };
     
     const token = localStorage.getItem('token'); // fetch the token
   
-    console.log('Submitting feedback with data:', formData);
+    console.log('Submitting feedback with data:', updatedFormData);
   
     try {
       const response = await fetch('https://librarydbbackend.onrender.com/feedback', {
@@ -93,7 +111,7 @@ function Feedback(props) {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(updatedFormData),
       });
   
       const responseData = await response.json();
@@ -113,7 +131,10 @@ function Feedback(props) {
           setMessageType('');
         }, 2000);
       } else if (response.status === 400) {
-        setMessage(responseData.message || 'Validation error');
+        setMessage(responseData.message || 'Validation Error');
+        setMessageType('danger');
+      } else if (response.status === 404) {
+        setMessage(responseData.message || 'Book Not Found. Enter Full Book Name');
         setMessageType('danger');
       } else {
         setMessage('Error creating feedback');
