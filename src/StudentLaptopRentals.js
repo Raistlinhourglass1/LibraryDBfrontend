@@ -6,8 +6,6 @@ import axios from 'axios';
 import AppTheme from './AppTheme';
 import { addDays, differenceInDays } from 'date-fns';
 
-
-
 function renderStatus(status) {
   const colors = {
     Early: 'success',
@@ -81,11 +79,11 @@ export default function LaptopReserveTable({ userId, ...props }) {
 
   const sendOverdueEmail = (userEmail, reservationDetails) => {
     // Check if the required fields are present
-    if (!userEmail || !reservationDetails || !reservationDetails.laptop_id || reservationDetails.overdueDays == null) {
-      console.error("Invalid data: Missing userEmail, laptop_id, or overdueDays.");
+    if (!userEmail || !reservationDetails || !reservationDetails.reservation_id || reservationDetails.overdueDays == null) {
+      console.error("Invalid data: Missing userEmail, reservation_id, or overdueDays.");
       return;
     }
-  
+
     return axios.post('https://librarydbbackend.onrender.com/send-overdue-email', { userEmail, reservationDetails })
       .then(() => console.log('Overdue email sent'))
       .catch((error) => console.error('Error sending overdue email:', error));
@@ -107,7 +105,7 @@ export default function LaptopReserveTable({ userId, ...props }) {
         
         // Send email only if the item is "Late" and hasn't been notified yet
         if (status === 'Late' && !row.notified) {
-          await sendOverdueEmail(row.user_email, { laptop_id: row.laptop_id, overdueDays });
+          await sendOverdueEmail(row.user_email, { reservation_id: row.reservation_id, overdueDays });
           row.notified = true; // Mark as notified (ideally update this on the backend as well)
         }
       });
