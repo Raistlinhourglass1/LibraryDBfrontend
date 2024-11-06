@@ -78,7 +78,7 @@ export default function LaptopReserveTable({ userId, ...props }) {
   const [rows, setRows] = useState([]);
 
   const sendOverdueEmail = (userEmail, reservationDetails) => {
-    axios.post('https://librarydbbackend.onrender.com/send-overdue-email', { userEmail, reservationDetails })
+    return axios.post('https://librarydbbackend.onrender.com/send-overdue-email', { userEmail, reservationDetails })
       .then(() => console.log('Overdue email sent'))
       .catch((error) => console.error('Error sending overdue email:', error));
   };
@@ -94,16 +94,19 @@ export default function LaptopReserveTable({ userId, ...props }) {
       setRows(userRows);
 
       // Check for "Late" reservations and send an email if needed
-      userRows.forEach((row) => {
+      const lateEmails = userRows.map(async (row) => {
         const { status, overdueDays } = calculateTimeDue(row.reservation_date_time);
+        
+        // Send email only if the item is "Late" and hasn't been notified yet
         if (status === 'Late' && !row.notified) {
-          sendOverdueEmail(row.user_email, { laptop_id: row.laptop_id, overdueDays });
+          await sendOverdueEmail(row.user_email, { laptop_id: row.laptop_id, overdueDays });
+          row.notified = true; // Mark as notified (ideally update this on the backend as well)
         }
       });
 
+      // Execute all the emails concurrently
+      Promise.all(lateEmails).then(() => setRows([...userRows])); // Update the rows to reflect notified status
 
-
-      
     })
     .catch((error) => {
       console.error('Error fetching data:', error);
