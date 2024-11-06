@@ -58,6 +58,7 @@ function RoomReservation(props) {
   const [errorMessage, setErrorMessage] = useState('');
   const [reservationDate, setReservationDate] = useState('');
   const [reservationTime, setReservationTime] = useState('');
+  const [reservationReason, setReservationReason] = useState('');
   const [duration, setDuration] = useState(0);
   const [successMessage, setSuccessMessage] = useState('');
   const [loggedInUserId, setLoggedInUserId] = useState(null); //store loggedin user
@@ -65,7 +66,7 @@ function RoomReservation(props) {
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const response = await fetch('https://librarydbbackend.onrender.com/get-rooms');
+        const response = await fetch('http://localhost:5000/get-rooms');
         const data = await response.json();
         setRooms(data);
       } catch (error) {
@@ -112,6 +113,7 @@ function RoomReservation(props) {
           partySize: partySize,
           reservationDateTime: reservationDateTime,
           duration: duration,
+          reservationReason: reservationReason,
         }),
       });
       const result = await response.json();
@@ -121,6 +123,7 @@ function RoomReservation(props) {
           setPartySize(0);
           setDuration(0);
           setReservationTime('');
+          setReservationReason('');
           setReservationDate('');
           setSelectedRoomCapacity(0);
           setSelectedRoom('');
@@ -219,6 +222,18 @@ function RoomReservation(props) {
                   name="reservationTime"
                   value={reservationTime}
                   onChange={(e) => setReservationTime(e.target.value)}
+                  fullWidth
+                  variant="outlined"
+                />
+              </FormControl>
+              <FormControl>
+                <FormLabel htmlFor="reservationReason">Reservation Reason</FormLabel>
+                <TextField
+                  id="reservationReason"
+                  type="text"
+                  name="reservationReason"
+                  value={reservationReason}
+                  onChange={(e) => setReservationReason(e.target.value)}
                   fullWidth
                   variant="outlined"
                 />
