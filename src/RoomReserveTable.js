@@ -35,6 +35,13 @@ const calculateTimeDue = (reservationDateTime, reservationDuration, status) => {
 
 const RoomReserveTable = ({ userId, ...props }) => {
   const [rows, setRows] = useState([]);
+  const [sortModel, setSortModel] = useState([
+    {
+      field: 'reservation_date', // Initially sort by reservation_date
+      sort: 'desc', // Sort in descending order (most recent first)
+    },
+  ]);
+
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -131,6 +138,13 @@ const RoomReserveTable = ({ userId, ...props }) => {
     },
   ];
 
+  const handleSortChange = (newSortModel) => {
+    setSortModel(newSortModel);
+    console.log('Sort model changed:', newSortModel);
+  };
+
+
+
   return (
     <AppTheme {...props}>
       <Box
@@ -156,6 +170,8 @@ const RoomReserveTable = ({ userId, ...props }) => {
           pageSizeOptions={[5, 10]}
           checkboxSelection
           disableRowSelectionOnClick
+          sortModel={sortModel} // Use the state variable for the sort model
+          onSortModelChange={handleSortChange}
         />
       </Box>
     </AppTheme>

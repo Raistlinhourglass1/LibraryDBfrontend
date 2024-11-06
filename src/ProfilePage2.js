@@ -215,7 +215,7 @@ export default function ProfilePage2(props) {
                       <Link href="/Nice" variant="body2" display="block" gutterBottom>
                         Nice
                       </Link>
-                      <Link href="/TestBookSearch" variant="body2" display="block" gutterBottom>
+                      <Link href="/testbooksearch" variant="body2" display="block" gutterBottom>
                         TestBookSearch
                       </Link>
                       <Link href="/reports" variant="body2" display="block" gutterBottom>
