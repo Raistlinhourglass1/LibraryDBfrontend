@@ -78,16 +78,18 @@ export default function LaptopReserveTable({ userId, ...props }) {
   const [rows, setRows] = useState([]);
 
   const sendOverdueEmail = (userEmail, reservationDetails) => {
-    // Check if the required fields are present
+    // Log data before sending
+    console.log("Sending overdue email with data:", { userEmail, reservationDetails });
+
     if (!userEmail || !reservationDetails || !reservationDetails.reservation_id || reservationDetails.overdueDays == null) {
       console.error("Invalid data: Missing userEmail, reservation_id, or overdueDays.");
       return;
     }
-
+  
     return axios.post('https://librarydbbackend.onrender.com/send-overdue-email', { userEmail, reservationDetails })
       .then(() => console.log('Overdue email sent'))
       .catch((error) => console.error('Error sending overdue email:', error));
-  };
+};
 
   useEffect(() => {
     const token = localStorage.getItem('token');
