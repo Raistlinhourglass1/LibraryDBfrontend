@@ -147,7 +147,7 @@ export default function SignIn(props) {
         <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
         <Card variant="outlined">
           {alertMessage && (
-            <Alert severity="info" sx={{ mb: 2 }}>
+            <Alert severity="error" sx={{ mb: 2 }}>
               {alertMessage}
             </Alert>
           )}
