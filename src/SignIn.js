@@ -11,13 +11,14 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import MuiCard from '@mui/material/Card';
+import Alert from '@mui/material/Alert';
 import { styled } from '@mui/material/styles';
 import ForgotPassword from './ForgotPassword';
-import { CogIcon } from './CustomIcons'; // Assuming only using CogIcon
+import { CogIcon } from './CustomIcons';
 import AppTheme from './AppTheme';
 import ColorModeSelect from './ColorModeSelect';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -30,20 +31,18 @@ const Card = styled(MuiCard)(({ theme }) => ({
   [theme.breakpoints.up('sm')]: {
     maxWidth: '450px',
   },
-  boxShadow:
-    'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px',
+  boxShadow: 'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px',
   ...theme.applyStyles('dark', {
-    boxShadow:
-      'hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px',
+    boxShadow: 'hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px',
   }),
 }));
 
 const SignInContainer = styled(Stack)(({ theme }) => ({
-  minHeight: '100vh', // Full viewport height for vertical centering
-  display: 'flex', // Flexbox display for centering
-  justifyContent: 'center', // Center vertically
-  alignItems: 'center', // Center horizontally
-  position: 'relative', // Required for the background with ::before
+  minHeight: '100vh',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  position: 'relative',
   padding: theme.spacing(2),
   [theme.breakpoints.up('sm')]: {
     padding: theme.spacing(4),
@@ -54,12 +53,10 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
     position: 'absolute',
     zIndex: -1,
     inset: 0,
-    backgroundImage:
-      'radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))',
+    backgroundImage: 'radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))',
     backgroundRepeat: 'no-repeat',
     ...theme.applyStyles('dark', {
-      backgroundImage:
-        'radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))',
+      backgroundImage: 'radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))',
     }),
   },
 }));
@@ -69,11 +66,18 @@ export default function SignIn(props) {
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
+  const [alertMessage, setAlertMessage] = React.useState('');
   const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
+  // Display alert if redirected due to missing authentication
+  React.useEffect(() => {
+    if (location.state?.message) {
+      setAlertMessage(location.state.message);
+    }
+  }, [location.state]);
 
-  
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -82,11 +86,9 @@ export default function SignIn(props) {
     setOpen(false);
   };
 
-  // Update the handleSubmit function to perform the login
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Validate inputs
     if (!validateInputs()) {
       return;
     }
@@ -98,14 +100,11 @@ export default function SignIn(props) {
     };
 
     try {
-      // Axios call to your login API
       const response = await axios.post('https://librarydbbackend.onrender.com/SignIn', loginDetails);
       const { token } = response.data;
 
-      // Store the JWT in localStorage
       localStorage.setItem('token', token);
 
-      // Navigate to the profile page after successful login
       navigate('/ProfilePage2');
     } catch (error) {
       console.error('Error logging in:', error);
@@ -147,13 +146,14 @@ export default function SignIn(props) {
       <SignInContainer direction="column" justifyContent="space-between">
         <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
         <Card variant="outlined">
+          {alertMessage && (
+            <Alert severity="info" sx={{ mb: 2 }}>
+              {alertMessage}
+            </Alert>
+          )}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <CogIcon />
-            <Typography
-              component="h1"
-              variant="h6"
-              sx={{ fontSize: 'clamp(1rem, 5vw, 1.5rem)' }}
-            >
+            <Typography component="h1" variant="h6" sx={{ fontSize: 'clamp(1rem, 5vw, 1.5rem)' }}>
               The Learning Loft
             </Typography>
           </Box>
@@ -164,17 +164,7 @@ export default function SignIn(props) {
           >
             Sign in
           </Typography>
-          <Box
-            component="form"
-            onSubmit={handleSubmit}
-            noValidate
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              width: '100%',
-              gap: 2,
-            }}
-          >
+          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ display: 'flex', flexDirection: 'column', width: '100%', gap: 2 }}>
             <FormControl>
               <FormLabel htmlFor="email">Email</FormLabel>
               <TextField
@@ -196,13 +186,7 @@ export default function SignIn(props) {
             <FormControl>
               <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <FormLabel htmlFor="password">Password</FormLabel>
-                <Link
-                  component="button"
-                  type="button"
-                  onClick={handleClickOpen}
-                  variant="body2"
-                  sx={{ alignSelf: 'baseline' }}
-                >
+                <Link component="button" type="button" onClick={handleClickOpen} variant="body2" sx={{ alignSelf: 'baseline' }}>
                   Forgot your password?
                 </Link>
               </Box>
@@ -214,30 +198,22 @@ export default function SignIn(props) {
                 type="password"
                 id="password"
                 autoComplete="current-password"
-                autoFocus
                 required
                 fullWidth
                 variant="outlined"
                 color={passwordError ? 'error' : 'primary'}
               />
             </FormControl>
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
+            <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Remember me" />
             <ForgotPassword open={open} handleClose={handleClose} />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-            >
+            <Button type="submit" fullWidth variant="contained">
               Sign in
             </Button>
             <Typography sx={{ textAlign: 'center' }}>
               Don&apos;t have an account?{' '}
-                <Link href="./SignUp" variant="body2" sx={{ alignSelf: 'center' }}>
-                  Sign up
-                </Link>
+              <Link href="./SignUp" variant="body2" sx={{ alignSelf: 'center' }}>
+                Sign up
+              </Link>
             </Typography>
           </Box>
         </Card>

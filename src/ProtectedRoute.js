@@ -1,9 +1,21 @@
+// src/ProtectedRoute.js
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 
 function ProtectedRoute({ children }) {
   const token = localStorage.getItem('token'); // Retrieve token from localStorage
-  return token ? children : <Navigate to="/signin" />; // Redirect to /signin if no token
+  
+  if (!token) {
+    return (
+      <Navigate 
+        to="/signin" 
+        replace
+        state={{ message: 'Please log in to access this page.' }}
+      />
+    );
+  }
+  
+  return children;
 }
 
 export default ProtectedRoute;
