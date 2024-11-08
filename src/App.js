@@ -1,13 +1,16 @@
-import React from 'react'
-import SignIn from './SignIn'
-import { BrowserRouter as Router, Route, Routes, Outlet} from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Navbar from './Navbar';
+import ProtectedRoute from './ProtectedRoute'; // Import the ProtectedRoute component
+
+import SignIn from './SignIn';
 import SignUp from './SignUp';
 import Fines from './TotalFines';
 import StudentBookFines from './StudentBookFines';
 import ProfilePage2 from './ProfilePage2';
 import ProfilePage from './ProfilePage';
 import StudentBookRentals from './StudentBookRentals';
-import Nice from './Nice'
+import Nice from './Nice';
 import StudentRoomReservationTable from './RoomReserveTable';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import RoomReservation from './RoomReservation';
@@ -23,77 +26,254 @@ import BookSearch from './BookSearch';
 import AudioBookEntry from './AudioBookEntry';
 import EBookEntry from './EBookEntry';
 import AdvancedSearch from './AdvancedSearch';
-import _calculatorReservation from './_calculatorReservation'
-import _laptopReservation from './_laptopReservation'
-import _bookReservation from './_bookReservation'
-import _laptopSearch from './_laptopSearch'
-import _calculatorEntry from './_calculatorEntry'
-import _calculatorSearch from './_calculatorSearch'
-import _laptopEntry from './_laptopEntry'
-import Navbar from './Navbar'
-import Home from './HomePage'
-import TestBookSearch from './TestBookSearch'
-
-const Layout = () => (
-  <div>
-  <Navbar />
-  <div style={{ padding: '20px' }}>
-    <h1>Device Management System</h1>
-    <p>Please select a device entry or search from the options above.</p>
-    <Outlet />
-  </div>
-</div>
-);
-
+import _calculatorReservation from './_calculatorReservation';
+import _laptopReservation from './_laptopReservation';
+import _bookReservation from './_bookReservation';
+import _laptopSearch from './_laptopSearch';
+import _calculatorEntry from './_calculatorEntry';
+import _calculatorSearch from './_calculatorSearch';
+import _laptopEntry from './_laptopEntry';
+import Home from './HomePage';
+import TestBookSearch from './TestBookSearch';
 
 function App() {
   return (
     <Router>
-      {/* Navbar appears on all pages */}
       <Navbar />
-    <Routes>
-      <Route path="/home" element={<Home />} />
-      {/* Default route to display SignIn when the user goes to "/" */}
-      <Route path="/" element={<SignIn />} />
-      
-      {/* Explicit route for SignIn */}
-      <Route path="/signin" element={<SignIn />} />
+      <Routes>
+        {/* Public routes */}
+        <Route path="/" element={<SignIn />} />
+        <Route path="/signin" element={<SignIn />} />
+        <Route path="/signup" element={<SignUp />} />
 
-      {/* Route for SignUp (old value is /signup) */} 
-      
-      <Route path="/SignUp" element={<SignUp />} />
-      <Route path="/fines" element={<Fines />} />
-      <Route path="/StudentBookFines" element={<StudentBookFines />} />
-      <Route path="/ProfilePage2" element={<ProfilePage2 />} />
-      <Route path="/ProfilePage" element={<ProfilePage />} />
-      <Route path="/StudentBookRentals" element={<StudentBookRentals />} />
-      <Route path="/Nice" element={<Nice />} />
-      <Route path="/StudentRoomReservationTable" element={<StudentRoomReservationTable />} />
-      <Route path="/TestBookSearch" element={<TestBookSearch />} />
-      <Route path="/create-room" element={<CreateRoom />} />
-      <Route path="/reserve-room" element={<RoomReservation />} />
-      <Route path="/feedback" element={<Feedback />} />
-      <Route path="/reports" element={<Reports />} />
-      <Route path="/catalog-entry/book" element={<BookEntry />} />
-      <Route path="/catalog-entry/audiobook" element={<AudioBookEntry />} />
-      <Route path="/catalog-entry/ebook" element={<EBookEntry />} />
-      <Route path="/catalog-entry/periodical" element={<PeriodicalEntry />} />
-      <Route path="/search" element={<BookSearch />} />
-      <Route path="/advanced-search" element={<AdvancedSearch />} /> 
-      <Route path="/search-results" element={<BookSearchResults />} />
-      <Route path="/books/:book_id" element={<BookDetail />} />
-      <Route path='/_laptopEntry' element = {<_laptopEntry />}></Route>
-      <Route path='/_laptopSearch' element = {<_laptopSearch />}></Route>
-      <Route path='/_calculatorEntry' element = {<_calculatorEntry />}></Route>
-      <Route path='/_calculatorSearch' element = {<_calculatorSearch />}> </Route>
-      <Route path= '/_bookReservation' element = {<_bookReservation />}></Route>
-      <Route path= '/_laptopReservation' element = {<_laptopReservation />}></Route>
-      <Route path= '/_calculatorReservation' element = {<_calculatorReservation />}></Route>
-
-    </Routes>
-  </Router>
-   
-  )
+        {/* Protected routes */}
+        <Route
+          path="/home"
+          element={
+            <ProtectedRoute>
+              <Home />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/fines"
+          element={
+            <ProtectedRoute>
+              <Fines />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/StudentBookFines"
+          element={
+            <ProtectedRoute>
+              <StudentBookFines />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/ProfilePage2"
+          element={
+            <ProtectedRoute>
+              <ProfilePage2 />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/ProfilePage"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/StudentBookRentals"
+          element={
+            <ProtectedRoute>
+              <StudentBookRentals />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/Nice"
+          element={
+            <ProtectedRoute>
+              <Nice />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/StudentRoomReservationTable"
+          element={
+            <ProtectedRoute>
+              <StudentRoomReservationTable />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/TestBookSearch"
+          element={
+            <ProtectedRoute>
+              <TestBookSearch />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/create-room"
+          element={
+            <ProtectedRoute>
+              <CreateRoom />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/reserve-room"
+          element={
+            <ProtectedRoute>
+              <RoomReservation />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/feedback"
+          element={
+            <ProtectedRoute>
+              <Feedback />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/reports"
+          element={
+            <ProtectedRoute>
+              <Reports />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/catalog-entry/book"
+          element={
+            <ProtectedRoute>
+              <BookEntry />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/catalog-entry/audiobook"
+          element={
+            <ProtectedRoute>
+              <AudioBookEntry />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/catalog-entry/ebook"
+          element={
+            <ProtectedRoute>
+              <EBookEntry />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/catalog-entry/periodical"
+          element={
+            <ProtectedRoute>
+              <PeriodicalEntry />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/search"
+          element={
+            <ProtectedRoute>
+              <BookSearch />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/advanced-search"
+          element={
+            <ProtectedRoute>
+              <AdvancedSearch />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/search-results"
+          element={
+            <ProtectedRoute>
+              <BookSearchResults />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/books/:book_id"
+          element={
+            <ProtectedRoute>
+              <BookDetail />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/_laptopEntry"
+          element={
+            <ProtectedRoute>
+              <_laptopEntry />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/_laptopSearch"
+          element={
+            <ProtectedRoute>
+              <_laptopSearch />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/_calculatorEntry"
+          element={
+            <ProtectedRoute>
+              <_calculatorEntry />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/_calculatorSearch"
+          element={
+            <ProtectedRoute>
+              <_calculatorSearch />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/_bookReservation"
+          element={
+            <ProtectedRoute>
+              <_bookReservation />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/_laptopReservation"
+          element={
+            <ProtectedRoute>
+              <_laptopReservation />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/_calculatorReservation"
+          element={
+            <ProtectedRoute>
+              <_calculatorReservation />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
+export default App;
