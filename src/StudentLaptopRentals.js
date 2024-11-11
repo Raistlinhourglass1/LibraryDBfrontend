@@ -74,51 +74,54 @@ const columns = [
   },
 ];
 
-// Send overdue email without decoding token on the frontend
-const sendOverdueEmail = (reservationDetails) => {
-  const token = localStorage.getItem('token'); // Get JWT from localStorage
-  return axios.post(
-    'https://librarydbbackend.onrender.com/send-overdue-email',
-    { reservationDetails },
-    { headers: { Authorization: `Bearer ${token}` } } // Send token in Authorization header
-  )
-  .then(() => console.log('Overdue email sent'))
-  .catch((error) => console.error('Error sending overdue email:', error));
-};
+const StudentLaptopRentals = (props) => {
+  const [rows, setRows] = useState([]);
 
-useEffect(() => {
-  const token = localStorage.getItem('token'); // Get JWT from localStorage
+  // Send overdue email without decoding token on the frontend
+  const sendOverdueEmail = (reservationDetails) => {
+    const token = localStorage.getItem('token'); // Get JWT from localStorage
+    return axios.post(
+      'https://librarydbbackend.onrender.com/send-overdue-email',
+      { reservationDetails },
+      { headers: { Authorization: `Bearer ${token}` } } // Send token in Authorization header
+    )
+    .then(() => console.log('Overdue email sent'))
+    .catch((error) => console.error('Error sending overdue email:', error));
+  };
 
-  // Fetch laptop reservations with the JWT in the headers
-  axios.get('https://librarydbbackend.onrender.com/laptop_reservations', {
-    headers: { Authorization: `Bearer ${token}` },
-  })
-  .then((response) => {
-    const userRows = response.data;
-    setRows(userRows);
+  useEffect(() => {
+    const token = localStorage.getItem('token'); // Get JWT from localStorage
 
-    // Check for "Late" reservations and send an email if needed
-    const lateEmails = userRows.map(async (row) => {
-      const { status, overdueDays } = calculateTimeDue(row.reservation_date_time);
-      
-      // Send email only if the item is "Late" and hasn't been notified yet
-      if (status === 'Late' && !row.notified) {
-        await sendOverdueEmail({ reservation_id: row.reservation_id, overdueDays });
-        row.notified = true; // Mark as notified (ideally update this on the backend as well)
+    // Fetch laptop reservations with the JWT in the headers
+    axios.get('https://librarydbbackend.onrender.com/laptop_reservations', {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .then((response) => {
+      const userRows = response.data;
+      setRows(userRows);
+
+      // Check for "Late" reservations and send an email if needed
+      const lateEmails = userRows.map(async (row) => {
+        const { status, overdueDays } = calculateTimeDue(row.reservation_date_time);
+        
+        // Send email only if the item is "Late" and hasn't been notified yet
+        if (status === 'Late' && !row.notified) {
+          await sendOverdueEmail({ reservation_id: row.reservation_id, overdueDays });
+          row.notified = true; // Mark as notified (ideally update this on the backend as well)
+        }
+      });
+
+      // Execute all the emails concurrently
+      Promise.all(lateEmails).then(() => setRows([...userRows])); // Update the rows to reflect notified status
+
+    })
+    .catch((error) => {
+      console.error('Error fetching data:', error);
+      if (error.response && error.response.status === 401) {
+        console.warn('Unauthorized access - possibly due to an invalid token.');
       }
     });
-
-    // Execute all the emails concurrently
-    Promise.all(lateEmails).then(() => setRows([...userRows])); // Update the rows to reflect notified status
-
-  })
-  .catch((error) => {
-    console.error('Error fetching data:', error);
-    if (error.response && error.response.status === 401) {
-      console.warn('Unauthorized access - possibly due to an invalid token.');
-    }
-  });
-}, []);
+  }, []);
 
   return (
     <AppTheme {...props}>
@@ -151,4 +154,6 @@ useEffect(() => {
       </Box>
     </AppTheme>
   );
-}
+};
+
+export default StudentLaptopRentals;
