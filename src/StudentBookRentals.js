@@ -50,9 +50,9 @@ const columns = [
     width: 150,
   },
   {
-    field: 'ISBN',
-    headerName: 'Book ISBN',
-    width: 160,
+    field: 'author',
+    headerName: 'Author',
+    width: 150,
   },
   {
     field: 'dueDate',
@@ -94,15 +94,18 @@ export default function StudentBookRentals(props) {
     })
     .then((response) => {
       console.log("Fetched data from /book_reservations:", response.data);
-  
-      // Check if response data is an array
+
       if (Array.isArray(response.data)) {
-        const bookRows = response.data.map((book) => ({
-          id: book.reservation_id,
-          title: book.book_title,
-          ISBN: book.book_isbn,
-          dueDate: book.due_date,
-        }));
+        const bookRows = response.data.map((book) => {
+          // Assuming dueDate is 2 weeks after reservation_date_time
+          const dueDate = addDays(new Date(book.reservation_date_time), 14);
+          return {
+            id: book.reservation_id,
+            title: book.book_title,
+            author: book.book_author,
+            dueDate: dueDate,
+          };
+        });
         setRows(bookRows);
       } else {
         console.warn("Unexpected data format:", response.data);
@@ -116,7 +119,6 @@ export default function StudentBookRentals(props) {
     });
   }, []);
   
-
   return (
     <AppTheme {...props}>
       <Box
