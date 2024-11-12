@@ -25,7 +25,9 @@ function BookSearchResults({books = [], term}) {
     const handleReserve = (book) => {
         navigate('/_bookReservation', { state: { book } });
     };
-
+    const handleDetails = (bookId, term) => {
+        navigate(`/books/${bookId}?term=${encodeURIComponent(term)}`);
+      };
     return (
     <>
     {books.length === 0 ? (
@@ -81,9 +83,9 @@ function BookSearchResults({books = [], term}) {
                                         Reserve                               
                                         </button>
                                     
-                                    <Link href={`/books/${book.id}?term=${encodeURIComponent(term)}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                                        <Button size="small" onClick={handleShowDetails} >View Summary</Button>
-                                    </Link>
+                                        <Button size="small" onClick={() => handleDetails(book.id, term)}>
+                                            View Summary
+                                            </Button>
                                 </Stack>
                             </Card>
                             
