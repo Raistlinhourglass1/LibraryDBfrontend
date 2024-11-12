@@ -3,10 +3,9 @@ import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
 import Chip from '@mui/material/Chip';
 import Button from '@mui/material/Button';
-import { differenceInHours } from 'date-fns';
-import AppTheme from './AppTheme';
 import axios from 'axios';
-import { format } from 'date-fns';
+import { differenceInHours, format } from 'date-fns';
+import AppTheme from './AppTheme';
 
 function renderStatus(status) {
   const colors = {
@@ -37,8 +36,8 @@ const RoomReserveTable = (props) => {
   const [rows, setRows] = useState([]);
   const [sortModel, setSortModel] = useState([
     {
-      field: 'reservation_date', // Initially sort by reservation_date
-      sort: 'desc', // Sort in descending order (most recent first)
+      field: 'reservation_date',
+      sort: 'desc',
     },
   ]);
 
@@ -47,16 +46,16 @@ const RoomReserveTable = (props) => {
     axios.get('https://librarydbbackend.onrender.com/RoomReserveTable', {
       headers: { Authorization: `Bearer ${token}` },
     })
-      .then((response) => {
-        console.log('Fetched rows:', response.data); // Debugging statement
-        setRows(response.data);
-      })
-      .catch((error) => {
-        console.error('Error fetching data:', error);
-        if (error.response && error.response.status === 401) {
-          console.warn('Unauthorized access - possibly due to an invalid token.');
-        }
-      });
+    .then((response) => {
+      console.log('Fetched rows:', response.data); 
+      setRows(response.data);
+    })
+    .catch((error) => {
+      console.error('Error fetching data:', error);
+      if (error.response && error.response.status === 401) {
+        console.warn('Unauthorized access - possibly due to an invalid token.');
+      }
+    });
   }, []);
 
   const handleCancelReservation = async (reservationId, roomId) => {
@@ -68,13 +67,12 @@ const RoomReserveTable = (props) => {
       }, {
         headers: { Authorization: `Bearer ${token}` },
       });
-  
-      // Fetch updated reservations after cancellation
+
       const response = await axios.get('https://librarydbbackend.onrender.com/RoomReserveTable', {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setRows(response.data); // Update rows state with fresh data
-      console.log(`Reservation ${reservationId} canceled successfully`, response.data); // Debugging statement
+      setRows(response.data); 
+      console.log(`Reservation ${reservationId} canceled successfully`, response.data); 
     } catch (error) {
       if (error.response) {
         if (error.response.status === 400 && error.response.data === 'Reservation has already ended') {
@@ -95,8 +93,6 @@ const RoomReserveTable = (props) => {
   };
 
   const columns = [
-    // { field: 'reservation_id', headerName: 'Reservation ID', width: 110 },
-    // { field: 'user_id', headerName: 'User ID', width: 110 },
     {
       field: 'reservation_status',
       headerName: 'Status',
@@ -118,7 +114,6 @@ const RoomReserveTable = (props) => {
       },
     },
     { field: 'reservation_reason', headerName: 'Reason', width: 160 },
-    
     { field: 'reservation_duration_hrs', headerName: 'Duration (hrs)', width: 160 },
     { field: 'party_size', headerName: 'Party Size', width: 150 },
     {
@@ -130,7 +125,7 @@ const RoomReserveTable = (props) => {
         <Button
           variant="outlined"
           color="danger"
-          onClick={() => handleCancelReservation(params.row.reservation_id, params.row.room_number)} // Pass the room ID
+          onClick={() => handleCancelReservation(params.row.reservation_id, params.row.room_number)}
         >
           Cancel
         </Button>
@@ -168,7 +163,7 @@ const RoomReserveTable = (props) => {
           pageSizeOptions={[5, 10]}
           checkboxSelection
           disableRowSelectionOnClick
-          sortModel={sortModel} // Use the state variable for the sort model
+          sortModel={sortModel}
           onSortModelChange={handleSortChange}
         />
       </Box>
