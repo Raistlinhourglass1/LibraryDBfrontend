@@ -129,6 +129,11 @@ export default function ProfilePage2(props) {
     fetchProfileData();
   }, [navigate]);
 
+  const handleSignOut = () => {
+    localStorage.removeItem('token'); // Remove token from localStorage
+    navigate('/SignIn'); // Redirect to the sign-in page
+  };
+
   const handleChange = (event, newValue) => setValue(newValue);
   const handleEditToggle = () => setIsEditing(!isEditing);
   const handleSave = () => {
@@ -201,9 +206,9 @@ export default function ProfilePage2(props) {
                   <Typography variant="h6" gutterBottom>
                     Additional Links
                   </Typography>
-                  <Link href="/SignIn" variant="body1" display="block" gutterBottom>
-                    Sign out
-                  </Link>
+                  <Button variant="outlined" color="error" onClick={handleSignOut} fullWidth>
+                    Sign Out
+                  </Button>
                   <Link href="/feedback" variant="body2" display="block" gutterBottom>
                     Feedback
                   </Link>
