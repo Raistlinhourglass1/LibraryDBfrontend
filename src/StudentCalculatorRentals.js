@@ -76,21 +76,50 @@ const columns = [
   { field: 'model_name', headerName: 'Model Name', width: 150 },
 ];
 
-export default function CalculatorReserveTable({ userId, ...props }) {
+const StudentCalculatorRentals = ({ userId, ...props }) => {
   const [rows, setRows] = useState([]);
+
+  // Send overdue email
+  const sendOverdueEmail = (reservationDetails) => {
+    const token = localStorage.getItem('token');
+    return axios.post(
+      'https://librarydbbackend.onrender.com/send-overdue-email',
+      { reservationDetails },
+      { headers: { Authorization: `Bearer ${token}` } }
+    )
+    .then(() => console.log('Overdue email sent'))
+    .catch((error) => console.error('Error sending overdue email:', error));
+  };
 
   useEffect(() => {
     const token = localStorage.getItem('token');
+
+    // Fetch calculator reservations
     axios.get('https://librarydbbackend.onrender.com/calculator_reservations', {
       headers: { Authorization: `Bearer ${token}` },
     })
     .then((response) => {
-      // Filter rows to include only those matching the userId
+      // Filter reservations by userId
       const userRows = response.data.filter((row) => row.user_id === userId);
       setRows(userRows);
+
+      // Send overdue email for "Late" reservations
+      const lateEmails = userRows.map(async (row) => {
+        const { status, overdueDays } = calculateTimeDue(row.reservation_date_time);
+        
+        // Check if the reservation is "Late" and not yet notified
+        if (status === 'Late' && !row.notified) {
+          await sendOverdueEmail({ reservation_id: row.reservation_id, overdueDays });
+          row.notified = true; // Ideally update backend
+        }
+      });
+
+      // Execute all email notifications concurrently
+      Promise.all(lateEmails).then(() => setRows([...userRows])); // Update rows to reflect notified status
+
     })
     .catch((error) => {
-      console.error('Error fetching data:', error);
+      console.error('Error fetching calculator reservations:', error);
       if (error.response && error.response.status === 401) {
         console.warn('Unauthorized access - possibly due to an invalid token.');
       }

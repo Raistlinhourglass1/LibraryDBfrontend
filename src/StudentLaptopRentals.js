@@ -74,54 +74,55 @@ const columns = [
   },
 ];
 
-const StudentLaptopRentals = (props) => {
+const StudentLaptopRentals = ({ userId, ...props }) => {
   const [rows, setRows] = useState([]);
 
-  // Send overdue email without decoding token on the frontend
+  // Send overdue email
   const sendOverdueEmail = (reservationDetails) => {
-    const token = localStorage.getItem('token'); // Get JWT from localStorage
+    const token = localStorage.getItem('token');
     return axios.post(
       'https://librarydbbackend.onrender.com/send-overdue-email',
       { reservationDetails },
-      { headers: { Authorization: `Bearer ${token}` } } // Send token in Authorization header
+      { headers: { Authorization: `Bearer ${token}` } }
     )
     .then(() => console.log('Overdue email sent'))
     .catch((error) => console.error('Error sending overdue email:', error));
   };
 
   useEffect(() => {
-    const token = localStorage.getItem('token'); // Get JWT from localStorage
+    const token = localStorage.getItem('token');
 
-    // Fetch laptop reservations with the JWT in the headers
+    // Fetch laptop reservations
     axios.get('https://librarydbbackend.onrender.com/laptop_reservations', {
       headers: { Authorization: `Bearer ${token}` },
     })
     .then((response) => {
-      const userRows = response.data;
+      // Filter reservations by userId
+      const userRows = response.data.filter((row) => row.user_id === userId);
       setRows(userRows);
 
-      // Check for "Late" reservations and send an email if needed
+      // Send overdue email for "Late" reservations
       const lateEmails = userRows.map(async (row) => {
         const { status, overdueDays } = calculateTimeDue(row.reservation_date_time);
         
-        // Send email only if the item is "Late" and hasn't been notified yet
+        // Check if the reservation is "Late" and not yet notified
         if (status === 'Late' && !row.notified) {
           await sendOverdueEmail({ reservation_id: row.reservation_id, overdueDays });
-          row.notified = true; // Mark as notified (ideally update this on the backend as well)
+          row.notified = true; // Ideally update backend
         }
       });
 
-      // Execute all the emails concurrently
-      Promise.all(lateEmails).then(() => setRows([...userRows])); // Update the rows to reflect notified status
+      // Execute all email notifications concurrently
+      Promise.all(lateEmails).then(() => setRows([...userRows])); // Update rows to reflect notified status
 
     })
     .catch((error) => {
-      console.error('Error fetching data:', error);
+      console.error('Error fetching laptop reservations:', error);
       if (error.response && error.response.status === 401) {
         console.warn('Unauthorized access - possibly due to an invalid token.');
       }
     });
-  }, []);
+  }, [userId]);
 
   return (
     <AppTheme {...props}>
