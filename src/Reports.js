@@ -111,10 +111,12 @@ function Reports(props) {
     if (specification === 'calculators') payload.calc_id = calcId;
     if (specification === 'periodical') payload.period_type = periodType;
     if (specification === 'room reservations') payload.room_num = roomNum;
+    if (specification === 'transactions') payload.user_id = userId;
     if (specification === 'books') {
       payload.book_name = bookName;
       payload.book_isbn = bookIsbn;
     }
+
 
     try {
       const response = await fetch('https://librarydbbackend.onrender.com/get-reports', {
@@ -218,6 +220,8 @@ function Reports(props) {
                   <option value="users">Users</option>
                   <option value="staff">Staff</option>
                   <option value="teacher">Teacher</option>
+                  <option value="catalog">Library Catalog</option>
+                  <option value="transactions">Transactions</option>
                 </TextField>
               </FormControl>
 
@@ -355,6 +359,20 @@ function Reports(props) {
                     name="roomNum"
                     value={roomNum}
                     onChange={(e) => setRoomNum(e.target.value)}
+                    fullWidth
+                    variant="outlined"
+                  />
+                </FormControl>
+              )}
+
+              {(specification === 'transactions') && (
+                <FormControl>
+                  <FormLabel htmlFor="userId">By User ID (optional)</FormLabel>
+                  <TextField
+                    id="userId"
+                    name="userId"
+                    value={userId}
+                    onChange={(e) => setUserId(e.target.value)}
                     fullWidth
                     variant="outlined"
                   />
