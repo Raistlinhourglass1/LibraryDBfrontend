@@ -201,14 +201,14 @@ export default function ProfilePage2(props) {
                     Change Photo
                     <input type="file" hidden />
                   </Button>
+                  <Button variant="outlined" color="error" onClick={handleSignOut} fullWidth>
+                    Sign Out
+                  </Button>
                 </Box>
                 <Box mt={4} sx={{ textAlign: 'left', overflowY: 'auto', maxHeight: '50vh' }}>
                   <Typography variant="h6" gutterBottom>
                     Additional Links
                   </Typography>
-                  <Button variant="outlined" color="error" onClick={handleSignOut} fullWidth>
-                    Sign Out
-                  </Button>
                   <Link href="/feedback" variant="body2" display="block" gutterBottom>
                     Feedback
                   </Link>
