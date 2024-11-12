@@ -89,7 +89,7 @@ export default function StudentBookRentals(props) {
     const token = localStorage.getItem('token');
     console.log("Token found:", token);
     
-    axios.get('https://librarydbbackend.onrender.com/book_reservations', {
+    axios.get('https://librarydbbackend.onrender.com/booktable_reservations', {
       headers: { Authorization: `Bearer ${token}` },
     })
     .then((response) => {
