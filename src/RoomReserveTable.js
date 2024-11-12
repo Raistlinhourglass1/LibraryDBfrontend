@@ -33,7 +33,7 @@ const calculateTimeDue = (reservationDateTime, reservationDuration, status) => {
   }
 };
 
-const RoomReserveTable = ({ userId, ...props }) => {
+const RoomReserveTable = (props) => {
   const [rows, setRows] = useState([]);
   const [sortModel, setSortModel] = useState([
     {
@@ -42,16 +42,14 @@ const RoomReserveTable = ({ userId, ...props }) => {
     },
   ]);
 
-
   useEffect(() => {
     const token = localStorage.getItem('token');
     axios.get('https://librarydbbackend.onrender.com/RoomReserveTable', {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((response) => {
-        // Filter rows to include only those matching the userId
-        const userRows = response.data.filter((row) => row.user_id === userId);
-        setRows(userRows);
+        console.log('Fetched rows:', response.data); // Debugging statement
+        setRows(response.data);
       })
       .catch((error) => {
         console.error('Error fetching data:', error);
@@ -59,7 +57,7 @@ const RoomReserveTable = ({ userId, ...props }) => {
           console.warn('Unauthorized access - possibly due to an invalid token.');
         }
       });
-  }, [userId]);
+  }, []);
 
   const handleCancelReservation = async (reservationId, roomId) => {
     try {
@@ -97,6 +95,8 @@ const RoomReserveTable = ({ userId, ...props }) => {
   };
 
   const columns = [
+    // { field: 'reservation_id', headerName: 'Reservation ID', width: 110 },
+    // { field: 'user_id', headerName: 'User ID', width: 110 },
     {
       field: 'reservation_status',
       headerName: 'Status',
@@ -142,8 +142,6 @@ const RoomReserveTable = ({ userId, ...props }) => {
     setSortModel(newSortModel);
     console.log('Sort model changed:', newSortModel);
   };
-
-
 
   return (
     <AppTheme {...props}>

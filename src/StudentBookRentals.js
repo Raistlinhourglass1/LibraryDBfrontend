@@ -93,7 +93,7 @@ export default function StudentBookRentals(props) {
       headers: { Authorization: `Bearer ${token}` },
     })
     .then((response) => {
-      console.log("Fetched data from /book_reservations:", response.data);
+      console.log("Fetched data from /booktable_reservations:", response.data);
       
       if (Array.isArray(response.data)) {
         const bookRows = response.data.map((book) => {
