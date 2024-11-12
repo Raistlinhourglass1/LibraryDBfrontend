@@ -350,9 +350,6 @@ export default function ProfilePage2(props) {
                   <CustomTabPanel value={value} index={4}>
                     <RoomReserveTable userId={userInfo.user_ID} />
                   </CustomTabPanel>
-                  <CustomTabPanel value={value} index={5}>
-                    <Typography>Fines Due</Typography>
-                  </CustomTabPanel>
                 </Box>
               </Paper>
             </Grid2>
