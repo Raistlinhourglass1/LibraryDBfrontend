@@ -1,252 +1,179 @@
 import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
+import { DataGrid } from '@mui/x-data-grid';
+import Chip from '@mui/material/Chip';
 import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import FormLabel from '@mui/material/FormLabel';
-import FormControl from '@mui/material/FormControl';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-import Stack from '@mui/material/Stack';
-import MuiCard from '@mui/material/Card';
-import { styled } from '@mui/material/styles';
+import { differenceInHours } from 'date-fns';
 import AppTheme from './AppTheme';
-import ColorModeSelect from './ColorModeSelect';
+import axios from 'axios';
+import { format } from 'date-fns';
 
-const Card = styled(MuiCard)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  alignSelf: 'center',
-  width: '100%',
-  padding: theme.spacing(4),
-  gap: theme.spacing(2),
-  margin: 'auto',
-  [theme.breakpoints.up('sm')]: {
-    maxWidth: '450px',
-  },
-  boxShadow:
-    'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px',
-  ...theme.applyStyles('dark', {
-    boxShadow:
-      'hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px',
-  }),
-}));
+function renderStatus(status) {
+  const colors = {
+    Ongoing: 'success',
+    Ended: 'error',
+    Canceled: 'default',
+  };
+  return <Chip label={status} color={colors[status] || 'default'} size="small" />;
+}
 
-const ReservationContainer = styled(Stack)(({ theme }) => ({
-  minHeight: '100vh',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  position: 'relative',
-  padding: theme.spacing(2),
-  backgroundImage:
-    'radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))',
-  backgroundRepeat: 'no-repeat',
-  ...theme.applyStyles('dark', {
-    backgroundImage:
-      'radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))',
-  }),
-  [theme.breakpoints.up('sm')]: {
-    padding: theme.spacing(4),
-  },
-}));
+const calculateTimeDue = (reservationDateTime, reservationDuration, status) => {
+  if (status === 'canceled') {
+    return { status: 'Canceled', timeDue: '', overdueHours: 0 };
+  }
+  const now = new Date();
+  const reservationStart = new Date(reservationDateTime);
+  const reservationEnd = new Date(reservationStart.getTime() + reservationDuration * 60 * 60 * 1000);
+  const timeRemaining = differenceInHours(now, reservationEnd);
 
-function RoomReservation(props) {
-  const [rooms, setRooms] = useState([]);
-  const [selectedRoom, setSelectedRoom] = useState('');
-  const [partySize, setPartySize] = useState(0);
-  const [selectedRoomCapacity, setSelectedRoomCapacity] = useState(0);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [reservationDate, setReservationDate] = useState('');
-  const [reservationTime, setReservationTime] = useState('');
-  const [reservationReason, setReservationReason] = useState('');
-  const [duration, setDuration] = useState(0);
-  const [successMessage, setSuccessMessage] = useState('');
-  const [loggedInUserId, setLoggedInUserId] = useState(null); //store loggedin user
+  if (now >= reservationEnd) {
+    return { status: 'Ended', timeDue: `${Math.abs(timeRemaining)} hours overdue`, overdueHours: Math.abs(timeRemaining) };
+  } else {
+    return { status: 'Ongoing', timeDue: `${Math.abs(timeRemaining)} hours remaining`, overdueHours: 0 };
+  }
+};
+
+const RoomReserveTable = (props) => {
+  const [rows, setRows] = useState([]);
+  const [sortModel, setSortModel] = useState([
+    {
+      field: 'reservation_date', // Initially sort by reservation_date
+      sort: 'desc', // Sort in descending order (most recent first)
+    },
+  ]);
 
   useEffect(() => {
-    const fetchRooms = async () => {
-      try {
-        const response = await fetch('https://librarydbbackend.onrender.com/get-rooms');
-        const data = await response.json();
-        setRooms(data);
-      } catch (error) {
-        console.error('Error fetching rooms:', error);
-      }
-    };
-
-    //get logged in user from local storage
-    setLoggedInUserId(localStorage.getItem('loggedInUserId'));
-    fetchRooms();
+    const token = localStorage.getItem('token');
+    axios.get('https://librarydbbackend.onrender.com/RoomReserveTable', {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((response) => {
+        console.log('Fetched rows:', response.data); // Debugging statement
+        setRows(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching data:', error);
+        if (error.response && error.response.status === 401) {
+          console.warn('Unauthorized access - possibly due to an invalid token.');
+        }
+      });
   }, []);
 
-  const handleRoomSelection = (e) => {
-    const selectedRoomId = e.target.value;
-    const room = rooms.find((room) => room.room_id === parseInt(selectedRoomId));
-    setSelectedRoom(selectedRoomId);
-    if (room) {
-      setSelectedRoomCapacity(room.room_capacity);
+  const handleCancelReservation = async (reservationId, roomId) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post('https://librarydbbackend.onrender.com/cancel-reservation', {
+        reservationId,
+        roomId
+      }, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+  
+      // Fetch updated reservations after cancellation
+      const response = await axios.get('https://librarydbbackend.onrender.com/RoomReserveTable', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setRows(response.data); // Update rows state with fresh data
+      console.log(`Reservation ${reservationId} canceled successfully`, response.data); // Debugging statement
+    } catch (error) {
+      if (error.response) {
+        if (error.response.status === 400 && error.response.data === 'Reservation has already ended') {
+          alert('This reservation has already ended and cannot be canceled.');
+        } else if (error.response.status === 400 && error.response.data === 'Reservation has already been canceled') {
+          alert('This reservation has already been canceled.');
+        } else if (error.response.status === 404) {
+          alert('Reservation not found or already canceled');
+        } else {
+          console.error('Error cancelling reservation:', error);
+          alert('An error occurred while attempting to cancel the reservation.');
+        }
+      } else {
+        console.error('Error cancelling reservation:', error);
+        alert('An error occurred while attempting to cancel the reservation.');
+      }
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const columns = [
+    // { field: 'reservation_id', headerName: 'Reservation ID', width: 110 },
+    // { field: 'user_id', headerName: 'User ID', width: 110 },
+    {
+      field: 'reservation_status',
+      headerName: 'Status',
+      width: 100,
+      sortable: false,
+      renderCell: (params) => {
+        const { status } = calculateTimeDue(params.row.reservation_date, params.row.reservation_duration_hrs, params.row.reservation_status);
+        return renderStatus(status);
+      },
+    },
+    { field: 'room_number', headerName: 'Room Number', width: 150 },
+    {
+      field: 'reservation_date',
+      headerName: 'Date',
+      width: 150,
+      renderCell: (params) => {
+        const formattedDate = format(new Date(params.row.reservation_date), 'MM/dd/yyyy, hh:mm a');
+        return <span>{formattedDate}</span>;
+      },
+    },
+    { field: 'reservation_reason', headerName: 'Reason', width: 160 },
+    
+    { field: 'reservation_duration_hrs', headerName: 'Duration (hrs)', width: 160 },
+    { field: 'party_size', headerName: 'Party Size', width: 150 },
+    {
+      field: 'cancel',
+      headerName: 'Cancel Reservation',
+      width: 160,
+      sortable: false,
+      renderCell: (params) => (
+        <Button
+          variant="outlined"
+          color="danger"
+          onClick={() => handleCancelReservation(params.row.reservation_id, params.row.room_number)} // Pass the room ID
+        >
+          Cancel
+        </Button>
+      ),
+    },
+  ];
 
-    const token = localStorage.getItem('token'); // fetch the token from local storage
-
-    if (partySize > selectedRoomCapacity) {
-      setErrorMessage(`The party size exceeds the room's capacity of ${selectedRoomCapacity}.`);
-      return;
-    }
-    setErrorMessage('');
-  
-    const reservationDateTime = `${reservationDate}T${reservationTime}`;
-    try {
-      const response = await fetch('https://librarydbbackend.onrender.com/reserve-room', {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`, //authorization with token
-        },
-        body: JSON.stringify({
-          user_id: loggedInUserId, //user_id
-          roomId: selectedRoom,
-          partySize: partySize,
-          reservationDateTime: reservationDateTime,
-          duration: duration,
-          reservationReason: reservationReason,
-        }),
-      });
-      const result = await response.json();
-      if (response.ok) {
-        setSuccessMessage(result.message);
-        setTimeout(() => {
-          setPartySize(0);
-          setDuration(0);
-          setReservationTime('');
-          setReservationReason('');
-          setReservationDate('');
-          setSelectedRoomCapacity(0);
-          setSelectedRoom('');
-          setSuccessMessage('');
-        }, 2000);
-      } else {
-        setErrorMessage(result.message || 'Error making reservation. Please try again.');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      setErrorMessage('Error making reservation. Please try again.');
-      setSuccessMessage('');
-    }
+  const handleSortChange = (newSortModel) => {
+    setSortModel(newSortModel);
+    console.log('Sort model changed:', newSortModel);
   };
 
   return (
-    <div>
-      <AppTheme {...props}>
-        <CssBaseline enableColorScheme />
-        <ReservationContainer direction="column">
-          <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
-          <Card variant="outlined">
-            <Typography
-              component="h1"
-              variant="h4"
-              sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)', mt: 2 }}
-            >
-              Room Reservation
-            </Typography>
-            {errorMessage && <div className="alert alert-danger mt-3">{errorMessage}</div>}
-            {successMessage && <div className="alert alert-success mt-3">{successMessage}</div>}
-            <Box component="form" onSubmit={handleSubmit} noValidate sx={{ display: 'flex', flexDirection: 'column', width: '100%', gap: 2 }}>
-              <FormControl>
-                <FormLabel htmlFor="room">Available Rooms</FormLabel>
-                <TextField
-                  id="room"
-                  select
-                  name="selectedRoom"
-                  value={selectedRoom}
-                  onChange={handleRoomSelection}
-                  fullWidth
-                  variant="outlined"
-                  SelectProps={{ native: true }}
-                >
-                  <option value="" disabled>Select a room</option>
-                  {rooms.map((room) => (
-                    <option key={room.room_id} value={room.room_id}>
-                      {room.room_name} (Capacity: {room.room_capacity}) - {room.room_description}
-                    </option>
-                  ))}
-                </TextField>
-              </FormControl>
-              <FormControl>
-                <FormLabel htmlFor="partySize">Party Size</FormLabel>
-                <TextField
-                  id="partySize"
-                  type="number"
-                  name="partySize"
-                  value={partySize}
-                  onChange={(e) => setPartySize(e.target.value)}
-                  fullWidth
-                  variant="outlined"
-                  inputProps={{ min: 1 }}
-                />
-              </FormControl>
-              <FormControl>
-                <FormLabel htmlFor="duration">Duration (hrs)</FormLabel>
-                <TextField
-                  id="duration"
-                  type="number"
-                  name="duration"
-                  value={duration}
-                  onChange={(e) => setDuration(e.target.value)}
-                  fullWidth
-                  variant="outlined"
-                  inputProps={{ min: 1, max: 8 }}
-                />
-              </FormControl>
-              <FormControl>
-                <FormLabel htmlFor="reservationDate">Reservation Date</FormLabel>
-                <TextField
-                  id="reservationDate"
-                  type="date"
-                  name="reservationDate"
-                  value={reservationDate}
-                  onChange={(e) => setReservationDate(e.target.value)}
-                  fullWidth
-                  variant="outlined"
-                />
-              </FormControl>
-              <FormControl>
-                <FormLabel htmlFor="reservationTime">Reservation Time</FormLabel>
-                <TextField
-                  id="reservationTime"
-                  type="time"
-                  name="reservationTime"
-                  value={reservationTime}
-                  onChange={(e) => setReservationTime(e.target.value)}
-                  fullWidth
-                  variant="outlined"
-                />
-              </FormControl>
-              <FormControl>
-                <FormLabel htmlFor="reservationReason">Reservation Reason</FormLabel>
-                <TextField
-                  id="reservationReason"
-                  type="text"
-                  name="reservationReason"
-                  value={reservationReason}
-                  onChange={(e) => setReservationReason(e.target.value)}
-                  fullWidth
-                  variant="outlined"
-                />
-              </FormControl>
-              <Button type="submit" fullWidth variant="contained">
-                Reserve Room
-              </Button>
-            </Box>
-          </Card>
-        </ReservationContainer>
-      </AppTheme>
-    </div>
+    <AppTheme {...props}>
+      <Box
+        sx={{
+          height: 390,
+          width: '100%',
+          display: 'flex',
+          boxShadow: 3,
+          borderRadius: 2,
+          padding: 1,
+          bgcolor: 'background.paper',
+        }}
+      >
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          getRowId={(row) => row.reservation_id}
+          initialState={{
+            pagination: {
+              paginationModel: { pageSize: 10 },
+            },
+          }}
+          pageSizeOptions={[5, 10]}
+          checkboxSelection
+          disableRowSelectionOnClick
+          sortModel={sortModel} // Use the state variable for the sort model
+          onSortModelChange={handleSortChange}
+        />
+      </Box>
+    </AppTheme>
   );
 }
 
-export default RoomReservation;
+export default RoomReserveTable;
