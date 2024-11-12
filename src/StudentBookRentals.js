@@ -4,7 +4,7 @@ import Chip from '@mui/material/Chip';
 import axios from 'axios';
 import AppTheme from './AppTheme';
 import { DataGrid } from '@mui/x-data-grid';
-import { differenceInDays } from 'date-fns';
+import { differenceInDays, addDays } from 'date-fns';
 
 function renderStatus(status) {
   const colors = {
@@ -91,12 +91,17 @@ export default function StudentBookRentals(props) {
       headers: { Authorization: `Bearer ${token}` },
     })
     .then((response) => {
-      const bookRows = response.data.map((book) => ({
-        id: book.reservation_id,
-        title: book.book_title,
-        ISBN: book.book_isbn,
-        dueDate: book.due_date,
-      }));
+      const bookRows = response.data.map((book) => {
+        const reservationDate = new Date(book.reservation_date_time);
+        const dueDate = addDays(reservationDate, 14); // Calculate due date as 2 weeks from reservation date
+
+        return {
+          id: book.reservation_id,
+          title: book.book_title,
+          ISBN: book.book_isbn,
+          dueDate: dueDate.toISOString().split('T')[0], // Format date as YYYY-MM-DD
+        };
+      });
       setRows(bookRows);
     })
     .catch((error) => {
