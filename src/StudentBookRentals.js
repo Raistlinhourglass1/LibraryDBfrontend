@@ -87,13 +87,29 @@ export default function StudentBookRentals(props) {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
+    if (!token) {
+      console.warn("No token found in localStorage.");
+    } else {
+      console.log("Token found:", token);
+    }
+
+    // Fetch book reservations
     axios.get('https://librarydbbackend.onrender.com/book_reservations', {
       headers: { Authorization: `Bearer ${token}` },
     })
     .then((response) => {
+      console.log("Fetched data from /book_reservations:", response.data);
+      
       const bookRows = response.data.map((book) => {
         const reservationDate = new Date(book.reservation_date_time);
         const dueDate = addDays(reservationDate, 14); // Calculate due date as 2 weeks from reservation date
+
+        console.log("Processing book:", {
+          reservation_id: book.reservation_id,
+          title: book.book_title,
+          ISBN: book.book_isbn,
+          dueDate: dueDate.toISOString().split('T')[0],
+        });
 
         return {
           id: book.reservation_id,
@@ -102,6 +118,8 @@ export default function StudentBookRentals(props) {
           dueDate: dueDate.toISOString().split('T')[0], // Format date as YYYY-MM-DD
         };
       });
+
+      console.log("Processed rows:", bookRows);
       setRows(bookRows);
     })
     .catch((error) => {
