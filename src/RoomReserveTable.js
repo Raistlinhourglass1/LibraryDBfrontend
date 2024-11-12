@@ -20,17 +20,20 @@ const calculateTimeDue = (reservationDateTime, reservationDuration, status) => {
   if (status === 'canceled') {
     return { status: 'Canceled', timeDue: '', overdueHours: 0 };
   }
-  const now = new Date();
-  const reservationStart = new Date(reservationDateTime);
-  const reservationEnd = new Date(reservationStart.getTime() + reservationDuration * 60 * 60 * 1000);
-  const timeRemaining = differenceInHours(now, reservationEnd);
 
-  if (now >= reservationEnd) {
+  const now = new Date();
+  // Parse the reservationDateTime string to create a Date object
+  const reservationStart = parse(reservationDateTime, 'yyyy-MM-dd HH:mm:ss', new Date());
+  const reservationEnd = new Date(reservationStart.getTime() + reservationDuration * 60 * 60 * 1000);
+  const timeRemaining = differenceInHours(reservationEnd, now); // Calculate remaining time till end
+
+  if (timeRemaining <= 0) {
     return { status: 'Ended', timeDue: `${Math.abs(timeRemaining)} hours overdue`, overdueHours: Math.abs(timeRemaining) };
   } else {
-    return { status: 'Ongoing', timeDue: `${Math.abs(timeRemaining)} hours remaining`, overdueHours: 0 };
+    return { status: 'Ongoing', timeDue: `${timeRemaining} hours remaining`, overdueHours: 0 };
   }
 };
+
 
 const RoomReserveTable = (props) => {
   const [rows, setRows] = useState([]);
