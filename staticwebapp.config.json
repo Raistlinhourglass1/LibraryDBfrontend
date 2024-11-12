@@ -1,36 +1,34 @@
 {
-  "routes": [
-    { "route": "/SignIn", "rewrite": "/index.html" },
-    { "route": "/SignUp", "rewrite": "/index.html" },
-    { "route": "/fines", "rewrite": "/index.html" },
-    { "route": "/StudentBookFines", "rewrite": "/index.html" },
-    { "route": "/ProfilePage2", "rewrite": "/index.html" },
-    { "route": "/ProfilePage", "rewrite": "/index.html" },
-    { "route": "/StudentBookRentals", "rewrite": "/index.html" },
-    { "route": "/Nice", "rewrite": "/index.html" },
-    { "route": "/StudentRoomReservationTable", "rewrite": "/index.html" },
-    { "route": "/create-room", "rewrite": "/index.html" },
-    { "route": "/reserve-room", "rewrite": "/index.html" },
-    { "route": "/feedback", "rewrite": "/index.html" },
-    { "route": "/reports", "rewrite": "/index.html" },
-    { "route": "/catalog-entry/book", "rewrite": "/index.html" },
-    { "route": "/catalog-entry/audiobook", "rewrite": "/index.html" },
-    { "route": "/catalog-entry/ebook", "rewrite": "/index.html" },
-    { "route": "/catalog-entry/periodical", "rewrite": "/index.html" },
-    { "route": "/search", "rewrite": "/index.html" },
-    { "route": "/advanced-search", "rewrite": "/index.html" },
-    { "route": "/search-results", "rewrite": "/index.html" },
-
-    { "route": "/books/*", "rewrite": "/index.html" },
-
-    { "route": "/_laptopEntry", "rewrite": "/index.html" },
-    { "route": "/_laptopSearch", "rewrite": "/index.html" },
-    { "route": "/_calculatorEntry", "rewrite": "/index.html" },
-    { "route": "/_calculatorSearch", "rewrite": "/index.html" },
-    { "route": "/_bookReservation", "rewrite": "/index.html" },
-    { "route": "/_laptopReservation", "rewrite": "/index.html" },
-    { "route": "/_calculatorReservation", "rewrite": "/index.html" },
-
-    { "route": "/*", "rewrite": "/index.html" }
-  ]
-}
+    "routes": [
+      { "route": "/SignIn", "rewrite": "/index.html" },
+      { "route": "/SignUp", "rewrite": "/index.html" },
+      { "route": "/fines", "rewrite": "/index.html" },
+      { "route": "/StudentBookFines", "rewrite": "/index.html" },
+      { "route": "/ProfilePage2", "rewrite": "/index.html" },
+      { "route": "/ProfilePage", "rewrite": "/index.html" },
+      { "route": "/StudentBookRentals", "rewrite": "/index.html" },
+      { "route": "/Nice", "rewrite": "/index.html" },
+      { "route": "/StudentRoomReservationTable", "rewrite": "/index.html" },
+      { "route": "/create-room", "rewrite": "/index.html" },
+      { "route": "/reserve-room", "rewrite": "/index.html" },
+      { "route": "/feedback", "rewrite": "/index.html" },
+      { "route": "/reports", "rewrite": "/index.html" },
+      { "route": "/catalog-entry/book", "rewrite": "/index.html" },
+      { "route": "/catalog-entry/audiobook", "rewrite": "/index.html" },
+      { "route": "/catalog-entry/ebook", "rewrite": "/index.html" },
+      { "route": "/catalog-entry/periodical", "rewrite": "/index.html" },
+      { "route": "/search", "rewrite": "/index.html" },
+      { "route": "/advanced-search", "rewrite": "/index.html" },
+      { "route": "/search-results", "rewrite": "/index.html" },
+      { "route": "/books/:book_id", "rewrite": "/index.html" },
+      { "route": "/_laptopEntry", "rewrite": "/index.html" },
+      { "route": "/_laptopSearch", "rewrite": "/index.html" },
+      { "route": "/_calculatorEntry", "rewrite": "/index.html" },
+      { "route": "/_calculatorSearch", "rewrite": "/index.html" },
+      { "route": "/_bookReservation", "rewrite": "/index.html" },
+      { "route": "/_laptopReservation", "rewrite": "/index.html" },
+      { "route": "/_calculatorReservation", "rewrite": "/index.html" },
+      { "route": "/{*.all}", "rewrite": "/index.html" }
+    ]
+  }
+  
