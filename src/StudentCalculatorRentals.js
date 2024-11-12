@@ -158,3 +158,4 @@ const StudentCalculatorRentals = ({ userId, ...props }) => {
     </AppTheme>
   );
 }
+export default StudentCalculatorRentals;
