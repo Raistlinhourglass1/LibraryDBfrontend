@@ -94,10 +94,9 @@ export default function StudentBookRentals(props) {
     })
     .then((response) => {
       console.log("Fetched data from /book_reservations:", response.data);
-
+      
       if (Array.isArray(response.data)) {
         const bookRows = response.data.map((book) => {
-          // Assuming dueDate is 2 weeks after reservation_date_time
           const dueDate = addDays(new Date(book.reservation_date_time), 14);
           return {
             id: book.reservation_id,
@@ -118,6 +117,7 @@ export default function StudentBookRentals(props) {
       }
     });
   }, []);
+  
   
   return (
     <AppTheme {...props}>
