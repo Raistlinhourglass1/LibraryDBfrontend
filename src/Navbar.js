@@ -3,39 +3,33 @@ import { NavDropdown, Navbar, Nav, Container } from 'react-bootstrap';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
+function NavbarComponent() {
+  const [userInfo, setUserInfo] = useState(null); // Define userInfo state
+  const navigate = useNavigate(); // Define navigate hook for redirection
 
-
-
-const fetchProfileData = () => {
-  const token = localStorage.getItem('token');
-  axios
-    .get('https://librarydbbackend.onrender.com/ProfilePage2', {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-    .then((response) => {
-      setUserInfo(response.data);
-      setEditedInfo({
-        first_name: response.data.first_name,
-        last_name: response.data.last_name,
+  // Function to fetch profile data
+  const fetchProfileData = () => {
+    const token = localStorage.getItem('token');
+    axios
+      .get('https://librarydbbackend.onrender.com/ProfilePage2', {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((response) => {
+        setUserInfo(response.data); // Set user info data
+        console.log("User Info:", response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching profile data:', error);
+        localStorage.removeItem('token');
+        navigate('/SignIn'); // Navigate to SignIn on error
       });
-      console.log("User Info:", response.data);
-    })
-    .catch((error) => {
-      console.error('Error fetching profile data:', error);
-      localStorage.removeItem('token');
-      navigate('/SignIn');
-    });
-};
+  };
 
-// Fetch user info when the component mounts
-useEffect(() => {
-  fetchProfileData();
-}, []);
+  // Fetch user info when the component mounts
+  useEffect(() => {
+    fetchProfileData();
+  }, []);
 
-
-
-function NavBar() {
-  
   return (
     <Navbar expand="lg" className="bg-body-tertiary" bg="dark" data-bs-theme="dark">
       <Container>
@@ -47,16 +41,11 @@ function NavBar() {
             <Nav.Link href="/search">Search</Nav.Link>
             <Nav.Link href="/reserve-room">Room reservation</Nav.Link>
             <Nav.Link href="/feedback">Book Reviews</Nav.Link>
-            <NavDropdown title="Rent Device" id="basic-nav-dropdown">
-              <NavDropdown.Item href="/_laptopReservation">Laptops</NavDropdown.Item>
-              <NavDropdown.Item href="/_calculatorReservation">
-                Calculator
-              </NavDropdown.Item>
-            </NavDropdown>
 
-            {(userInfo.user_level === 'Admin' || userInfo.user_level === 'Staff') && (
+            {/* Only show "Staff Functions" dropdown if userInfo is loaded and user is "Admin" or "Staff" */}
+            {userInfo && (userInfo.user_level === 'Admin' || userInfo.user_level === 'Staff') && (
               <NavDropdown title="Staff Functions" id="staff-functions-dropdown">
-                {(userInfo.user_level === 'Admin') && (
+                {userInfo.user_level === 'Admin' && (
                   <NavDropdown title="Admin Functions" id="admin-functions-dropdown" drop="end">
                     <NavDropdown.Item href="/addstaff">Add a Staff Member</NavDropdown.Item>
                   </NavDropdown>
@@ -76,4 +65,4 @@ function NavBar() {
   );
 }
 
-export default NavBar;
+export default NavbarComponent;
