@@ -93,18 +93,18 @@ const RoomReserveTable = (props) => {
       width: 150,
       renderCell: (params) => {
         try {
-          const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone; // Get local timezone
           const date = new Date(params.row.reservation_date); // Parse date directly from string
-          const localDate = toDate(date, { timeZone: timezone }); // Convert to local time zone
-          if (isNaN(localDate)) throw new Error("Invalid date"); // Check if date parsing is successful
-          const formattedDate = format(localDate, 'MM/dd/yyyy, hh:mm a'); // Display in 12-hour format with AM/PM
+          if (isNaN(date)) throw new Error("Invalid date"); // Check if date parsing is successful
+    
+          // Format the date to display in 12-hour format with AM/PM
+          const formattedDate = format(date, 'MM/dd/yyyy, hh:mm a');
           return <span>{formattedDate}</span>;
         } catch (error) {
           console.error("Error parsing or formatting date:", error);
           return <span>Invalid Date</span>; // Display a fallback if date is invalid
         }
       },
-    },
+    }
     { field: 'reservation_reason', headerName: 'Reason', width: 160 },
     { field: 'reservation_duration_hrs', headerName: 'Duration (hrs)', width: 160 },
     { field: 'party_size', headerName: 'Party Size', width: 150 },
