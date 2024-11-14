@@ -28,7 +28,7 @@ function NavBar() {
               </NavDropdown.Item>
             </NavDropdown>
             <NavDropdown title="Staff Functions" id="basic-nav-dropdown">
-              <NavDropdown.Item href="/addstaff">Add a Staff Member</NavDropdown.Item>
+              <NavDropdown.Item href="/AddStaff">Add a Staff Member</NavDropdown.Item>
             </NavDropdown>
           </Nav>
         </Navbar.Collapse>
