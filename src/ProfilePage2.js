@@ -223,15 +223,6 @@ export default function ProfilePage2(props) {
                       <Link href="/Nice" variant="body2" display="block" gutterBottom>
                         Nice
                       </Link>
-                      <Link href="/reports" variant="body2" display="block" gutterBottom>
-                        Reports
-                      </Link>
-                      <Link href="/create-room" variant="body2" display="block" gutterBottom>
-                        Create Room
-                      </Link>
-                      <Link href="/catalog-entry/book" variant="body2" display="block" gutterBottom>
-                        Add Book
-                      </Link>
                       <Link href="/catalog-entry/ebook" variant="body2" display="block" gutterBottom>
                         Add E-Book
                       </Link>
@@ -240,12 +231,6 @@ export default function ProfilePage2(props) {
                       </Link>
                       <Link href="/catalog-entry/periodical" variant="body2" display="block" gutterBottom>
                         Add Periodical
-                      </Link>
-                      <Link href="/_laptopEntry" variant="body2" display="block" gutterBottom>
-                        Add Laptop
-                      </Link>
-                      <Link href="/_calculatorEntry" variant="body2" display="block" gutterBottom>
-                        Add Calculator
                       </Link>
                     </>
                   )}

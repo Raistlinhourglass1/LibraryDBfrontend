@@ -29,6 +29,12 @@ function NavBar() {
             </NavDropdown>
             <NavDropdown title="Staff Functions" id="basic-nav-dropdown">
               <NavDropdown.Item href="/addstaff">Add a Staff Member</NavDropdown.Item>
+              <NavDropdown.Item href="/nice">PERSONAL VIEW ONLY</NavDropdown.Item>
+              <NavDropdown.Item href="/reports">Create a Report</NavDropdown.Item>
+              <NavDropdown.Item href="/create-room">Add a Room</NavDropdown.Item>
+              <NavDropdown.Item href="/catalog-entry/book">Add a Book</NavDropdown.Item>
+              <NavDropdown.Item href="/_laptopEntry">Add a Laptop</NavDropdown.Item>
+              <NavDropdown.Item href="/_calculatorEntry">Add a Calculator</NavDropdown.Item>
             </NavDropdown>
           </Nav>
         </Navbar.Collapse>
