@@ -115,7 +115,8 @@ const RoomReserveTable = (props) => {
         try {
           const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone; // Get local timezone
           const date = new Date(params.row.reservation_date); // Parse date directly from string
-          const localDate = toDate(date, { timeZone: timezone }); // Convert to local time zone
+          const localDate = new Date(date.toLocaleString('en-US', { timeZone: timezone }));
+
           if (isNaN(localDate)) throw new Error("Invalid date"); // Check if date parsing is successful
           const formattedDate = format(localDate, 'MM/dd/yyyy, hh:mm a'); // Display in 12-hour format with AM/PM
           return <span>{formattedDate}</span>;
@@ -145,7 +146,7 @@ const RoomReserveTable = (props) => {
     },
   ];
 
-  
+
   const handleSortChange = (newSortModel) => {
     setSortModel(newSortModel);
     console.log('Sort model changed:', newSortModel);
