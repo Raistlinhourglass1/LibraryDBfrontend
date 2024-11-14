@@ -3,8 +3,31 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 
+const fetchProfileData = () => {
+  const token = localStorage.getItem('token');
+  axios
+    .get('https://librarydbbackend.onrender.com/ProfilePage2', {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .then((response) => {
+      setUserInfo(response.data);
+      setEditedInfo({
+        first_name: response.data.first_name,
+        last_name: response.data.last_name,
+      });
+      console.log("User Info:", response.data);
+    })
+    .catch((error) => {
+      console.error('Error fetching profile data:', error);
+      localStorage.removeItem('token');
+      navigate('/SignIn');
+    });
+};
 
-
+// Fetch user info when the component mounts
+useEffect(() => {
+  fetchProfileData();
+}, []);
 
 
 
