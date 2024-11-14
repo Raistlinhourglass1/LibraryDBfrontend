@@ -35,7 +35,7 @@ import _calculatorSearch from './_calculatorSearch';
 import _laptopEntry from './_laptopEntry';
 import Home from './HomePage';
 import TestBookSearch from './TestBookSearch';
-import AddStaff from './AddStaff';
+import AddStaff from './StaffForm';
 
 function App() {
   return (
