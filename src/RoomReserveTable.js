@@ -48,7 +48,7 @@ const RoomReserveTable = (props) => {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    axios.get('http://localhost:5000/RoomReserveTable', {
+    axios.get('https://librarydbbackend.onrender.com/RoomReserveTable', {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((response) => {
@@ -62,10 +62,10 @@ const RoomReserveTable = (props) => {
   const handleCancelReservation = async (reservationId, roomId) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.post('http://localhost:5000/cancel-reservation', { reservationId, roomId }, {
+      await axios.post('https://librarydbbackend.onrender.com/cancel-reservation', { reservationId, roomId }, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const response = await axios.get('http://localhost:5000/RoomReserveTable', {
+      const response = await axios.get('https://librarydbbackend.onrender.com/RoomReserveTable', {
         headers: { Authorization: `Bearer ${token}` },
       });
       setRows(response.data);

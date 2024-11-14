@@ -35,6 +35,7 @@ import _calculatorSearch from './_calculatorSearch';
 import _laptopEntry from './_laptopEntry';
 import Home from './HomePage';
 import TestBookSearch from './TestBookSearch';
+import addstaff from './addstaff';
 
 function App() {
   return (
@@ -55,6 +56,14 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/addstaff"
+          element={
+            <ProtectedRoute>
+              <addstaff />
+            </ProtectedRoute>
+            }
+          />
         <Route
           path="/fines"
           element={
