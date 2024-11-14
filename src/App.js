@@ -56,12 +56,12 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/AddStaff"
-          element={
-            <ProtectedRoute>
-              <AddStaff />
-            </ProtectedRoute>
+          <Route
+            path="/addstaff"
+            element={
+              <ProtectedRoute>
+                <AddStaff />
+              </ProtectedRoute>
             }
           />
         <Route
