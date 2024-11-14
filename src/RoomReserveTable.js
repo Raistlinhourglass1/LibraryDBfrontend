@@ -3,9 +3,10 @@ import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
 import Chip from '@mui/material/Chip';
 import Button from '@mui/material/Button';
-import axios from 'axios';
-import { differenceInHours, format, parse } from 'date-fns';
+import { differenceInHours, format } from 'date-fns';
+import { toDate } from 'date-fns-tz';
 import AppTheme from './AppTheme';
+import axios from 'axios';
 
 function renderStatus(status) {
   const colors = {
@@ -17,81 +18,60 @@ function renderStatus(status) {
 }
 
 const calculateTimeDue = (reservationDateTime, reservationDuration, status) => {
-  if (status === 'canceled') {
+  if (status === 'Canceled') {
     return { status: 'Canceled', timeDue: '', overdueHours: 0 };
   }
 
   const now = new Date();
-  // Parse the reservationDateTime string to create a Date object
-  const reservationStart = parse(reservationDateTime, 'yyyy-MM-dd HH:mm:ss', new Date());
+  const reservationStart = toDate(new Date(reservationDateTime));
   const reservationEnd = new Date(reservationStart.getTime() + reservationDuration * 60 * 60 * 1000);
-  const timeRemaining = differenceInHours(reservationEnd, now); // Calculate remaining time till end
+  const timeRemaining = (reservationEnd - now) / (1000 * 60); // Calculate in minutes
 
   if (timeRemaining <= 0) {
-    return { status: 'Ended', timeDue: `${Math.abs(timeRemaining)} hours overdue`, overdueHours: Math.abs(timeRemaining) };
+    return { status: 'Ended', timeDue: `${Math.abs(Math.floor(timeRemaining / 60))} hours overdue`, overdueHours: Math.abs(Math.floor(timeRemaining / 60)) };
   } else {
-    return { status: 'Ongoing', timeDue: `${timeRemaining} hours remaining`, overdueHours: 0 };
+    const hoursRemaining = Math.floor(timeRemaining / 60);
+    const minutesRemaining = Math.floor(timeRemaining % 60);
+    return { 
+      status: 'Ongoing', 
+      timeDue: `${hoursRemaining} hours ${minutesRemaining} minutes remaining`, 
+      overdueHours: 0 
+    };
   }
 };
-
 
 const RoomReserveTable = (props) => {
   const [rows, setRows] = useState([]);
   const [sortModel, setSortModel] = useState([
-    {
-      field: 'reservation_date',
-      sort: 'desc',
-    },
+    { field: 'reservation_date', sort: 'desc' },
   ]);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    axios.get('https://librarydbbackend.onrender.com/RoomReserveTable', {
+    axios.get('http://localhost:5000/RoomReserveTable', {
       headers: { Authorization: `Bearer ${token}` },
     })
-    .then((response) => {
-      console.log('Fetched rows:', response.data); 
-      setRows(response.data);
-    })
-    .catch((error) => {
-      console.error('Error fetching data:', error);
-      if (error.response && error.response.status === 401) {
-        console.warn('Unauthorized access - possibly due to an invalid token.');
-      }
-    });
+      .then((response) => {
+        setRows(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching data:', error);
+      });
   }, []);
 
   const handleCancelReservation = async (reservationId, roomId) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.post('https://librarydbbackend.onrender.com/cancel-reservation', {
-        reservationId,
-        roomId
-      }, {
+      await axios.post('http://localhost:5000/cancel-reservation', { reservationId, roomId }, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
-      const response = await axios.get('https://librarydbbackend.onrender.com/RoomReserveTable', {
+      const response = await axios.get('http://localhost:5000/RoomReserveTable', {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setRows(response.data); 
-      console.log(`Reservation ${reservationId} canceled successfully`, response.data); 
+      setRows(response.data);
     } catch (error) {
-      if (error.response) {
-        if (error.response.status === 400 && error.response.data === 'Reservation has already ended') {
-          alert('This reservation has already ended and cannot be canceled.');
-        } else if (error.response.status === 400 && error.response.data === 'Reservation has already been canceled') {
-          alert('This reservation has already been canceled.');
-        } else if (error.response.status === 404) {
-          alert('Reservation not found or already canceled');
-        } else {
-          console.error('Error cancelling reservation:', error);
-          alert('An error occurred while attempting to cancel the reservation.');
-        }
-      } else {
-        console.error('Error cancelling reservation:', error);
-        alert('An error occurred while attempting to cancel the reservation.');
-      }
+      alert('Error while canceling the reservation.');
+      console.error('Error cancelling reservation:', error);
     }
   };
 
@@ -115,8 +95,7 @@ const RoomReserveTable = (props) => {
         try {
           const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone; // Get local timezone
           const date = new Date(params.row.reservation_date); // Parse date directly from string
-          const localDate = new Date(date.toLocaleString('en-US', { timeZone: timezone }));
-
+          const localDate = toDate(date, { timeZone: timezone }); // Convert to local time zone
           if (isNaN(localDate)) throw new Error("Invalid date"); // Check if date parsing is successful
           const formattedDate = format(localDate, 'MM/dd/yyyy, hh:mm a'); // Display in 12-hour format with AM/PM
           return <span>{formattedDate}</span>;
@@ -137,7 +116,7 @@ const RoomReserveTable = (props) => {
       renderCell: (params) => (
         <Button
           variant="outlined"
-          color="danger"
+          color="error"
           onClick={() => handleCancelReservation(params.row.reservation_id, params.row.room_number)}
         >
           Cancel
@@ -146,39 +125,19 @@ const RoomReserveTable = (props) => {
     },
   ];
 
-
-  const handleSortChange = (newSortModel) => {
-    setSortModel(newSortModel);
-    console.log('Sort model changed:', newSortModel);
-  };
-
   return (
     <AppTheme {...props}>
-      <Box
-        sx={{
-          height: 390,
-          width: '100%',
-          display: 'flex',
-          boxShadow: 3,
-          borderRadius: 2,
-          padding: 1,
-          bgcolor: 'background.paper',
-        }}
-      >
+      <Box sx={{ height: 390, width: '100%', display: 'flex', boxShadow: 3, borderRadius: 2, padding: 1, bgcolor: 'background.paper' }}>
         <DataGrid
           rows={rows}
           columns={columns}
           getRowId={(row) => row.reservation_id}
-          initialState={{
-            pagination: {
-              paginationModel: { pageSize: 10 },
-            },
-          }}
+          initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
           pageSizeOptions={[5, 10]}
           checkboxSelection
           disableRowSelectionOnClick
           sortModel={sortModel}
-          onSortModelChange={handleSortChange}
+          onSortModelChange={(newSortModel) => setSortModel(newSortModel)}
         />
       </Box>
     </AppTheme>
