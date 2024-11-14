@@ -202,32 +202,6 @@ function AddStaff(props) {
                 />
               </FormControl>
               <FormControl>
-                <FormLabel htmlFor="position">Position</FormLabel>
-                <TextField
-                  id="position"
-                  name="position"
-                  value={formData.position}
-                  onChange={handleChange}
-                  placeholder="Enter position (e.g., Staff, Manager)"
-                  required
-                  fullWidth
-                  variant="outlined"
-                />
-              </FormControl>
-              <FormControl>
-                <FormLabel htmlFor="status">Status</FormLabel>
-                <TextField
-                  id="status"
-                  name="status"
-                  value={formData.status}
-                  onChange={handleChange}
-                  placeholder="Enter status (e.g., Active, Inactive)"
-                  required
-                  fullWidth
-                  variant="outlined"
-                />
-              </FormControl>
-              <FormControl>
                 <FormLabel htmlFor="salary">Salary</FormLabel>
                 <TextField
                   id="salary"
