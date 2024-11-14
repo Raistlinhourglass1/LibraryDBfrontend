@@ -43,21 +43,23 @@ function NavbarComponent() {
             <Nav.Link href="/feedback">Book Reviews</Nav.Link>
 
             {/* Only show "Staff Functions" dropdown if userInfo is loaded and user is "Admin" or "Staff" */}
-            {userInfo && (userInfo.user_level === 'Admin' || userInfo.user_level === 'Staff') && (
-              <NavDropdown title="Staff Functions" id="staff-functions-dropdown">
-                {userInfo.user_level === 'Admin' && (
-                  <NavDropdown title="Admin Functions" id="admin-functions-dropdown" drop="end">
-                    <NavDropdown.Item href="/addstaff">Add a Staff Member</NavDropdown.Item>
-                  </NavDropdown>
-                )}
-                <NavDropdown.Item href="/reports">Create a Report</NavDropdown.Item>
-                <NavDropdown.Item href="/create-room">Add a Room</NavDropdown.Item>
-                <NavDropdown.Item href="/catalog-entry/book">Add a Book</NavDropdown.Item>
-                <NavDropdown.Item href="/_laptopEntry">Add a Laptop</NavDropdown.Item>
-                <NavDropdown.Item href="/_calculatorEntry">Add a Calculator</NavDropdown.Item>
-                <NavDropdown.Item href="/nice">PERSONAL VIEW ONLY</NavDropdown.Item>
-              </NavDropdown>
-            )}
+{userInfo && (userInfo.user_level === 'Admin' || userInfo.user_level === 'Staff') && (
+  <NavDropdown title="Staff Functions" id="staff-functions-dropdown">
+    
+    {/* Only show "Admin Functions" with "Add a Staff Member" item for Admin users */}
+    {userInfo.user_level === 'Admin' && (
+      <NavDropdown.Item href="/addstaff">Add a Staff Member</NavDropdown.Item>
+    )}
+
+    {/* Common items for both Admin and Staff */}
+    <NavDropdown.Item href="/reports">Create a Report</NavDropdown.Item>
+    <NavDropdown.Item href="/create-room">Add a Room</NavDropdown.Item>
+    <NavDropdown.Item href="/catalog-entry/book">Add a Book</NavDropdown.Item>
+    <NavDropdown.Item href="/_laptopEntry">Add a Laptop</NavDropdown.Item>
+    <NavDropdown.Item href="/_calculatorEntry">Add a Calculator</NavDropdown.Item>
+    <NavDropdown.Item href="/nice">PERSONAL VIEW ONLY</NavDropdown.Item>
+  </NavDropdown>
+)}      
           </Nav>
         </Navbar.Collapse>
       </Container>
