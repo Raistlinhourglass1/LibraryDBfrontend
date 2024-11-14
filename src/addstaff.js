@@ -50,7 +50,7 @@ const AddStaffContainer = styled(Stack)(({ theme }) => ({
   },
 }));
 
-function addstaff(props) {
+function AddStaff(props) {
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
@@ -270,4 +270,4 @@ function addstaff(props) {
   );
 }
 
-export default addstaff;
+export default AddStaff;
