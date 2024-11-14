@@ -78,6 +78,7 @@ function Reports(props) {
   const [laptopId, setLaptopId] = useState('');
   const [calcId, setCalcId] = useState('');
   const [periodType, setPeriodType] = useState('');
+  const [activityType, setActivityType] = useState('');
   const [staffId, setStaffId] = useState('');
   const [teachEmail, setTeachEmail] = useState('');
   const [bookName, setBookName] = useState('');
@@ -98,6 +99,7 @@ function Reports(props) {
     setLaptopId('');
     setPeriodType('');
     setRoomNum('');
+    setActivityType('');
   }, [specification]);
 
   const handleSubmit = async (e) => {
@@ -116,6 +118,15 @@ function Reports(props) {
       payload.book_name = bookName;
       payload.book_isbn = bookIsbn;
     }
+    if (specification === 'user activity') {
+      payload.activity_type = activityType;
+      payload.user_id = userId;
+    }
+
+    if (specification === 'session activity') {
+      payload.user_id = userId;
+    }
+
 
 
     try {
@@ -124,7 +135,7 @@ function Reports(props) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ specification, date, user_id: userId, book_name: bookName, book_isbn: bookIsbn, staff_id: staffId, teach_email: teachEmail, laptop_id: laptopId, calc_id: calcId, period_type: periodType, room_num: roomNum }),
+        body: JSON.stringify({ specification, date, user_id: userId, book_name: bookName, book_isbn: bookIsbn, staff_id: staffId, teach_email: teachEmail, laptop_id: laptopId, calc_id: calcId, period_type: periodType, room_num: roomNum, activityType: activityType}),
       });
       if (!response.ok) {
         throw new Error('Error fetching reports');
@@ -208,7 +219,10 @@ function Reports(props) {
                   }}
                 >
                   <option value="">-- Select Specification --</option>
-                  <option value="laptops">Laptops</option>
+                  <option value="most liked">Most Liked Books</option>
+                  <option value="user transactions">User Transactions</option>
+                  <option value="session activity">Session Activity</option>
+                  {/* <option value="laptops">Laptops</option>
                   <option value="calculators">Calculators</option>
                   <option value="books">Books</option>
                   <option value="audiobooks">Audio Books</option>
@@ -219,9 +233,9 @@ function Reports(props) {
                   <option value="feedback">Book Reviews</option>
                   <option value="users">Users</option>
                   <option value="staff">Staff</option>
-                  <option value="teacher">Teacher</option>
+                  <option value="teacher">Teacher</option> */}
                   <option value="catalog">Library Catalog</option>
-                  <option value="transactions">Transactions</option>
+                  {/* <option value="transactions">Transactions</option> */}
                 </TextField>
               </FormControl>
 
@@ -377,6 +391,38 @@ function Reports(props) {
                     variant="outlined"
                   />
                 </FormControl>
+              )}
+
+              {(specification === 'user activity') && (
+                <>
+                  <FormControl>
+                  <FormLabel htmlFor="userId">By User ID (optional)</FormLabel>
+                  <TextField
+                    id="userId"
+                    name="userId"
+                    value={userId}
+                    onChange={(e) => setUserId(e.target.value)}
+                    fullWidth
+                    variant="outlined"
+                  />
+                </FormControl>
+                </>
+              )}
+
+              {(specification === 'session activity') && (
+                <>
+                  <FormControl>
+                  <FormLabel htmlFor="userId">By User ID (optional)</FormLabel>
+                  <TextField
+                    id="userId"
+                    name="userId"
+                    value={userId}
+                    onChange={(e) => setUserId(e.target.value)}
+                    fullWidth
+                    variant="outlined"
+                  />
+                </FormControl>
+                </>
               )}
 
               <Button type="submit" fullWidth variant="contained">

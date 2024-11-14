@@ -9,10 +9,9 @@ import {
   TextField,
   Stack,
   Card as MuiCard,
-  Grid2,
   Avatar,
   Paper,
-  Tabs, 
+  Tabs,
   Tab,
   Dialog,
   DialogActions,
@@ -30,12 +29,6 @@ import StudentLaptopRentals from './StudentLaptopRentals';
 import StudentCalculatorRentals from './StudentCalculatorRentals';
 import RoomReserveTable from './RoomReserveTable';
 
-
-
-
-
-
-// Function to determine the max books allowed based on user_level
 const getMaxBooksAllowed = (userLevel) => {
   switch (userLevel) {
     case 'Student':
@@ -50,6 +43,7 @@ const getMaxBooksAllowed = (userLevel) => {
       return 0;
   }
 };
+
 const SignInContainer = styled(Stack)(({ theme }) => ({
   minHeight: '100vh',
   display: 'flex',
@@ -125,14 +119,24 @@ export default function ProfilePage2(props) {
       });
   };
 
+  const handleLogout = async () => {
+    const token = localStorage.getItem('token'); // Get the JWT token
+    if (token) {
+      try {
+        await axios.post('https://librarydbbackend.onrender.com/logout', {}, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        localStorage.removeItem('token'); // Clear the token from local storage
+        navigate('/SignIn'); // Redirect to the sign-in page
+      } catch (error) {
+        console.error('Error logging out:', error);
+      }
+    }
+  };
+
   useEffect(() => {
     fetchProfileData();
   }, [navigate]);
-
-  const handleSignOut = () => {
-    localStorage.removeItem('token'); // Remove token from localStorage
-    navigate('/SignIn'); // Redirect to the sign-in page
-  };
 
   const handleChange = (event, newValue) => setValue(newValue);
   const handleEditToggle = () => setIsEditing(!isEditing);
@@ -144,7 +148,7 @@ export default function ProfilePage2(props) {
       })
       .then(() => {
         setIsEditing(false);
-        fetchProfileData(); // Refresh profile data after successful update
+        fetchProfileData();
       })
       .catch((error) => {
         console.error('Error updating profile data:', error);
@@ -157,7 +161,7 @@ export default function ProfilePage2(props) {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then(() => {
-        navigate('/SignIn'); // Redirect after deletion
+        navigate('/SignIn');
       })
       .catch((error) => {
         console.error('Error deleting profile:', error);
@@ -178,8 +182,7 @@ export default function ProfilePage2(props) {
         <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
         <MuiCard variant="outlined" sx={{ width: '100%', maxWidth: 1200 }}>
           <Paper elevation={0} sx={{ p: 3, bgcolor: 'background.paper', display: 'flex', flexDirection: 'row' }}>
-            {/* Left Panel */}
-            <Grid2 item sx={{ width: 150, minWidth: 150, mr: 2 }}>
+            <Box sx={{ width: 150, minWidth: 150, mr: 2 }}>
               <Paper
                 elevation={1}
                 sx={{
@@ -188,7 +191,7 @@ export default function ProfilePage2(props) {
                   height: '100%',
                   display: 'flex',
                   flexDirection: 'column',
-                  justifyContent: 'flex-start', // Align items at the top
+                  justifyContent: 'flex-start',
                 }}
               >
                 <Box>
@@ -201,14 +204,14 @@ export default function ProfilePage2(props) {
                     Change Photo
                     <input type="file" hidden />
                   </Button>
-                  <Button variant="outlined" color="error" onClick={handleSignOut} fullWidth>
-                    Sign Out
-                  </Button>
                 </Box>
                 <Box mt={4} sx={{ textAlign: 'left', overflowY: 'auto', maxHeight: '50vh' }}>
                   <Typography variant="h6" gutterBottom>
                     Additional Links
                   </Typography>
+                  <Link onClick={handleLogout} variant="body1" display="block" gutterBottom>
+                    Sign out
+                  </Link>
                   <Link href="/feedback" variant="body2" display="block" gutterBottom>
                     Feedback
                   </Link>
@@ -219,9 +222,6 @@ export default function ProfilePage2(props) {
                     <>
                       <Link href="/Nice" variant="body2" display="block" gutterBottom>
                         Nice
-                      </Link>
-                      <Link href="/testbooksearch" variant="body2" display="block" gutterBottom>
-                        TestBookSearch
                       </Link>
                       <Link href="/reports" variant="body2" display="block" gutterBottom>
                         Reports
@@ -240,19 +240,20 @@ export default function ProfilePage2(props) {
                       </Link>
                       <Link href="/catalog-entry/periodical" variant="body2" display="block" gutterBottom>
                         Add Periodical
-                      </Link><Link href="/_laptopEntry" variant="body2" display="block" gutterBottom>
-                        Add laptop
-                      </Link><Link href="/_calculatorEntry" variant="body2" display="block" gutterBottom>
+                      </Link>
+                      <Link href="/_laptopEntry" variant="body2" display="block" gutterBottom>
+                        Add Laptop
+                      </Link>
+                      <Link href="/_calculatorEntry" variant="body2" display="block" gutterBottom>
                         Add Calculator
                       </Link>
                     </>
                   )}
                 </Box>
               </Paper>
-            </Grid2>
+            </Box>
 
-            {/* Right Panel */}
-            <Grid2 item xs={12} md={8} sx={{ flexGrow: 1, overflow: 'auto' }}>
+            <Box sx={{ flexGrow: 1, overflow: 'auto' }}>
               <Paper elevation={1} sx={{ p: 2, minHeight: '100%', display: 'flex', flexDirection: 'column' }}>
                 <Box display="flex" justifyContent="space-between" alignItems="center">
                   {isEditing ? (
@@ -283,7 +284,6 @@ export default function ProfilePage2(props) {
                     </Box>
                   )}
 
-                  {/* Edit Buttons */}
                   {isEditing ? (
                     <Box>
                       <Button variant="outlined" color="primary" onClick={handleSave} sx={{ ml: 2 }}>
@@ -303,7 +303,6 @@ export default function ProfilePage2(props) {
                   )}
                 </Box>
 
-                {/* Tabs and Tab Panels */}
                 <Box mt={3}>
                   <Tabs value={value} onChange={handleChange}>
                     <Tab label="Profile Details" {...a11yProps(0)} />
@@ -311,56 +310,43 @@ export default function ProfilePage2(props) {
                     <Tab label="Laptop Rentals" {...a11yProps(2)} />
                     <Tab label="Calculator Rentals" {...a11yProps(3)} />
                     <Tab label="Reservations" {...a11yProps(4)} />
+                    <Tab label="Fines Due" {...a11yProps(5)} />
                   </Tabs>
                   <CustomTabPanel value={value} index={0}>
-                  <Box>
-                      <Grid2 container spacing={4}>
-                        <Grid2 item xs={12} sm={6}>
-                          <Typography variant="body1">First Name</Typography>
-                          <br />
-                          <Typography variant="body1">Last Name</Typography>
-                          <br />
-                          <Typography variant="body1">Email</Typography>
-                          <br />
-                          <Typography variant="body1">User ID</Typography>
-                          <br />
-                          <Typography variant="body1">Max Books Allowed</Typography>
-                        </Grid2>
-
-                        <Grid2 item xs={12} sm={8}>
-                          <Typography variant="body2" color="primary">{userInfo.first_name}</Typography>
-                          <br />
-                          <Typography variant="body2" color="primary">{userInfo.last_name}</Typography>
-                          <br />
-                          <Typography variant="body2" color="primary">{userInfo.email}</Typography>
-                          <br />
-                          <Typography variant="body2" color="primary">{userInfo.user_ID}</Typography>
-                          <br />
-                          <Typography variant="body2" color="primary">{getMaxBooksAllowed(userInfo.user_level)}</Typography>
-                          <br />
-                        </Grid2>
-                      </Grid2>
+                    <Box>
+                      <Typography variant="body1">First Name</Typography>
+                      <Typography variant="body2" color="primary">{userInfo.first_name}</Typography>
+                      <Typography variant="body1">Last Name</Typography>
+                      <Typography variant="body2" color="primary">{userInfo.last_name}</Typography>
+                      <Typography variant="body1">Email</Typography>
+                      <Typography variant="body2" color="primary">{userInfo.email}</Typography>
+                      <Typography variant="body1">User ID</Typography>
+                      <Typography variant="body2" color="primary">{userInfo.user_ID}</Typography>
+                      <Typography variant="body1">Max Books Allowed</Typography>
+                      <Typography variant="body2" color="primary">{getMaxBooksAllowed(userInfo.user_level)}</Typography>
                     </Box>
                   </CustomTabPanel>
                   <CustomTabPanel value={value} index={1}>
                     <StudentBookRentals />
                   </CustomTabPanel>
                   <CustomTabPanel value={value} index={2}>
-                  <StudentLaptopRentals userId={userInfo.user_ID} />
+                    <StudentLaptopRentals userId={userInfo.user_ID} />
                   </CustomTabPanel>
                   <CustomTabPanel value={value} index={3}>
-                  <StudentCalculatorRentals userId={userInfo.user_ID} />
+                    <StudentCalculatorRentals userId={userInfo.user_ID} />
                   </CustomTabPanel>
                   <CustomTabPanel value={value} index={4}>
                     <RoomReserveTable userId={userInfo.user_ID} />
                   </CustomTabPanel>
+                  <CustomTabPanel value={value} index={5}>
+                    <Typography>Fines Due</Typography>
+                  </CustomTabPanel>
                 </Box>
               </Paper>
-            </Grid2>
+            </Box>
           </Paper>
         </MuiCard>
 
-        {/* Delete Confirmation Dialog */}
         <Dialog open={openConfirmDialog} onClose={closeDeleteConfirmDialog}>
           <DialogTitle>Confirm Delete</DialogTitle>
           <DialogContent>
