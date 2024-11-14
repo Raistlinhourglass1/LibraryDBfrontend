@@ -56,8 +56,6 @@ function AddStaff(props) {
     last_name: '',
     email: '',
     phone_number: '',
-    position: '',
-    status: '',
     salary: '',
     notes: '',
   });
