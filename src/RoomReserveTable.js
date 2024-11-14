@@ -104,7 +104,7 @@ const RoomReserveTable = (props) => {
           return <span>Invalid Date</span>; // Display a fallback if date is invalid
         }
       },
-    }
+    },
     { field: 'reservation_reason', headerName: 'Reason', width: 160 },
     { field: 'reservation_duration_hrs', headerName: 'Duration (hrs)', width: 160 },
     { field: 'party_size', headerName: 'Party Size', width: 150 },
