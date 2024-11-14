@@ -57,7 +57,7 @@ function App() {
           }
         />
           <Route
-            path="/AddStaff"
+            path="/StaffForm"
             element={
               <ProtectedRoute>
                 <AddStaff />
