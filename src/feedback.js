@@ -82,13 +82,19 @@ function Feedback(props) {
     });
   };
 
-  // Helper function to capitalize each word in a string
-const capitalizeWords = (str) => {
-  return str
-    .split(' ')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(' ');
-};
+  const capitalizeWords = (str) => {
+    return str
+      .split(' ')
+      .map(word => {
+        // Check if the word is all uppercase (e.g., "J.R.R.")
+        if (word === word.toUpperCase()) {
+          return word; // Leave as-is
+        }
+        // Capitalize only the first letter if it's not all uppercase
+        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+      })
+      .join(' ');
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
