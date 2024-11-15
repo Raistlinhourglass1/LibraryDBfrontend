@@ -1,8 +1,9 @@
-import React from 'react';
+// App.js
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import axios from 'axios';
 import Navbar from './Navbar';
-import ProtectedRoute from './ProtectedRoute'; // Import the ProtectedRoute component
-
+import ProtectedRoute from './ProtectedRoute';
 import SignIn from './SignIn';
 import SignUp from './SignUp';
 import Fines from './TotalFines';
@@ -38,248 +39,76 @@ import TestBookSearch from './TestBookSearch';
 import AddStaff from './addstaff';
 
 function App() {
+  const [userInfo, setUserInfo] = useState(null);
+
+  // Function to fetch user data and update `userInfo`
+  const fetchUserData = async (token) => {
+    try {
+      const response = await axios.get('https://librarydbbackend.onrender.com/ProfilePage2', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setUserInfo(response.data);
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      localStorage.removeItem('token'); // Clear invalid token
+      setUserInfo(null); // Reset userInfo if fetching fails
+    }
+  };
+
+  // Fetch user data on mount if a token exists
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      fetchUserData(token);
+    }
+  }, []);
+
+  // Function to handle logout
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setUserInfo(null);
+  };
+
   return (
     <Router>
-      <Navbar />
+      {/* Pass userInfo, handleLogout, and fetchUserData to Navbar */}
+      <Navbar userInfo={userInfo} onLogout={handleLogout} fetchUserData={fetchUserData} />
       <Routes>
         {/* Public routes */}
-        <Route path="/" element={<SignIn />} />
-        <Route path="/signin" element={<SignIn />} />
+        <Route path="/" element={<SignIn onLoginSuccess={() => fetchUserData(localStorage.getItem('token'))} />} />
+        <Route path="/signin" element={<SignIn onLoginSuccess={() => fetchUserData(localStorage.getItem('token'))} />} />
         <Route path="/signup" element={<SignUp />} />
 
         {/* Protected routes */}
-        <Route
-          path="/home"
-          element={
-            <ProtectedRoute>
-              <Home />
-            </ProtectedRoute>
-          }
-        />
-          <Route
-            path="/addstaff"
-            element={
-              <ProtectedRoute>
-                <AddStaff />
-              </ProtectedRoute>
-            }
-          />
-        <Route
-          path="/fines"
-          element={
-            <ProtectedRoute>
-              <Fines />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/StudentBookFines"
-          element={
-            <ProtectedRoute>
-              <StudentBookFines />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/ProfilePage2"
-          element={
-            <ProtectedRoute>
-              <ProfilePage2 />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/ProfilePage"
-          element={
-            <ProtectedRoute>
-              <ProfilePage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/StudentBookRentals"
-          element={
-            <ProtectedRoute>
-              <StudentBookRentals />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/Nice"
-          element={
-            <ProtectedRoute>
-              <Nice />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/StudentRoomReservationTable"
-          element={
-            <ProtectedRoute>
-              <StudentRoomReservationTable />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/TestBookSearch"
-          element={
-            <ProtectedRoute>
-              <TestBookSearch />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/create-room"
-          element={
-            <ProtectedRoute>
-              <CreateRoom />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/reserve-room"
-          element={
-            <ProtectedRoute>
-              <RoomReservation />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/feedback"
-          element={
-            <ProtectedRoute>
-              <Feedback />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/reports"
-          element={
-            <ProtectedRoute>
-              <Reports />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/catalog-entry/book"
-          element={
-            <ProtectedRoute>
-              <BookEntry />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/catalog-entry/audiobook"
-          element={
-            <ProtectedRoute>
-              <AudioBookEntry />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/catalog-entry/ebook"
-          element={
-            <ProtectedRoute>
-              <EBookEntry />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/catalog-entry/periodical"
-          element={
-            <ProtectedRoute>
-              <PeriodicalEntry />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/search"
-          element={
-            <ProtectedRoute>
-              <BookSearch />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/advanced-search"
-          element={
-            <ProtectedRoute>
-              <AdvancedSearch />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/search-results"
-          element={
-            <ProtectedRoute>
-              <BookSearchResults />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/books/:book_id"
-          element={
-            <ProtectedRoute>
-              <BookDetail />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/_laptopEntry"
-          element={
-            <ProtectedRoute>
-              <_laptopEntry />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/_laptopSearch"
-          element={
-            <ProtectedRoute>
-              <_laptopSearch />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/_calculatorEntry"
-          element={
-            <ProtectedRoute>
-              <_calculatorEntry />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/_calculatorSearch"
-          element={
-            <ProtectedRoute>
-              <_calculatorSearch />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/_bookReservation"
-          element={
-            <ProtectedRoute>
-              <_bookReservation />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/_laptopReservation"
-          element={
-            <ProtectedRoute>
-              <_laptopReservation />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/_calculatorReservation"
-          element={
-            <ProtectedRoute>
-              <_calculatorReservation />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/home" element={<ProtectedRoute><ProfilePage2 /></ProtectedRoute>} />
+        <Route path="/addstaff" element={<ProtectedRoute><AddStaff /></ProtectedRoute>} />
+        <Route path="/fines" element={<ProtectedRoute><Fines /></ProtectedRoute>} />
+        <Route path="/StudentBookFines" element={<ProtectedRoute><StudentBookFines /></ProtectedRoute>} />
+        <Route path="/ProfilePage2" element={<ProtectedRoute><ProfilePage2 /></ProtectedRoute>} />
+        <Route path="/ProfilePage" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+        <Route path="/StudentBookRentals" element={<ProtectedRoute><StudentBookRentals /></ProtectedRoute>} />
+        <Route path="/Nice" element={<ProtectedRoute><Nice /></ProtectedRoute>} />
+        <Route path="/StudentRoomReservationTable" element={<ProtectedRoute><StudentRoomReservationTable /></ProtectedRoute>} />
+        <Route path="/TestBookSearch" element={<ProtectedRoute><TestBookSearch /></ProtectedRoute>} />
+        <Route path="/create-room" element={<ProtectedRoute><CreateRoom /></ProtectedRoute>} />
+        <Route path="/reserve-room" element={<ProtectedRoute><RoomReservation /></ProtectedRoute>} />
+        <Route path="/feedback" element={<ProtectedRoute><Feedback /></ProtectedRoute>} />
+        <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
+        <Route path="/catalog-entry/book" element={<ProtectedRoute><BookEntry /></ProtectedRoute>} />
+        <Route path="/catalog-entry/audiobook" element={<ProtectedRoute><AudioBookEntry /></ProtectedRoute>} />
+        <Route path="/catalog-entry/ebook" element={<ProtectedRoute><EBookEntry /></ProtectedRoute>} />
+        <Route path="/catalog-entry/periodical" element={<ProtectedRoute><PeriodicalEntry /></ProtectedRoute>} />
+        <Route path="/search" element={<ProtectedRoute><BookSearch /></ProtectedRoute>} />
+        <Route path="/advanced-search" element={<ProtectedRoute><AdvancedSearch /></ProtectedRoute>} />
+        <Route path="/search-results" element={<ProtectedRoute><BookSearchResults /></ProtectedRoute>} />
+        <Route path="/books/:book_id" element={<ProtectedRoute><BookDetail /></ProtectedRoute>} />
+        <Route path="/_laptopEntry" element={<ProtectedRoute><_laptopEntry /></ProtectedRoute>} />
+        <Route path="/_laptopSearch" element={<ProtectedRoute><_laptopSearch /></ProtectedRoute>} />
+        <Route path="/_calculatorEntry" element={<ProtectedRoute><_calculatorEntry /></ProtectedRoute>} />
+        <Route path="/_calculatorSearch" element={<ProtectedRoute><_calculatorSearch /></ProtectedRoute>} />
+        <Route path="/_bookReservation" element={<ProtectedRoute><_bookReservation /></ProtectedRoute>} />
+        <Route path="/_laptopReservation" element={<ProtectedRoute><_laptopReservation /></ProtectedRoute>} />
+        <Route path="/_calculatorReservation" element={<ProtectedRoute><_calculatorReservation /></ProtectedRoute>} />
       </Routes>
     </Router>
   );

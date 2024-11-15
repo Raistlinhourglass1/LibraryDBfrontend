@@ -61,7 +61,7 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
   },
 }));
 
-export default function SignIn(props) {
+export default function SignIn({ onLoginSuccess, ...props }) { // Add onLoginSuccess as a prop
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
   const [passwordError, setPasswordError] = React.useState(false);
@@ -103,8 +103,15 @@ export default function SignIn(props) {
       const response = await axios.post('https://librarydbbackend.onrender.com/SignIn', loginDetails);
       const { token } = response.data;
 
+      // Save the token
       localStorage.setItem('token', token);
 
+      // Call onLoginSuccess to update userInfo in App
+      if (onLoginSuccess) {
+        onLoginSuccess();
+      }
+
+      // Navigate to ProfilePage2 after successful login
       navigate('/ProfilePage2');
     } catch (error) {
       console.error('Error logging in:', error);

@@ -1,31 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { NavDropdown, Navbar, Nav, Container } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const NavbarComponent = () => {
-  const [userInfo, setUserInfo] = useState(null);
+const NavbarComponent = ({ userInfo, setUserInfo, fetchProfileData }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchProfileData = () => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        axios
-          .get('https://librarydbbackend.onrender.com/ProfilePage2', {
-            headers: { Authorization: `Bearer ${token}` },
-          })
-          .then((response) => {
-            setUserInfo(response.data);
-          })
-          .catch(() => {
-            setUserInfo(null); // Clear user info on fetch failure
-          });
-      }
-    };
-
-    fetchProfileData();
-  }, []);
+    if (!userInfo) {
+      fetchProfileData(); // Fetch user info if not already loaded
+    }
+  }, [userInfo, fetchProfileData]);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
