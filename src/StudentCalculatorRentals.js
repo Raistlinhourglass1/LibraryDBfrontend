@@ -35,7 +35,6 @@ const calculateAmountDue = (overdueDays) => {
 };
 
 const columns = [
- // { field: 'reservation_id', headerName: 'Reservation ID', width: 150 },
   {
     field: 'reservation_date_time',
     headerName: 'Reservation Date & Time',
@@ -106,10 +105,15 @@ const StudentCalculatorRentals = ({ userId, ...props }) => {
       // Send overdue email for "Late" reservations
       const lateEmails = userRows.map(async (row) => {
         const { status, overdueDays } = calculateTimeDue(row.reservation_date_time);
+        const amountDue = calculateAmountDue(overdueDays);
         
         // Check if the reservation is "Late" and not yet notified
         if (status === 'Late' && !row.notified) {
-          await sendOverdueEmail({ reservation_id: row.reservation_id, overdueDays });
+          await sendOverdueEmail({ 
+            reservation_id: row.reservation_id, 
+            overdueDays, 
+            amount_due: amountDue 
+          });
           row.notified = true; // Ideally update backend
         }
       });
