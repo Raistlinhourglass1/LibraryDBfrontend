@@ -3,20 +3,15 @@ import { NavDropdown, Navbar, Nav, Container } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const NavbarComponent = ({ userInfo, setUserInfo, fetchProfileData }) => {
+const NavbarComponent = ({ userInfo, onLogout, fetchProfileData }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!userInfo) {
-      fetchProfileData(); // Fetch user info if not already loaded
+    const token = localStorage.getItem('token');
+    if (token && !userInfo) {
+      fetchProfileData(token);
     }
-  }, [userInfo, fetchProfileData]);
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    setUserInfo(null); // Clear user info on logout
-    navigate('/SignIn');
-  };
+  }, [fetchProfileData, userInfo]);
 
   return (
     <Navbar expand="lg" className="bg-body-tertiary" bg="dark" data-bs-theme="dark">
@@ -25,11 +20,11 @@ const NavbarComponent = ({ userInfo, setUserInfo, fetchProfileData }) => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link href="/home">Home</Nav.Link> 
+            <Nav.Link href="/home">Home</Nav.Link>
             <Nav.Link href="/search">Search</Nav.Link>
             <Nav.Link href="/reserve-room">Room reservation</Nav.Link>
             <Nav.Link href="/feedback">Book Reviews</Nav.Link>
-            
+
             {/* Conditionally render Staff Functions only if userInfo is available and has the correct role */}
             {userInfo && (userInfo.user_level === 'Admin' || userInfo.user_level === 'Staff') && (
               <NavDropdown title="Staff Functions" id="staff-functions-dropdown">
@@ -50,7 +45,7 @@ const NavbarComponent = ({ userInfo, setUserInfo, fetchProfileData }) => {
 
           {/* Show logout button if user is logged in */}
           {userInfo ? (
-            <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
+            <Nav.Link onClick={onLogout}>Logout</Nav.Link>
           ) : (
             <Nav.Link href="/SignIn">Sign In</Nav.Link>
           )}

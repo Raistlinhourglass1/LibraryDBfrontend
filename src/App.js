@@ -72,7 +72,8 @@ function App() {
   return (
     <Router>
       {/* Pass userInfo, handleLogout, and fetchUserData to Navbar */}
-      <Navbar userInfo={userInfo} onLogout={handleLogout} fetchUserData={fetchUserData} />
+      < Navbar userInfo={userInfo} onLogout={handleLogout} fetchProfileData={fetchUserData} />
+
       <Routes>
         {/* Public routes */}
         <Route path="/" element={<SignIn onLoginSuccess={() => fetchUserData(localStorage.getItem('token'))} />} />
