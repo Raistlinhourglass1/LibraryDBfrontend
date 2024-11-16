@@ -80,9 +80,12 @@ function App() {
 
   return (
     <Router>
-      {/* Pass userInfo, handleLogout, and fetchUserData to Navbar */}
-      < Navbar userInfo={userInfo} onLogout={handleLogout} fetchProfileData={fetchUserData} />
-      {window.location.pathname !== '/' && window.location.pathname !== '/Signin' && window.location.pathname !== '/Signup' && <Navbar />}
+{/* Conditionally render NavbarComponent based on the current path */}
+{window.location.pathname !== '/' &&
+        window.location.pathname !== '/signin' &&
+        window.location.pathname !== '/signup' && (
+          <NavbarComponent userInfo={userInfo} onLogout={handleLogout} fetchProfileData={fetchUserData} />
+      )}
       <Routes>
         {/* Public routes */}
         <Route path="/" element={<SignIn onLoginSuccess={() => fetchUserData(localStorage.getItem('token'))} />} />
