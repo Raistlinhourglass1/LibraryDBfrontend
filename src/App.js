@@ -40,7 +40,7 @@ import AddStaff from './addstaff';
 import HomePage from './HomePage';
 import BookCheckout from './BookCheckout';
 import StaffCatalog from './StaffCatalog';
-
+import LandingPage from './landingPage';
 
 
 
@@ -86,7 +86,7 @@ function App() {
           {window.location.pathname !== '/landingpage' && <Navbar />}
       <Routes>
         {/* Public routes */}
-        <Route path="/" element={<SignIn onLoginSuccess={() => fetchUserData(localStorage.getItem('token'))} />} />
+        <Route path="/" element={<LandingPage />} />  {/*removed SignIn onLoginSuccess={() => fetchUserData(localStorage.getItem('token'))}*/}
         <Route path="/signin" element={<SignIn onLoginSuccess={() => fetchUserData(localStorage.getItem('token'))} />} />
         <Route path="/signup" element={<SignUp />} />
 
