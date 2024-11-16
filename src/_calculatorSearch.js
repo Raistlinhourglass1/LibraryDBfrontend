@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import NavBar from './Navbar';
 
 const MainContent = styled.div`
   max-width-xl p-6 mx-auto bg-white rounded-lg shadow-md
@@ -37,6 +38,7 @@ const ErrorText = styled.span`
 const CalculatorSearch = () => {
   const [searchParams, setSearchParams] = useState({
     price: '',
+    price_comparison: '',  // Add this line for comparison operator
     model_name: '',
     serial_number: '',
     type: ''
@@ -106,6 +108,7 @@ const CalculatorSearch = () => {
   const clearSearch = () => {
     setSearchParams({
       price: '',
+      price_comparison: '', // Clear comparison operator
       model_name: '',
       serial_number: '',
       type: ''
@@ -116,6 +119,7 @@ const CalculatorSearch = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
+      <NavBar />
       <MainContent>
         <h2 className="text-2xl font-bold mb-6">Calculator Search</h2>
         <p className="mb-4 text-gray-600">Search by any combination of criteria below:</p>
@@ -128,9 +132,23 @@ const CalculatorSearch = () => {
               name="price"
               value={searchParams.price}
               onChange={handleInputChange}
-              placeholder="Enter maximum price"
+              placeholder="Enter price"
               step="0.01"
             />
+          </FormGroup>
+
+          <FormGroup>
+            <Label>Price Comparison</Label>
+            <select
+              name="price_comparison"
+              value={searchParams.price_comparison || ''}
+              onChange={handleInputChange}
+            >
+              <option value="">Select comparison</option>
+              <option value="lessThanEqual">Less than or equal to</option>
+              <option value="greaterThanEqual">Greater than or equal to</option>
+              <option value="equal">Equal to</option>
+            </select>
           </FormGroup>
 
           <FormGroup>

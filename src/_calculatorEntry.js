@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-
+import NavBar from './Navbar';
 
 const AppContainer = styled.div`
   font-family: Arial, sans-serif;
@@ -72,6 +72,17 @@ const Input = styled.input`
   font-size: 16px;
 `;
 
+const Select = styled.select`
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+`;
+
+const Option = styled.option`
+  font-size: 16px;
+`;
+
 const ErrorMessage = styled.span`
   color: red;
   font-size: 14px;
@@ -91,77 +102,124 @@ const SubmitButton = styled.button`
   }
 `;
 
+const CatalogContainer = styled.div`
+  margin-top: 40px;
+`;
+
+const CatalogItem = styled.div`
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+  display: flex;
+  justify-content: space-between;
+`;
+
+const ActionButton = styled.button`
+  background-color: #cc0000;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 4px;
+  &:hover {
+    background-color: #990000;
+  }
+`;
+
 const CalculatorEntry = () => {
   const [values, setValues] = useState({
-    model_name: '',     // This will map to calculator_model
-    type: '',          // This will map to calculator_type
-    serial_number: '', // This will map to calc_serial_num
-    price: ''         // This will map to price
+    calculator_model: '',     // Corrected field name
+    calculator_type: '',      // Corrected field name
+    calc_serial_num: '',      // Corrected field name
+    price: ''                 // No change needed for price
   });
 
   const [errors, setErrors] = useState({});
   const [submitStatus, setSubmitStatus] = useState('');
+  const [catalog, setCatalog] = useState([]);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [originalSerialNumber, setOriginalSerialNumber] = useState('');
+
+  const fetchCatalog = async () => {
+    try {
+      const response = await fetch('https://librarydbbackend.onrender.com/_calculatorCatalog');
+      const data = await response.json();
+      setCatalog(data);
+    } catch (error) {
+      console.error('Error fetching catalog:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCatalog();
+  }, []);
 
   const validateForm = (formValues) => {
     let errors = {};
     if (!formValues.price.trim()) {
       errors.price = "Price is required";
-    } else if (isNaN(parseFloat(formValues.price)) || parseFloat(formValues.price) <= 0) {
-      errors.price = "Price must be a positive number";
     }
-    if (!formValues.model_name.trim()) {
-      errors.model_name = "Model name is required";
+    if (!formValues.calculator_model.trim()) { // Corrected field name
+      errors.calculator_model = "Model name is required";
     }
-    if (!formValues.serial_number.trim()) {
-      errors.serial_number = "Serial number is required";
-    } 
-    if (!formValues.type.trim()) {
-      errors.type = "Calculator type is required";
-    } 
+    if (!formValues.calc_serial_num.trim()) { // Corrected field name
+      errors.calc_serial_num = "Serial number is required";
+    }
+    if (!formValues.calculator_type.trim()) { // Corrected field name
+      errors.calculator_type = "Type is required";
+    }
     return errors;
+  };
+
+  const resetForm = () => {
+    setIsEditMode(false);
+    setValues({
+      calculator_model: '',
+      calc_serial_num: '',
+      price: '',
+      calculator_type: ''
+    });
   };
 
   const handleInput = (event) => {
     const { name, value } = event.target;
-    setValues(prev => ({...prev, [name]: value}));
-
-    if (errors[name]) {
-      setErrors(prev => ({...prev, [name]: ''}));
-    }
+    setValues(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setSubmitStatus('');
-
     const validationErrors = validateForm(values);
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
       try {
         setSubmitStatus('submitting');
-        const response = await fetch('https://librarydbbackend.onrender.com/_calculatorEntry', {
-          method: 'POST',
+
+        const method = isEditMode ? 'PUT' : 'POST';
+        const url = isEditMode ? 'https://librarydbbackend.onrender.com/_editCalculator' : 'https://librarydbbackend.onrender.com/_calculatorEntry';
+
+        const response = await fetch(url, {
+          method: method,
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
           },
-          body: JSON.stringify(values)
+          body: JSON.stringify({
+            ...values,
+            original_serial_number: originalSerialNumber
+          }),
         });
 
         const data = await response.json();
-        
+
         if (response.ok) {
           setSubmitStatus('success');
           alert(data.message);
-          setValues({
-            model_name: '',
-            type: '',
-            serial_number: '',
-            price: ''
-          });
+          resetForm();
+          fetchCatalog();
         } else {
           setSubmitStatus('error');
-          alert(`Failed to add calculator: ${data.message}`);
+          alert(`Failed to add or update calculator: ${data.message}`);
         }
       } catch (error) {
         console.error('Error:', error);
@@ -171,34 +229,91 @@ const CalculatorEntry = () => {
     }
   };
 
+  const handleEditCalculator = (calculator) => {
+    setIsEditMode(true);
+    setValues({
+      calculator_model: calculator.calculator_model,
+      calc_serial_num: calculator.calc_serial_num,
+      price: calculator.price,
+      calculator_type: calculator.calculator_type
+    });
+
+    setOriginalSerialNumber(calculator.calc_serial_num);
+  };
+
+  const handleFlagCalculator = async (serial_number) => {
+    try {
+      const response = await fetch('https://librarydbbackend.onrender.com/_flagCalculator', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ serial_number })
+      });
+
+      const data = await response.json();
+      alert(data.message);
+      fetchCatalog();
+    } catch (error) {
+      console.error('Error flagging calculator:', error);
+      alert('Failed to flag calculator');
+    }
+  };
+
   return (
     <AppContainer>
+      <NavBar />
       <MainContent>
         <FormTitle>Calculator Entry</FormTitle>
         <Form onSubmit={handleSubmit}>
-          {[
-            { field: 'price', label: 'Price', type: 'number' },
-            { field: 'model_name', label: 'Model Name', type: 'text' },
-            { field: 'serial_number', label: 'Serial Number', type: 'text' },
-            { field: 'type', label: 'Type', type: 'text' }
-          ].map(({ field, label, type }) => (
+          {['price', 'calculator_model', 'calc_serial_num', 'calculator_type'].map((field) => (
             <FormGroup key={field}>
-              <Label htmlFor={field}>{label}</Label>
-              <Input
-                type={type}
-                placeholder={`Enter ${label}`}
-                name={field}
-                value={values[field]}
-                onChange={handleInput}
-              />
+              <Label htmlFor={field}>
+                {field.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+              </Label>
+              {field === 'calculator_type' ? (
+                <Select name={field} value={values[field]} onChange={handleInput}>
+                  <Option value="">Select Type</Option>
+                  <Option value="Graphing">Graphing</Option>
+                  <Option value="Scientific">Scientific</Option>
+                </Select>
+              ) : (
+                <Input
+                  type={field === 'price' ? 'number' : 'text'}
+                  placeholder={`Enter ${field.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}`}
+                  name={field}
+                  value={values[field]}
+                  onChange={handleInput}
+                />
+              )}
               {errors[field] && <ErrorMessage>{errors[field]}</ErrorMessage>}
             </FormGroup>
           ))}
-          <SubmitButton type="submit">Add Calculator</SubmitButton>
+          <SubmitButton type="submit">{isEditMode ? 'Update Calculator' : 'Add Calculator'}</SubmitButton>
           <Link to="/_calculatorSearch" style={{ textDecoration: 'none' }}>
-        <SubmitButton type='button' style={{ backgroundColor: '#f0f0f0', color: '#333' }}>Search Calculator</SubmitButton>
-      </Link>
+            <SubmitButton type='button' style={{ backgroundColor: '#f0f0f0', color: '#333' }}>Search Calculator</SubmitButton>
+          </Link>
         </Form>
+
+       {/* Catalog Display */}
+<CatalogContainer>
+  <h2>Calculator Catalog</h2>
+  {catalog.length === 0 ? (
+    <p>No calculators available.</p>
+  ) : (
+    catalog.filter(calculator => calculator.is_deleted !== 1).map((calculator, index) => (
+      <CatalogItem key={index}>
+        <span><strong>Model:</strong> {calculator.calculator_model}</span>
+        <span><strong>Serial Number:</strong> {calculator.calc_serial_num}</span>
+        <span><strong>Price:</strong> ${calculator.price}</span>
+        <span><strong>Type:</strong> {calculator.calculator_type}</span> {/* Add this line */}
+        <ActionButton onClick={() => handleEditCalculator(calculator)}>Edit</ActionButton>
+        <ActionButton onClick={() => handleFlagCalculator(calculator.calc_serial_num)}>Flag</ActionButton>
+      </CatalogItem>
+    ))
+  )}
+</CatalogContainer>
+
       </MainContent>
     </AppContainer>
   );

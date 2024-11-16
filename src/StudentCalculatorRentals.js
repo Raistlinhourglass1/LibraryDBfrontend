@@ -71,6 +71,21 @@ const columns = [
       return `$${amountDue}`;
     },
   },
+  {
+    field: 'cancel',
+    headerName: 'Cancel Reservation',
+    width: 160,
+    sortable: false,
+    renderCell: (params) => (
+      <Button
+        variant="outlined"
+        color="secondary"
+        onClick={() => handleCancelReservation(params.row.reservation_id, params.row.calculator_id)} // Pass calculator_id
+      >
+        Cancel
+      </Button>
+    ),
+  },
   { field: 'calc_type', headerName: 'Calculator Type', width: 150 },
   { field: 'model_name', headerName: 'Model Name', width: 150 },
 ];
@@ -89,6 +104,43 @@ const StudentCalculatorRentals = ({ userId, ...props }) => {
     .then(() => console.log('Overdue email sent'))
     .catch((error) => console.error('Error sending overdue email:', error));
   };
+
+
+  const handleCancelReservation = async (reservationId, calculatorId, setRows) => {
+    try {
+      const token = localStorage.getItem('token');
+      
+      // Send both IDs in the request body
+      await axios.post('https://librarydbbackend.onrender.com/cancel-cal-reservation', {
+        reservationId,
+        calculatorId
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+  
+      // Refresh the data after successful cancellation
+      const response = await axios.get('https://librarydbbackend.onrender.com/calculator_reservations', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      setRows(response.data);
+    } catch (error) {
+      console.error('Error cancelling reservation:', error);
+    }
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   useEffect(() => {
     const token = localStorage.getItem('token');

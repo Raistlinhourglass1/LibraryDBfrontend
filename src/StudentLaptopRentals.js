@@ -14,6 +14,32 @@ function renderStatus(status) {
   return <Chip label={status} color={colors[status]} size="small" />;
 }
 
+const handleCancelReservation = async (reservationId, laptopId) => {
+  try {
+    const token = localStorage.getItem('token');
+    await axios.post('https://librarydbbackend.onrender.com/cancel-laptop-reservation', {
+      reservationId,
+      laptopId  // Fixed variable name to match backend
+    }, {
+      headers: { 
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'  // Added content type header
+      },
+    });
+
+    // Fetch updated reservations after cancellation
+    const response = await axios.get('https://librarydbbackend.onrender.com/laptop_reservations', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setRows(response.data);
+  } catch (error) {
+    console.error('Error cancelling reservation:', error);
+    // Add user feedback for errors
+    alert('Failed to cancel reservation. Please try again.');
+  }
+};
+
+
 const calculateTimeDue = (reservationDateTime) => {
   const now = new Date();
   const reservationDate = new Date(reservationDateTime);
@@ -72,11 +98,27 @@ const columns = [
       return `$${amountDue}`;
     },
   },
+  {
+    field: 'cancel',
+    headerName: 'Cancel Reservation',
+    width: 160,
+    sortable: false,
+    renderCell: (params) => (
+      <Button
+        variant="outlined"
+        color="secondary"
+        onClick={() => handleCancelReservation(params.row.reservation_id, params.row.laptop_id)}
+      >
+        Cancel
+      </Button>
+    ),
+  },
 ];
 
 const StudentLaptopRentals = ({ userId, ...props }) => {
   const [rows, setRows] = useState([]);
 
+  
   // Send overdue email
   const sendOverdueEmail = (reservationDetails) => {
     const token = localStorage.getItem('token');

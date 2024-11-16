@@ -1,132 +1,223 @@
 import React, { useState, useEffect } from 'react';
+import { TextField, Button, FormControl, FormLabel, Typography, Box, CircularProgress, MenuItem, Select } from '@mui/material';
 
+const LaptopReservation = () => {
+  const [laptops, setLaptops] = useState([]);
+  const [selectedLaptop, setSelectedLaptop] = useState('');
+  const [reservationDate, setReservationDate] = useState('');
+  const [reservationTime, setReservationTime] = useState('');
+  const [duration, setDuration] = useState(0);
+  const [loggedInUserId, setLoggedInUserId] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
-
-const LaptopReservationForm = () => {
-  const [formData, setFormData] = useState({
-    userId: '',
-    model_name: '',
-    reservation_date_time: ''
-  });
-
+  // Fetch available laptops when component mounts
   useEffect(() => {
-    const userId = localStorage.getItem('userId');
-    if (userId) {
-      setFormData((prevData) => ({ ...prevData, userId }));
-    }
+    const fetchLaptops = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch('https://librarydbbackend.onrender.com/get-laptops');
+        const data = await response.json();
+        // Handle the new response format
+        if (data.success) {
+          setLaptops(data.data);
+        } else {
+          setErrorMessage('Error fetching laptops.');
+        }
+      } catch (error) {
+        console.error('Error fetching laptops:', error);
+        setErrorMessage('Error fetching laptops.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLaptops();
+    setLoggedInUserId(localStorage.getItem('loggedInUserId'));
   }, []);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
+  const handleLaptopSelection = (e) => {
+    setSelectedLaptop(e.target.value);
   };
-
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const token = localStorage.getItem('token'); // fetch the token
-
-    try{
+    const token = localStorage.getItem('token');
+    setErrorMessage('');
+    setLoading(true);
+  
+    const reservationDateTime = `${reservationDate}T${reservationTime}`;
+  
+    try {
       const response = await fetch('https://librarydbbackend.onrender.com/_laptopReservation', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({
+          user_id: loggedInUserId,
+          laptopId: selectedLaptop,
+          reservationDateTime: reservationDateTime,
+          duration: duration,
+        }),
       });
   
-      const data = await response.json();
-      
-      if (response.ok) {
-        alert('Reservation created successfully!');
-        // Reset form
-        setFormData({
-          userId: formData.userId, 
-          reservation_date_time: ''
-        });
-      } else {
-        alert(`Error: ${data.message}`);
+      let result;
+      try {
+        result = await response.json();
+      } catch (error) {
+        throw new Error('Server response was not in JSON format');
       }
-    } catch(error){
-      console.error('Error submitting reservation:', error);
-    alert('Error submitting reservation. Please try again.');
-    }    
+  
+      if (response.ok && result.success) {
+        setSuccessMessage(result.message);
+        setTimeout(() => {
+          setDuration(0);
+          setReservationTime('');
+          setReservationDate('');
+          setSelectedLaptop('');
+          setSuccessMessage('');
+        }, 2000);
+      } else {
+        setErrorMessage(result.message || 'Error making reservation. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setErrorMessage(
+        error.message === 'Server response was not in JSON format'
+          ? 'Server error: Invalid response format'
+          : 'Error making reservation. Please try again.'
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div>
-  <div style={{ padding: '20px', maxWidth: '500px', margin: '0 auto', background: '#fff', borderRadius: '8px', boxShadow: '0 0 10px rgba(0,0,0,0.1)' }}>
-    <h2 style={{ textAlign: 'center', color: '#333' }}>Laptop Reservation</h2>
-    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-      {/*
-      <div>
-        <label htmlFor="model_name">Model Name:</label>
-        <input
-          type="text"
-          id="model_name"
-          name="model_name"
-          value={formData.model_name}
-          onChange={handleChange}
-          required
-          style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
-        />
-      </div>
-      */}
+    <Box sx={{ maxWidth: 600, margin: 'auto', padding: 2 }}>
+      <Typography variant="h4" gutterBottom>
+        Laptop Reservation
+      </Typography>
 
-      <div>
-        <label htmlFor="reservation_date_time">Reservation Date & Time:</label>
-        <input
-          type="date"
-          id="reservation_date_time"
-          name="reservation_date_time"
-          value={formData.reservation_date_time}
-          onChange={handleChange}
-          required
-          style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
-        />
-      </div>
+      {loading ? (
+        <CircularProgress />
+      ) : (
+        <form onSubmit={handleSubmit}>
+          {/* Available Laptops */}
+          <FormControl fullWidth margin="normal">
+            <FormLabel htmlFor="laptop">Available Laptops</FormLabel>
+            <Select
+              id="laptop"
+              value={selectedLaptop}
+              onChange={handleLaptopSelection}
+              fullWidth
+              variant="outlined"
+              required
+            >
+              <MenuItem value="" disabled>Select a laptop</MenuItem>
+              {laptops.map((laptop) => (
+                <MenuItem key={laptop.laptop_ID} value={laptop.laptop_ID}>
+                  {laptop.model_name} - {laptop.serial_number}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
-      
-{/*
-      <div>
-        <label htmlFor="reservation_type">Reservation Type:</label>
-        <select
-          id="reservation_type"
-          name="reservation_type"
-          value={formData.reservation_type}
-          onChange={handleChange}
-          style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
-        >
-          <option value="">Select type</option>
-          <option value="book">Book</option>
-          <option value="periodical">Periodical</option>
-        </select>
-      </div>
-*/}
-      <button
-        type="submit"
-        style={{
-          width: '100%',
-          padding: '10px',
-          backgroundColor: '#d9534f',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer'
-        }}
-      >
-        Submit Reservation
-      </button>
-    </form>
-    </div>
-  </div>
+          {/* Laptop Details */}
+          {selectedLaptop && laptops.find(l => l.laptop_ID === selectedLaptop) && (
+            <Box sx={{ marginY: 2, padding: 2, bgcolor: '#f5f5f5', borderRadius: 1 }}>
+              <Typography variant="subtitle2">
+                {`Processor: ${laptops.find(l => l.laptop_ID === selectedLaptop).processor || 'N/A'}`}
+              </Typography>
+              <Typography variant="subtitle2">
+                {`Memory: ${laptops.find(l => l.laptop_ID === selectedLaptop).memory || 'N/A'}`}
+              </Typography>
+              <Typography variant="subtitle2">
+                {`Storage: ${laptops.find(l => l.laptop_ID === selectedLaptop).storage || 'N/A'}`}
+              </Typography>
+            </Box>
+          )}
+
+          {/* Reservation Date */}
+          <FormControl fullWidth margin="normal">
+            <FormLabel htmlFor="reservationDate">Reservation Date</FormLabel>
+            <TextField
+              type="date"
+              id="reservationDate"
+              name="reservationDate"
+              value={reservationDate}
+              onChange={(e) => setReservationDate(e.target.value)}
+              fullWidth
+              variant="outlined"
+              required
+              inputProps={{
+                min: new Date().toISOString().split('T')[0] // Prevent past dates
+              }}
+            />
+          </FormControl>
+
+          {/* Reservation Time */}
+          <FormControl fullWidth margin="normal">
+            <FormLabel htmlFor="reservationTime">Reservation Time</FormLabel>
+            <TextField
+              type="time"
+              id="reservationTime"
+              name="reservationTime"
+              value={reservationTime}
+              onChange={(e) => setReservationTime(e.target.value)}
+              fullWidth
+              variant="outlined"
+              required
+            />
+          </FormControl>
+
+          {/* Duration */}
+          <FormControl fullWidth margin="normal">
+            <FormLabel htmlFor="duration">Duration (hours)</FormLabel>
+            <TextField
+              type="number"
+              id="duration"
+              name="duration"
+              value={duration}
+              onChange={(e) => setDuration(Number(e.target.value))}
+              fullWidth
+              variant="outlined"
+              required
+              inputProps={{
+                min: 1,
+                max: 24 // Assuming maximum reservation duration is 24 hours
+              }}
+            />
+          </FormControl>
+
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            fullWidth
+            sx={{ marginTop: 2 }}
+            disabled={!selectedLaptop || !reservationDate || !reservationTime || !duration}
+          >
+            Reserve Laptop
+          </Button>
+        </form>
+      )}
+
+      {successMessage && (
+        <Typography variant="h6" color="green" sx={{ marginTop: 2 }}>
+          {successMessage}
+        </Typography>
+      )}
+
+      {errorMessage && (
+        <Typography variant="h6" color="error" sx={{ marginTop: 2 }}>
+          {errorMessage}
+        </Typography>
+      )}
+    </Box>
   );
 };
 
-export default LaptopReservationForm;
+export default LaptopReservation;
