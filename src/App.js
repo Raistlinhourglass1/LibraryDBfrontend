@@ -41,6 +41,7 @@ import HomePage from './HomePage';
 import BookCheckout from './BookCheckout';
 import StaffCatalog from './StaffCatalog';
 import LandingPage from './landingPage';
+import NavbarComponent from './Navbar'; // Ensure this line is present and correctly spelled
 
 
 
