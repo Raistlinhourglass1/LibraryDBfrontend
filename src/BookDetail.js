@@ -36,7 +36,7 @@ function BookDetail() {
     const fetchData = async () => {
       try {
         // Fetch the book data
-        const bookResponse = await fetch(`http://localhost:5000/books/${book_id}`);
+        const bookResponse = await fetch(`https://librarydbbackend.onrender.com/books/${book_id}`);
         if (!bookResponse.ok) throw new Error('Book not found');
         const bookData = await bookResponse.json();
         setBook(bookData);
@@ -44,7 +44,7 @@ function BookDetail() {
         // Fetch reviews only if the book has an ISBN
         if (bookData.isbn) {
           console.log('ISBN found:', bookData.isbn); 
-          const reviewsResponse = await fetch(`http://localhost:5000/reviews/${bookData.isbn}`);
+          const reviewsResponse = await fetch(`https://librarydbbackend.onrender.com/reviews/${bookData.isbn}`);
 
           if (!reviewsResponse.ok) throw new Error('Error fetching reviews');
 

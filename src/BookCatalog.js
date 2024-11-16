@@ -42,7 +42,7 @@ const books = catalogData
     if (!window.confirm('Are you sure you want to delete this book?')) return;
   
     try {
-      const response = await fetch('http://localhost:5000/soft-delete-book', {
+      const response = await fetch('https://librarydbbackend.onrender.com/soft-delete-book', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -67,7 +67,7 @@ const books = catalogData
 ////RESTORE BOOK
 const handleRestore = async (bookId) => {
   try {
-    const response = await fetch('http://localhost:5000/restore-book', {
+    const response = await fetch('https://librarydbbackend.onrender.com/restore-book', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

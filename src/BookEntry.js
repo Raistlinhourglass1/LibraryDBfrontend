@@ -161,7 +161,7 @@ function BookEntry({ book, onClose, fetchData }) {
         console.log('Original formData:', formData);
         
         try {
-            const response = await fetch('http://localhost:5000/book-entry', {
+            const response = await fetch('https://librarydbbackend.onrender.com/book-entry', {
                 method: method,
                 headers: {
                     'Content-Type': 'application/json',
