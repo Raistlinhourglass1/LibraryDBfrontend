@@ -82,7 +82,8 @@ function App() {
     <Router>
       {/* Pass userInfo, handleLogout, and fetchUserData to Navbar */}
       < Navbar userInfo={userInfo} onLogout={handleLogout} fetchProfileData={fetchUserData} />
-
+          {/* Navbar is conditionally rendered to exclude the LandingPage */}
+          {window.location.pathname !== '/landingpage' && <Navbar />}
       <Routes>
         {/* Public routes */}
         <Route path="/" element={<SignIn onLoginSuccess={() => fetchUserData(localStorage.getItem('token'))} />} />
