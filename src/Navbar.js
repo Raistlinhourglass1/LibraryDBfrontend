@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { NavDropdown, Navbar, Nav, Container } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const NavbarComponent = ({ userInfo, onLogout, fetchProfileData }) => {
   const navigate = useNavigate();
@@ -19,20 +20,19 @@ const NavbarComponent = ({ userInfo, onLogout, fetchProfileData }) => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link href="/ProfilePage2">Home</Nav.Link>
+            <Nav.Link href="/home">Home</Nav.Link>
             <Nav.Link href="/search">Search</Nav.Link>
             <Nav.Link href="/reserve-room">Room reservation</Nav.Link>
             <Nav.Link href="/feedback">Book Reviews</Nav.Link>
 
-            {/* Conditionally render Staff Functions if userInfo is available and has the correct role */}
+            {/* Conditionally render Staff Functions only if userInfo is available and has the correct role */}
             {userInfo && (userInfo.user_level === 'Admin' || userInfo.user_level === 'Staff') && (
               <NavDropdown title="Staff Functions" id="staff-functions-dropdown">
-                {/* Admin-only options */}
                 {userInfo.user_level === 'Admin' && (
-                  <NavDropdown.Item href="/addstaff">Add a Staff Member</NavDropdown.Item>
+                  <NavDropdown title="Admin Functions" id="admin-functions-dropdown" drop="end">
+                    <NavDropdown.Item href="/addstaff">Add a Staff Member</NavDropdown.Item>
+                  </NavDropdown>
                 )}
-                
-                {/* Staff and Admin options */}
                 <NavDropdown.Item href="/reports">Create a Report</NavDropdown.Item>
                 <NavDropdown.Item href="/create-room">Add a Room</NavDropdown.Item>
                 <NavDropdown.Item href="/catalog-entry/book">Add a Book</NavDropdown.Item>
