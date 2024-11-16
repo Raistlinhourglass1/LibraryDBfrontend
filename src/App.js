@@ -82,11 +82,10 @@ function App() {
     <Router>
       {/* Pass userInfo, handleLogout, and fetchUserData to Navbar */}
       < Navbar userInfo={userInfo} onLogout={handleLogout} fetchProfileData={fetchUserData} />
-          {/* Navbar is conditionally rendered to exclude the LandingPage */}
-          {window.location.pathname !== '/' && <Navbar />}
+
       <Routes>
         {/* Public routes */}
-        <Route path="/" element={<LandingPage />} />  {/*removed SignIn onLoginSuccess={() => fetchUserData(localStorage.getItem('token'))}*/}
+        <Route path="/" element={<SignIn onLoginSuccess={() => fetchUserData(localStorage.getItem('token'))} />} />
         <Route path="/signin" element={<SignIn onLoginSuccess={() => fetchUserData(localStorage.getItem('token'))} />} />
         <Route path="/signup" element={<SignUp />} />
 
@@ -120,10 +119,6 @@ function App() {
         <Route path="/_bookReservation" element={<ProtectedRoute><_bookReservation /></ProtectedRoute>} />
         <Route path="/_laptopReservation" element={<ProtectedRoute><_laptopReservation /></ProtectedRoute>} />
         <Route path="/_calculatorReservation" element={<ProtectedRoute><_calculatorReservation /></ProtectedRoute>} />
-        <Route path="/checkout" element={<ProtectedRoute><BookCheckout  /></ProtectedRoute>} />
-        <Route path="/catalog" element={<ProtectedRoute><StaffCatalog /></ProtectedRoute>} />
-        <Route path="/test" element={<ProtectedRoute><TestBookSearch /></ProtectedRoute>} />
-
       </Routes>
     </Router>
   );

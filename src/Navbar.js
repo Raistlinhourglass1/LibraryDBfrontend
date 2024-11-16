@@ -20,7 +20,7 @@ const NavbarComponent = ({ userInfo, onLogout, fetchProfileData }) => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link href="/home">Home</Nav.Link>
+            <Nav.Link href="/ProfilePage2">Home</Nav.Link>
             <Nav.Link href="/search">Search</Nav.Link>
             <Nav.Link href="/reserve-room">Room reservation</Nav.Link>
             <Nav.Link href="/feedback">Book Reviews</Nav.Link>
@@ -42,6 +42,13 @@ const NavbarComponent = ({ userInfo, onLogout, fetchProfileData }) => {
               </NavDropdown>
             )}
           </Nav>
+
+          {/* Show logout button if user is logged in */}
+          {userInfo ? (
+            <Nav.Link onClick={onLogout}>Logout</Nav.Link>
+          ) : (
+            <Nav.Link href="/SignIn">Sign In</Nav.Link>
+          )}
         </Navbar.Collapse>
       </Container>
     </Navbar>
