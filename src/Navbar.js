@@ -42,13 +42,6 @@ const NavbarComponent = ({ userInfo, onLogout, fetchProfileData }) => {
               </NavDropdown>
             )}
           </Nav>
-
-          {/* Show logout button if user is logged in */}
-          {userInfo ? (
-            <Nav.Link onClick={onLogout}>Logout</Nav.Link>
-          ) : (
-            <Nav.Link href="/SignIn">Sign In</Nav.Link>
-          )}
         </Navbar.Collapse>
       </Container>
     </Navbar>
