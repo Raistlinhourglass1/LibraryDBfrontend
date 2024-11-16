@@ -89,12 +89,12 @@ function App() {
       )}
       <Routes>
         {/* Public routes */}
-        <Route path="/" element={<SignIn onLoginSuccess={() => fetchUserData(localStorage.getItem('token'))} />} />
+        <Route path="/" element={<LandingPage onLoginSuccess={() => fetchUserData(localStorage.getItem('token'))} />} />
         <Route path="/signin" element={<SignIn onLoginSuccess={() => fetchUserData(localStorage.getItem('token'))} />} />
         <Route path="/signup" element={<SignUp />} />
 
         {/* Protected routes */}
-        <Route path="/home" element={<ProtectedRoute><ProfilePage2 /></ProtectedRoute>} />
+        <Route path="/home" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
         <Route path="/addstaff" element={<ProtectedRoute><AddStaff /></ProtectedRoute>} />
         <Route path="/fines" element={<ProtectedRoute><Fines /></ProtectedRoute>} />
         <Route path="/StudentBookFines" element={<ProtectedRoute><StudentBookFines /></ProtectedRoute>} />

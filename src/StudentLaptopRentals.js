@@ -4,19 +4,16 @@ import Chip from '@mui/material/Chip';
 import axios from 'axios';
 import AppTheme from './AppTheme';
 import { addDays, differenceInDays } from 'date-fns';
-import { Box,Button,} from '@mui/material';
-
+import { Box, Button } from '@mui/material';
 
 function renderStatus(status) {
   const colors = {
     Early: 'success',
     Late: 'error',
+    overdue: 'error'
   };
   return <Chip label={status} color={colors[status]} size="small" />;
 }
-
-
-
 
 const calculateTimeDue = (reservationDateTime) => {
   const now = new Date();
@@ -38,38 +35,48 @@ const calculateAmountDue = (overdueDays) => {
   return overdueDays * ratePerDay;
 };
 
-
 const StudentLaptopRentals = ({ userId, ...props }) => {
   const [rows, setRows] = useState([]);
 
-  
   const handleCancelReservation = async (reservationId, laptopId) => {
     try {
       const token = localStorage.getItem('token');
       await axios.post('https://librarydbbackend.onrender.com/cancel-laptop-reservation', {
         reservationId,
-        laptopId  // Fixed variable name to match backend
+        laptopId
       }, {
         headers: { 
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'  // Added content type header
+          'Content-Type': 'application/json'
         },
       });
   
-      // Fetch updated reservations after cancellation
       const response = await axios.get('https://librarydbbackend.onrender.com/laptop_reservations', {
         headers: { Authorization: `Bearer ${token}` },
       });
       setRows(response.data);
     } catch (error) {
       console.error('Error cancelling reservation:', error);
-      // Add user feedback for errors
       alert('Failed to cancel reservation. Please try again.');
     }
   };
 
+  // Function to update reservation status in the backend
+  const updateReservationStatus = async (reservationId) => {
+    const token = localStorage.getItem('token');
+    try {
+      await axios.post(
+        'https://librarydbbackend.onrender.com/update-reservation-status',
+        { reservationId, status: 'overdue' },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      console.log(`Status for reservation ${reservationId} set to 'overdue'`);
+    } catch (error) {
+      console.error(`Error updating reservation ${reservationId} to overdue:`, error);
+    }
+  };
 
-  // Send overdue email
+  // Function to send overdue email
   const sendOverdueEmail = (reservationDetails) => {
     const token = localStorage.getItem('token');
     return axios.post(
@@ -82,7 +89,6 @@ const StudentLaptopRentals = ({ userId, ...props }) => {
   };
 
   const columns = [
-    //{ field: 'reservation_id', headerName: 'Reservation ID', width: 150 },
     {
       field: 'reservation_date_time',
       headerName: 'Reservation Date & Time',
@@ -135,41 +141,27 @@ const StudentLaptopRentals = ({ userId, ...props }) => {
       ),
     },
   ];
-  
-
-
-
-
-
-
-
 
   useEffect(() => {
     const token = localStorage.getItem('token');
 
-    // Fetch laptop reservations
     axios.get('https://librarydbbackend.onrender.com/laptop_reservations', {
       headers: { Authorization: `Bearer ${token}` },
     })
     .then((response) => {
-      // Filter reservations by userId
       const userRows = response.data.filter((row) => row.user_id === userId);
       setRows(userRows);
 
-      // Send overdue email for "Late" reservations
-      const lateEmails = userRows.map(async (row) => {
+      // Check each reservation and handle overdue status and email sending
+      userRows.forEach(async (row) => {
         const { status, overdueDays } = calculateTimeDue(row.reservation_date_time);
         
-        // Check if the reservation is "Late" and not yet notified
-        if (status === 'Late' && !row.notified) {
+        // If status is "Late", update to "overdue" in backend and send email
+        if (status === 'Late' && row.reservation_status !== 'overdue') {
+          await updateReservationStatus(row.reservation_id); // Update DB status to "overdue"
           await sendOverdueEmail({ reservation_id: row.reservation_id, overdueDays });
-          row.notified = true; // Ideally update backend
         }
       });
-
-      // Execute all email notifications concurrently
-      Promise.all(lateEmails).then(() => setRows([...userRows])); // Update rows to reflect notified status
-
     })
     .catch((error) => {
       console.error('Error fetching laptop reservations:', error);
