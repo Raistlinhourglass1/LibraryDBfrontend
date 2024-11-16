@@ -5,15 +5,13 @@ import Button from '@mui/material/Button';
 import axios from 'axios';
 import AppTheme from './AppTheme';
 import { DataGrid } from '@mui/x-data-grid';
-import { differenceInDays, differenceInHours, addDays } from 'date-fns';
+import { differenceInHours, addDays } from 'date-fns';
 
 function renderStatus(status) {
   const colors = {
     Ongoing: 'success',
     Ended: 'error',
     Canceled: 'default',
-    Early: 'success',
-    Late: 'error',
   };
   return <Chip label={status} color={colors[status] || 'default'} size="small" />;
 }
@@ -29,31 +27,26 @@ const calculateTimeDue = (dueDate, status) => {
 
   if (hoursDifference > 0) {
     return { status: 'Ended', timeDue: `${hoursDifference} hours overdue`, overdueHours: hoursDifference };
-  } else if (hoursDifference === 0) {
-    return { status: 'Ongoing', timeDue: 'Due today', overdueHours: 0 };
   } else {
     return { status: 'Ongoing', timeDue: `${Math.abs(hoursDifference)} hours remaining`, overdueHours: 0 };
   }
 };
 
-const calculateAmountDue = (overdueHours) => {
-  const ratePerHour = 20;
-  return overdueHours * ratePerHour;
-};
+const calculateAmountDue = (overdueHours) => overdueHours * 20;
 
 export default function StudentBookRentals(props) {
   const [rows, setRows] = useState([]);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    console.log("Token found:", token);
-    
+    fetchBookReservations(token);
+  }, []);
+
+  const fetchBookReservations = (token) => {
     axios.get('https://librarydbbackend.onrender.com/booktable_reservations', {
       headers: { Authorization: `Bearer ${token}` },
     })
     .then((response) => {
-      console.log("Fetched data from /booktable_reservations:", response.data);
-      
       if (Array.isArray(response.data)) {
         const bookRows = response.data.map((book) => {
           const dueDate = addDays(new Date(book.reservation_date_time), 14);
@@ -62,7 +55,7 @@ export default function StudentBookRentals(props) {
             title: book.book_title,
             author: book.book_author,
             dueDate: dueDate,
-            status: book.reservation_status, // Assumes `reservation_status` from the backend
+            status: book.reservation_status,
           };
         });
         setRows(bookRows);
@@ -76,20 +69,16 @@ export default function StudentBookRentals(props) {
         console.warn('Unauthorized access - possibly due to an invalid token.');
       }
     });
-  }, []);
+  };
 
   const handleCancelReservation = async (reservationId) => {
+    const token = localStorage.getItem('token');
     try {
-      const token = localStorage.getItem('token');
       await axios.post('https://librarydbbackend.onrender.com/cancel-reservation', 
         { reservationId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      // Fetch the updated list of reservations after canceling
-      const response = await axios.get('https://librarydbbackend.onrender.com/booktable_reservations', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setRows(response.data);
+      fetchBookReservations(token); // Refresh data after canceling
     } catch (error) {
       alert('Error while canceling the reservation.');
       console.error('Error cancelling reservation:', error);
@@ -107,21 +96,9 @@ export default function StudentBookRentals(props) {
         return renderStatus(status);
       },
     },
-    {
-      field: 'title',
-      headerName: 'Book Title',
-      width: 150,
-    },
-    {
-      field: 'author',
-      headerName: 'Author',
-      width: 150,
-    },
-    {
-      field: 'dueDate',
-      headerName: 'Due Date',
-      width: 150,
-    },
+    { field: 'title', headerName: 'Book Title', width: 150 },
+    { field: 'author', headerName: 'Author', width: 150 },
+    { field: 'dueDate', headerName: 'Due Date', width: 150 },
     {
       field: 'elapsedTime',
       headerName: 'Time Overdue',
@@ -139,8 +116,7 @@ export default function StudentBookRentals(props) {
       sortable: false,
       renderCell: (params) => {
         const { overdueHours } = calculateTimeDue(params.row.dueDate, params.row.status);
-        const amountDue = overdueHours > 0 ? calculateAmountDue(overdueHours) : 0;
-        return `$${amountDue}`;
+        return `$${calculateAmountDue(overdueHours)}`;
       },
     },
     {
