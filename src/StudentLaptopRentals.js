@@ -77,16 +77,16 @@ const StudentLaptopRentals = ({ userId, ...props }) => {
   };
 
   // Function to send overdue email
-  const sendOverdueEmail = (reservationDetails) => {
-    const token = localStorage.getItem('token');
-    return axios.post(
-      'https://librarydbbackend.onrender.com/send-overdue-email',
-      { reservationDetails },
-      { headers: { Authorization: `Bearer ${token}` } }
-    )
-    .then(() => console.log('Overdue email sent'))
-    .catch((error) => console.error('Error sending overdue email:', error));
-  };
+const sendOverdueEmail = (reservation_id) => {
+  const token = localStorage.getItem('token');
+  return axios.post(
+    'https://librarydbbackend.onrender.com/send-overdue-email',
+    { reservation_id },
+    { headers: { Authorization: `Bearer ${token}` } }
+  )
+  .then(() => console.log('Overdue email sent'))
+  .catch((error) => console.error('Error sending overdue email:', error));
+};
 
   const columns = [
     {
@@ -159,7 +159,7 @@ const StudentLaptopRentals = ({ userId, ...props }) => {
         // If status is "Late", update to "overdue" in backend and send email
         if (status === 'Late' && row.reservation_status !== 'overdue') {
           await updateReservationStatus(row.reservation_id); // Update DB status to "overdue"
-          await sendOverdueEmail({ reservation_id: row.reservation_id, overdueDays });
+          await sendOverdueEmail(row.reservation_id);
         }
       });
     })
