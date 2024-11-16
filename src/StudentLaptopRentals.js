@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
 import Chip from '@mui/material/Chip';
 import axios from 'axios';
 import AppTheme from './AppTheme';
 import { addDays, differenceInDays } from 'date-fns';
+import { Box,Button,} from '@mui/material';
+
 
 function renderStatus(status) {
   const colors = {
@@ -14,30 +15,7 @@ function renderStatus(status) {
   return <Chip label={status} color={colors[status]} size="small" />;
 }
 
-const handleCancelReservation = async (reservationId, laptopId) => {
-  try {
-    const token = localStorage.getItem('token');
-    await axios.post('https://librarydbbackend.onrender.com/cancel-laptop-reservation', {
-      reservationId,
-      laptopId  // Fixed variable name to match backend
-    }, {
-      headers: { 
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json'  // Added content type header
-      },
-    });
 
-    // Fetch updated reservations after cancellation
-    const response = await axios.get('https://librarydbbackend.onrender.com/laptop_reservations', {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    setRows(response.data);
-  } catch (error) {
-    console.error('Error cancelling reservation:', error);
-    // Add user feedback for errors
-    alert('Failed to cancel reservation. Please try again.');
-  }
-};
 
 
 const calculateTimeDue = (reservationDateTime) => {
@@ -60,65 +38,37 @@ const calculateAmountDue = (overdueDays) => {
   return overdueDays * ratePerDay;
 };
 
-const columns = [
-  //{ field: 'reservation_id', headerName: 'Reservation ID', width: 150 },
-  {
-    field: 'reservation_date_time',
-    headerName: 'Reservation Date & Time',
-    width: 200,
-  },
-  {
-    field: 'status',
-    headerName: 'Status',
-    width: 100,
-    sortable: false,
-    renderCell: (params) => {
-      const { status } = calculateTimeDue(params.row.reservation_date_time);
-      return renderStatus(status);
-    },
-  },
-  {
-    field: 'time_due',
-    headerName: 'Time Due',
-    width: 160,
-    sortable: false,
-    renderCell: (params) => {
-      const { timeDue } = calculateTimeDue(params.row.reservation_date_time);
-      return timeDue;
-    },
-  },
-  {
-    field: 'amount_due',
-    headerName: 'Amount Due',
-    width: 140,
-    sortable: false,
-    renderCell: (params) => {
-      const { overdueDays } = calculateTimeDue(params.row.reservation_date_time);
-      const amountDue = calculateAmountDue(overdueDays);
-      return `$${amountDue}`;
-    },
-  },
-  {
-    field: 'cancel',
-    headerName: 'Cancel Reservation',
-    width: 160,
-    sortable: false,
-    renderCell: (params) => (
-      <Button
-        variant="outlined"
-        color="secondary"
-        onClick={() => handleCancelReservation(params.row.reservation_id, params.row.laptop_id)}
-      >
-        Cancel
-      </Button>
-    ),
-  },
-];
 
 const StudentLaptopRentals = ({ userId, ...props }) => {
   const [rows, setRows] = useState([]);
 
   
+  const handleCancelReservation = async (reservationId, laptopId) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post('https://librarydbbackend.onrender.com/cancel-laptop-reservation', {
+        reservationId,
+        laptopId  // Fixed variable name to match backend
+      }, {
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'  // Added content type header
+        },
+      });
+  
+      // Fetch updated reservations after cancellation
+      const response = await axios.get('https://librarydbbackend.onrender.com/laptop_reservations', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setRows(response.data);
+    } catch (error) {
+      console.error('Error cancelling reservation:', error);
+      // Add user feedback for errors
+      alert('Failed to cancel reservation. Please try again.');
+    }
+  };
+
+
   // Send overdue email
   const sendOverdueEmail = (reservationDetails) => {
     const token = localStorage.getItem('token');
@@ -130,6 +80,69 @@ const StudentLaptopRentals = ({ userId, ...props }) => {
     .then(() => console.log('Overdue email sent'))
     .catch((error) => console.error('Error sending overdue email:', error));
   };
+
+  const columns = [
+    //{ field: 'reservation_id', headerName: 'Reservation ID', width: 150 },
+    {
+      field: 'reservation_date_time',
+      headerName: 'Reservation Date & Time',
+      width: 200,
+    },
+    {
+      field: 'status',
+      headerName: 'Status',
+      width: 100,
+      sortable: false,
+      renderCell: (params) => {
+        const { status } = calculateTimeDue(params.row.reservation_date_time);
+        return renderStatus(status);
+      },
+    },
+    {
+      field: 'time_due',
+      headerName: 'Time Due',
+      width: 160,
+      sortable: false,
+      renderCell: (params) => {
+        const { timeDue } = calculateTimeDue(params.row.reservation_date_time);
+        return timeDue;
+      },
+    },
+    {
+      field: 'amount_due',
+      headerName: 'Amount Due',
+      width: 140,
+      sortable: false,
+      renderCell: (params) => {
+        const { overdueDays } = calculateTimeDue(params.row.reservation_date_time);
+        const amountDue = calculateAmountDue(overdueDays);
+        return `$${amountDue}`;
+      },
+    },
+    {
+      field: 'cancel',
+      headerName: 'Cancel Reservation',
+      width: 160,
+      sortable: false,
+      renderCell: (params) => (
+        <Button
+          variant="outlined"
+          color="secondary"
+          onClick={() => handleCancelReservation(params.row.reservation_id, params.row.laptop_id)}
+        >
+          Cancel
+        </Button>
+      ),
+    },
+  ];
+  
+
+
+
+
+
+
+
 
   useEffect(() => {
     const token = localStorage.getItem('token');

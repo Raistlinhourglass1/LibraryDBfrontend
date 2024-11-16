@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
 import Chip from '@mui/material/Chip';
 import axios from 'axios';
 import AppTheme from './AppTheme';
 import { addDays, differenceInDays } from 'date-fns';
-
+import {
+  Box,
+  Button,
+} from '@mui/material';
 function renderStatus(status) {
   const colors = {
     Early: 'success',
@@ -28,6 +30,32 @@ const calculateTimeDue = (reservationDateTime) => {
     return { status: 'Early', timeDue: `${Math.abs(daysDifference)} days remaining`, overdueDays: 0 };
   }
 };
+
+const handleCancelReservation = async (reservationId, calculatorId, setRows) => {
+  try {
+    const token = localStorage.getItem('token');
+    
+    // Send both IDs in the request body
+    await axios.post('https://librarydbbackend.onrender.com/cancel-cal-reservation', {
+      reservationId,
+      calculatorId
+    }, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    // Refresh the data after successful cancellation
+    const response = await axios.get('https://librarydbbackend.onrender.com/calculator_reservations', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    
+    setRows(response.data);
+  } catch (error) {
+    console.error('Error cancelling reservation:', error);
+  }
+};
+
+
+
 
 const calculateAmountDue = (overdueDays) => {
   const ratePerDay = 20;
@@ -106,29 +134,7 @@ const StudentCalculatorRentals = ({ userId, ...props }) => {
   };
 
 
-  const handleCancelReservation = async (reservationId, calculatorId, setRows) => {
-    try {
-      const token = localStorage.getItem('token');
-      
-      // Send both IDs in the request body
-      await axios.post('https://librarydbbackend.onrender.com/cancel-cal-reservation', {
-        reservationId,
-        calculatorId
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
   
-      // Refresh the data after successful cancellation
-      const response = await axios.get('https://librarydbbackend.onrender.com/calculator_reservations', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      
-      setRows(response.data);
-    } catch (error) {
-      console.error('Error cancelling reservation:', error);
-    }
-  };
-
 
 
 
