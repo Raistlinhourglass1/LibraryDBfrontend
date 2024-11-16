@@ -83,8 +83,8 @@ function App() {
     <Router>
 {/* Conditionally render NavbarComponent based on the current path */}
 {window.location.pathname !== '/' &&
-        window.location.pathname !== '/signin' &&
-        window.location.pathname !== '/signup' && (
+        window.location.pathname !== '/SignIn' &&
+        window.location.pathname !== '/SignUp' && (
           <NavbarComponent userInfo={userInfo} onLogout={handleLogout} fetchProfileData={fetchUserData} />
       )}
       <Routes>

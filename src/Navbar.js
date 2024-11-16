@@ -24,7 +24,13 @@ const NavbarComponent = ({ userInfo, onLogout, fetchProfileData }) => {
             <Nav.Link href="/search">Search</Nav.Link>
             <Nav.Link href="/reserve-room">Room reservation</Nav.Link>
             <Nav.Link href="/feedback">Book Reviews</Nav.Link>
-
+            <NavDropdown title="Rent Device" id="basic-nav-dropdown">
+              <NavDropdown.Item href="/_laptopReservation">Laptops</NavDropdown.Item>
+              <NavDropdown.Item href="/_calculatorReservation">
+                Calculator
+              </NavDropdown.Item>
+              <NavDropdown.Divider />
+            </NavDropdown>
             {/* Conditionally render Staff Functions only if userInfo is available and has the correct role */}
             {userInfo && (userInfo.user_level === 'Admin' || userInfo.user_level === 'Staff') && (
               <NavDropdown title="Staff Functions" id="staff-functions-dropdown">
