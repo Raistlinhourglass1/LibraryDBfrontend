@@ -37,6 +37,15 @@ import _laptopEntry from './_laptopEntry';
 import Home from './HomePage';
 import TestBookSearch from './TestBookSearch';
 import AddStaff from './addstaff';
+import HomePage from './HomePage';
+import BookCheckout from './BookCheckout';
+import StaffCatalog from './StaffCatalog';
+
+
+
+
+
+
 
 function App() {
   const [userInfo, setUserInfo] = useState(null);
@@ -110,6 +119,10 @@ function App() {
         <Route path="/_bookReservation" element={<ProtectedRoute><_bookReservation /></ProtectedRoute>} />
         <Route path="/_laptopReservation" element={<ProtectedRoute><_laptopReservation /></ProtectedRoute>} />
         <Route path="/_calculatorReservation" element={<ProtectedRoute><_calculatorReservation /></ProtectedRoute>} />
+        <Route path="/checkout" element={<ProtectedRoute><BookCheckout  /></ProtectedRoute>} />
+        <Route path="/catalog" element={<ProtectedRoute><StaffCatalog /></ProtectedRoute>} />
+        <Route path="/test" element={<ProtectedRoute><TestBookSearch /></ProtectedRoute>} />
+
       </Routes>
     </Router>
   );
