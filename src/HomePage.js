@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { AppBar, Toolbar, Typography, Button, IconButton, Box, Container, TextField, Link, Grid, Menu, MenuItem, Card, CardMedia, CardContent } from '@mui/material';
+import { AppBar, Toolbar, Typography, Button, IconButton, Box, Container, TextField, Link, Menu, MenuItem, Card, CardMedia, CardContent } from '@mui/material';
+import { Skeleton } from '@mui/material';
+import Grid from '@mui/material/Grid2';
 import { useNavigate } from 'react-router-dom';
 import SearchIcon from '@mui/icons-material/Search';
 import bgImage from './external/library_homepage.jpg';
 import BookSearch from './BookSearch';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import axios from 'axios';
 
 const HomePage = () => {
   const navigate = useNavigate();
   const [staffChoiceBooks, setStaffChoiceBooks] = useState([]);
   const [latestEntries, setLatestEntries] = useState([]);
   const [term, setTerm] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const handleSearch = () => {
     if (term.trim()) {
@@ -19,21 +24,45 @@ const HomePage = () => {
     }
   };
 
-  // Fetch data for Staff's Choice and Latest Entries
-  /*
-  useEffect(() => {
-    fetch('/api/staff-choice')
-      .then((res) => res.json())
-      .then((data) => setStaffChoiceBooks(data));
+  const fetchStaffChoice = async () => {
+    try {
+      const response = await axios.get('https://librarydbbackend.onrender.com/staff-choice');
+      console.log('Fetched data:', response.data);
+      setStaffChoiceBooks(response.data);
+      console.log('Fetched staff:', staffChoiceBooks);
+    } catch (err) {
+      console.error('Error fetching data:', err);
+      setError('Failed to fetch staff choice books.');
+    }
 
-    fetch('/api/latest-entries')
-      .then((res) => res.json())
-      .then((data) => setLatestEntries(data));
+  };
+
+  const fetchLatestEntries = async () => {
+    try {
+      const response = await axios.get('https://librarydbbackend.onrender.com/latest-entries');
+      console.log('Fetched data:', response.data);
+      setLatestEntries(response.data);
+      console.log('Fetched entry:', latestEntries);
+    } catch (err) {
+      console.error('Error fetching data:', err);
+      setError('Failed to fetch latest entry books.');
+    }
+
+  };
+
+
+  // Fetch data for Staff's Choice and Latest Entries
+  useEffect(() => {
+    fetchStaffChoice();
+      console.log(staffChoiceBooks)
+
+      fetchLatestEntries();
+      console.log(latestEntries)
   }, []);
 
   const handleSignOut = () => {
     navigate('/sign-in');
-  };*/
+  };
   
   const [anchorEl, setAnchorEl] = useState(null);  // To control the dropdown menu
 
@@ -45,6 +74,30 @@ const HomePage = () => {
   const handleClose = () => {
     setAnchorEl(null);  // This closes the Menu
   };
+
+  if (!staffChoiceBooks) {
+    // Display skeleton loading placeholders while data is being fetched
+    return (
+        <Container>
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 3 }}>
+                <Typography variant="h4" gutterBottom>
+                    <Skeleton width={200} />
+                </Typography>
+                <Card sx={{ maxWidth: 345 }}>
+                    <Skeleton variant="rectangular" width="100%" height={400} />
+                    <CardContent>
+                        <Skeleton height={30} width="60%" />
+                        <Skeleton height={20} width="40%" />
+                        <Skeleton height={15} width="80%" />
+                        <Skeleton height={15} width="70%" />
+                        <Skeleton height={40} width="100%" />
+                    </CardContent>
+                </Card>
+            </Box>
+        </Container>
+    );
+}
+
 
   return (
     <Box>
@@ -123,21 +176,23 @@ const HomePage = () => {
         </Box>
 
       {/* Book Rows */}
-      <Container sx={{ mt: 4 }}>
+      <Container maxWidth='xl' sx={{ mt: 4 }}>
         {/* Staff's Choice */}
         <Typography variant="h5" sx={{ mb: 2 }}>Staff's Choice</Typography>
-        <Grid container spacing={2}>
+        <Grid container spacing={3}>
           {staffChoiceBooks.map((book) => (
-            <Grid item xs={12} sm={6} md={3} key={book.book_id}>
-              <Card>
+            <Grid item size={2.25} key={book.book_id}>
+              <Card sx={{ width: 250, height: 300 }}>
                 <CardMedia
                   component="img"
-                  image={book.cover_image}
-                  alt={book.title}
+                  image={`https://covers.openlibrary.org/b/isbn/${book.isbn}-L.jpg`}
+                  alt={book.book_title}
                   height="200"
                 />
                 <CardContent>
-                  <Typography variant="subtitle1">{book.title}</Typography>
+                <Link href={`/books/${book.book_id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                  <Typography variant="subtitle2">{book.book_title}</Typography>
+                  </Link>
                 </CardContent>
               </Card>
             </Grid>
@@ -148,16 +203,18 @@ const HomePage = () => {
         <Typography variant="h5" sx={{ mt: 4, mb: 2 }}>Latest Entries</Typography>
         <Grid container spacing={2}>
           {latestEntries.map((book) => (
-            <Grid item xs={12} sm={6} md={3} key={book.book_id}>
-              <Card>
+            <Grid item size={2.25} key={book.book_id}>
+              <Card sx={{ width: 250, height: 300 }}>
                 <CardMedia
                   component="img"
-                  image={book.cover_image}
-                  alt={book.title}
+                  image={`https://covers.openlibrary.org/b/isbn/${book.isbn}-L.jpg`}
+                  alt={book.book_title}
                   height="200"
                 />
                 <CardContent>
-                  <Typography variant="subtitle1">{book.title}</Typography>
+                <Link href={`/books/${book.book_id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                  <Typography variant="subtitle2">{book.book_title}</Typography>
+                </Link>
                 </CardContent>
               </Card>
             </Grid>

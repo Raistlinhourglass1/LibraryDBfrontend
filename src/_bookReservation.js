@@ -140,14 +140,14 @@ const BookReservationForm = () => {
           <Button
             variant="contained"
             color="primary"
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/ProfilePage2')}
             sx={{
               padding: '10px 20px',
               fontSize: '1rem',
               borderRadius: '8px',
             }}
           >
-            Go Back to Home
+            Go to My Profile
           </Button>
         )}
       </Box>
