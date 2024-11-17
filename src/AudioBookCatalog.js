@@ -34,9 +34,9 @@ const AudioBookCatalog = ({ catalogData, fetchData }) => {
       return dateB - dateA; // Sort descending
     });
 
-    {/*
+
   // Deleting Audiobook
-  const handleDelete = async (audiobookId) => {
+  const handleDelete = async (audiobookId) => {/*
     if (!window.confirm('Are you sure you want to delete this audiobook?')) return;
     
     try {
@@ -59,10 +59,10 @@ const AudioBookCatalog = ({ catalogData, fetchData }) => {
       console.error('Error deleting audiobook:', error);
       alert('Failed to delete the audiobook. Please try again.');
     }
-  };
+  */};
 
   // Restoring Audiobook
-  const handleRestore = async (audiobookId) => {
+  const handleRestore = async (audiobookId) => {/*
     try {
       const response = await fetch('http://localhost:5000/restore-audiobook', {
         method: 'PUT',
@@ -84,7 +84,7 @@ const AudioBookCatalog = ({ catalogData, fetchData }) => {
     } catch (error) {
       console.error('Error restoring audiobook:', error);
     }
-  }; */}
+    */}; 
 
   // Toggle for deleted audiobooks visibility
   const [viewOption, setViewOption] = useState('showNormal'); // Default to show normal audiobooks only

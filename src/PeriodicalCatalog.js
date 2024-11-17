@@ -31,8 +31,8 @@ const PeriodicalCatalog = ({ periodicalData, fetchData }) => {
         setOpenAddDialog(false);
         setSelectedPeriodical(null); // Clear selected periodical when dialog is closed
       };
-{/*
-      const handleDelete = async (periodicalId) => {
+
+      const handleDelete = async (periodicalId) => {/*
         if (!window.confirm('Are you sure you want to delete this periodical?')) return;
     
         try {
@@ -55,8 +55,8 @@ const PeriodicalCatalog = ({ periodicalData, fetchData }) => {
           console.error('Error deleting periodical:', error);
           alert('Failed to delete the periodical. Please try again.');
         }
-      };
-
+      */};
+{/*
     // Fetch periodicals from the API
     useEffect(() => {
         const fetchPeriodicals = async () => {
