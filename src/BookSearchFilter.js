@@ -83,7 +83,7 @@ function BookSearchFilter({ books, onFilter }) {
             <FormControlLabel value="lost" control={<Radio />} label="Lost" />
           </RadioGroup>
         </FormControl>
-
+{/*
           <Typography>Exclude</Typography>
           <Accordion>
             <AccordionSummary
@@ -154,7 +154,7 @@ function BookSearchFilter({ books, onFilter }) {
             </Typography>
           </AccordionDetails>
         </Accordion>
-
+        */}
         {/* Apply Filter Button */}
         <Button
           variant="contained"

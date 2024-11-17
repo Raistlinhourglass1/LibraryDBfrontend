@@ -1,42 +1,25 @@
 import React, { useState } from 'react';
-import { Breadcrumbs, Box, Button, Container, Link, MenuItem, Stack, TextField, Typography } from '@mui/material';
-import { DatePicker, LocalizationProvider  } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { Breadcrumbs, Box, Button, CssBaseline, Container, Link, MenuItem, Stack, TextField, ThemeProvider, Typography } from '@mui/material';
+import Grid from '@mui/material/Grid2';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
+import ClaudeTheme from './ClaudeTheme';
 
 const format = [
-    {
-        value: 'pdf',
-        label: 'PDF',
-    },
-    {
-        value: 'epub',
-        label: 'EPUB',
-    },
-    {
-        value: 'online',
-        label: 'Online',
-    }
+    { value: 'pdf', label: 'PDF' },
+    { value: 'epub', label: 'EPUB' },
+    { value: 'online', label: 'Online' },
 ];
 
 const access_type = [
-    {
-        value: 'open access',
-        label: 'Open Access',
-    },
-    {
-        value: 'subscription-based',
-        label: 'Subscription-Based',
-    },
-    {
-        value: 'library patrons only',
-        label: 'Library Patrons Only',
-    }
+    { value: 'open access', label: 'Open Access' },
+    { value: 'subscription-based', label: 'Subscription-Based' },
+    { value: 'library patrons only', label: 'Library Patrons Only' },
 ];
 
 function EBookEntry() {
-    const [cleared, setCleared] = React.useState(false);
-    
+    const [cleared, setCleared] = useState(false);
     const [formData, setFormData] = useState({
         ebIsbn: '',
         ebTitle: '',
@@ -47,36 +30,38 @@ function EBookEntry() {
         ebLanguage: '',
         ebDate: '',
         ebFormat: '',
-        ebUrl:'',
+        ebUrl: '',
         ebAccessType: '',
         ebNumCopies: '',
         ebSummary: '',
         ebNotes: '',
     });
 
-    const [message, setMessage] = useState(null); 
+    const [message, setMessage] = useState(null);
     const [messageType, setMessageType] = useState('');
-    const [error, setError] = useState(false); // State for error
-    const [helperText, setHelperText] = useState(''); // State for helper text
+    const [error, setError] = useState(false);
+    const [helperText, setHelperText] = useState('');
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value,
-        });
-        if (!/^\d{10}|\d{13}$/.test(value)) {
+        setFormData({ ...formData, [name]: value });
+
+        if (name === 'ebIsbn' && !/^\d{10}|\d{13}$/.test(value)) {
             setError(true);
             setHelperText("Invalid ISBN format");
-          } else {
+        } else {
             setError(false);
             setHelperText("Enter the ISBN");
-          }
+        }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Original formData:', formData);
+        if (error || Object.values(formData).some(field => !field)) {
+            setMessage('Please fill all the required fields correctly');
+            setMessageType('danger');
+            return;
+        }
 
         try {
             const response = await fetch('https://librarydbbackend.onrender.com/catalog-entry/ebook', {
@@ -86,71 +71,78 @@ function EBookEntry() {
                 },
                 body: JSON.stringify(formData),
             });
-            console.log('Response:', response);
+
+            const responseData = await response.json();
 
             if (response.ok) {
                 setMessage('eBook added successfully');
                 setMessageType('success');
-            } else if (response.status === 400) {
-                const errorData = await response.json();
-                setMessage(errorData.message);
-                setMessageType('danger');
             } else {
-                const errorData = await response.json(); // Get the error data if available
-                throw new Error(`Error: ${errorData.message || 'Something went wrong'}`);
-                //setMessage('Error adding book');
-                //setMessageType('danger');
+                setMessage(responseData.message || 'Error adding eBook');
+                setMessageType('danger');
             }
-            const responseData = await response.json();
-            setMessage(responseData.message); // Set success message
         } catch (error) {
             console.error('Error:', error);
-            setMessage('Error submitting data:' + error.message);
+            setMessage('Error submitting data: ' + error.message);
             setMessageType('danger');
         }
     };
-    
+
+    const handleClear = () => {
+        setFormData({
+            ebIsbn: '',
+            ebTitle: '',
+            ebAuthor: '',
+            ebPublisher: '',
+            ebCategory: '',
+            ebEdition: '',
+            ebLanguage: '',
+            ebDate: '',
+            ebFormat: '',
+            ebUrl: '',
+            ebAccessType: '',
+            ebNumCopies: '',
+            ebSummary: '',
+            ebNotes: '',
+        });
+        setError(false);
+        setHelperText('');
+    };
+
     React.useEffect(() => {
         if (cleared) {
-        const timeout = setTimeout(() => {
-            setCleared(false);
-        }, 1500);
-    
-        return () => clearTimeout(timeout);
+            const timeout = setTimeout(() => {
+                setCleared(false);
+            }, 1500);
+
+            return () => clearTimeout(timeout);
         }
         return () => {};
     }, [cleared]);
-      
-  return (
-    <>
+
+    return (
+        <>
+    <ThemeProvider theme={ClaudeTheme}>
+      <CssBaseline />
         <Container maxWidth="lg">
-            <Box sx={{ bgcolor: '#f2f2f2', height: '100%' }}>
-                <Breadcrumbs aria-label="breadcrumb">
-                    <Link underline="hover" color="inherit" href="/">
-                        Home
-                    </Link>
-                    <Link
-                        underline="hover"
-                        color="inherit"
-                        href="/material-ui/getting-started/installation/"
-                    >
-                        Books
-                    </Link>
-                    <Typography sx={{ color: 'text.primary' }}>Add New eBook</Typography>
-                </Breadcrumbs>
-
-                <Typography variant="h4">Add New eBook</Typography>
-
-                <Box
-                    component="form"
-                    sx={{ '& .MuiTextField-root': { m: 1, width: '25ch' } }}
-                    noValidate
-                    autoComplete="off"
-                    onSubmit={handleSubmit}
-                    >
-                    <div>
+            <Box component="form"
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    '& .MuiTextField-root': { marginBottom: 5 },
+                    p: 3,
+                    borderRadius: 2, // Rounded corners
+                    boxShadow: 3, // Shadow for a card-like effect
+                }}
+                noValidate
+                autoComplete="off"
+                onSubmit={handleSubmit}>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Grid item size={6}>
                         <TextField
-                            helperText="Enter the ISBN"
+                            required
+                            helperText={helperText}
+                            error={error}
                             id="standard-basic"
                             label="ISBN"
                             type="number"
@@ -158,8 +150,14 @@ function EBookEntry() {
                             name="ebIsbn"
                             value={formData.ebIsbn}
                             onChange={handleChange}
-                            />
-                         <TextField
+                            fullWidth
+                        />
+                    </Grid>
+                </Box>
+                <Grid container spacing={2}>
+                    
+                    <Grid item xs={12} sm={6}>
+                        <TextField
                             required
                             helperText="Enter the Title"
                             id="standard-required"
@@ -168,7 +166,10 @@ function EBookEntry() {
                             name="ebTitle"
                             value={formData.ebTitle}
                             onChange={handleChange}
-                            />
+                            fullWidth
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
                         <TextField
                             required
                             helperText="Enter the Author"
@@ -178,8 +179,11 @@ function EBookEntry() {
                             name="ebAuthor"
                             value={formData.ebAuthor}
                             onChange={handleChange}
-                            />
-                         <TextField
+                            fullWidth
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <TextField
                             helperText="Enter the Publisher"
                             id="standard-basic"
                             label="Publisher"
@@ -187,8 +191,11 @@ function EBookEntry() {
                             name="ebPublisher"
                             value={formData.ebPublisher}
                             onChange={handleChange}
-                            />
-                            <TextField
+                            fullWidth
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <TextField
                             helperText="Enter the Category"
                             id="standard-basic"
                             label="Category"
@@ -196,9 +203,11 @@ function EBookEntry() {
                             name="ebCategory"
                             value={formData.ebCategory}
                             onChange={handleChange}
-                            />
-                    </div>
-                    <div>
+                            fullWidth
+                        />
+                    </Grid>
+
+                    <Grid item xs={12} sm={6}>
                         <TextField
                             id="standard-basic"
                             label="Edition"
@@ -206,7 +215,10 @@ function EBookEntry() {
                             name="ebEdition"
                             value={formData.ebEdition}
                             onChange={handleChange}
-                            />
+                            fullWidth
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
                         <TextField
                             id="standard-basic"
                             label="Language"
@@ -214,41 +226,34 @@ function EBookEntry() {
                             name="ebLanguage"
                             value={formData.ebLanguage}
                             onChange={handleChange}
+                            fullWidth
                         />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DatePicker 
-                                variant='standard'
+                            <DatePicker
+                                variant="standard"
                                 slotProps={{
-                                    textField: {
-                                      helperText: 'Year',
-                                    }, field: { 
-                                        clearable: true, 
-                                        onClear: () => setCleared(true) 
-                                    }
-                                  }}
-                                label={'Copyright Year'} 
-                                views={['year']} 
+                                    textField: { helperText: 'Year' },
+                                    field: { clearable: true, onClear: () => setCleared(true) },
+                                }}
+                                label="Copyright Year"
+                                views={['year']}
                                 name="ebDate"
-                                value={formData.ebDate ? dayjs(formData.ebDate, 'YYYY') : null} // Ensure valid date
+                                value={formData.ebDate ? dayjs(formData.ebDate, 'YYYY') : null}
                                 onChange={(newValue) => {
-                                    if (newValue) { // Check if newValue is valid
-                                        setFormData((prevFormData) => ({
-                                            ...prevFormData,
-                                            ebDate: newValue.year(), // Store the year directly as a number
-                                        }));
+                                    if (newValue) {
+                                        setFormData((prev) => ({ ...prev, ebDate: newValue.year() }));
                                     } else {
-                                        setFormData((prevFormData) => ({
-                                            ...prevFormData,
-                                            ebDate: null, // Set to null when cleared
-                                        }));
+                                        setFormData((prev) => ({ ...prev, ebDate: null }));
                                     }
                                 }}
-                                />
-                                 
+                                fullWidth
+                            />
                         </LocalizationProvider>
-                    <div>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
                         <TextField
-                            id="standard-select-type"
                             select
                             label="Format"
                             helperText="Please select the format type"
@@ -256,23 +261,27 @@ function EBookEntry() {
                             name="ebFormat"
                             value={formData.ebFormat}
                             onChange={handleChange}
-                            >
+                            fullWidth
+                        >
                             {format.map((option) => (
                                 <MenuItem key={option.value} value={option.value}>
-                                {option.label}
+                                    {option.label}
                                 </MenuItem>
                             ))}
                         </TextField>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
                         <TextField
-                            id="standard-basic"
                             label="URL"
                             variant="standard"
                             name="ebUrl"
                             value={formData.ebUrl}
                             onChange={handleChange}
+                            fullWidth
                         />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
                         <TextField
-                            id="standard-select-type"
                             select
                             label="Access Type"
                             helperText="Please select the access type"
@@ -280,53 +289,45 @@ function EBookEntry() {
                             name="ebAccessType"
                             value={formData.ebAccessType}
                             onChange={handleChange}
-                            >
+                            fullWidth
+                        >
                             {access_type.map((option) => (
                                 <MenuItem key={option.value} value={option.value}>
-                                {option.label}
+                                    {option.label}
                                 </MenuItem>
                             ))}
                         </TextField>
-                        <TextField
-                            id="standard-basic"
-                            label="Number of Copies"
-                            variant="standard"
-                            name="ebNumCopies"
-                            value={formData.ebNumCopies}
-                            onChange={handleChange}
-                        />
-                        
-                    </div>
-                         <TextField
-                            id="outlined-multiline-static"
-                            label="Summary"
-                            multiline
-                            rows={4}
-                            name="ebSummary"
-                            value={formData.ebSummary}
-                            onChange={handleChange}
-                            />
-                        <TextField
-                            id="outlined-multiline-static"
-                            label="Notes"
-                            multiline
-                            rows={4}
-                            name="ebNotes"
-                            value={formData.ebNotes}
-                            onChange={handleChange}
-                        />
-                    </div>
-                </Box>
-                <Stack spacing={2} direction="row" justifyContent="flex-end">
-                    <Button variant="text">Clear</Button>
-                    <Button variant="outlined">Cancel</Button>
-                    <Button variant="contained" color="primary" onClick={handleSubmit}>Enter</Button>
+                    </Grid>
+                    <TextField
+                        id="outlined-multiline-static"
+                        label="Summary"
+                        multiline
+                        rows={4}
+                        name="ebSummary"
+                        value={formData.ebSummary}
+                        onChange={handleChange}
+                        fullWidth
+                    />
+                    <TextField
+                        id="outlined-multiline-static"
+                        label="Notes"
+                        multiline
+                        rows={4}
+                        name="ebNotes"
+                        value={formData.ebNotes}
+                        onChange={handleChange}
+                        fullWidth
+                    />
+                </Grid>
+                <Stack spacing={2} direction="row" justifyContent="flex-end" sx={{ mt: 3 }}>
+                    <Button variant="outlined" onClick={handleClear}>Clear</Button>
+                    <Button variant="contained" type="submit">Submit</Button>
                 </Stack>
-                {/*message && <div>{message}</div>} {'FIXME:: cant add book info'*/}
             </Box>
         </Container>
+    </ThemeProvider>
     </>
-  )
+    );
 }
 
-export default EBookEntry
+export default EBookEntry;
