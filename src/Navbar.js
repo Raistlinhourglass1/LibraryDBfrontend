@@ -37,6 +37,7 @@ const NavbarComponent = ({ userInfo, onLogout, fetchProfileData }) => {
                 {userInfo.user_level === 'Admin' && (
                   <NavDropdown title="Admin Functions" id="admin-functions-dropdown" drop="end">
                     <NavDropdown.Item href="/addstaff">Add a Staff Member</NavDropdown.Item>
+                    <NavDropdown.Item href="/catalog">View the Catalog</NavDropdown.Item>
                   </NavDropdown>
                 )}
                 <NavDropdown.Item href="/reports">Create a Report</NavDropdown.Item>
