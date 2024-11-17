@@ -12,7 +12,9 @@ const BookCheckout = () => {
 
   // Simulate animation delay for 3 seconds before transitioning to the checkout page
   useEffect(() => {
+    console.log('useEffect start');
     setTimeout(() => {
+      console.log('Timeout ended');
       setIsAnimating(false); // End animation
       setIsReadyForCheckout(true); // Show "Book Ready for Checkout"
     }, 3000); // 3 seconds of animation

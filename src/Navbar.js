@@ -20,7 +20,8 @@ const NavbarComponent = ({ userInfo, onLogout, fetchProfileData }) => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link href="/ProfilePage2">Home</Nav.Link>
+            <Nav.Link href="/home">Home</Nav.Link>
+            <Nav.Link href="/ProfilePage2">My Profile</Nav.Link>
             <Nav.Link href="/search">Search</Nav.Link>
             <Nav.Link href="/reserve-room">Room reservation</Nav.Link>
             <Nav.Link href="/feedback">Book Reviews</Nav.Link>
@@ -40,8 +41,8 @@ const NavbarComponent = ({ userInfo, onLogout, fetchProfileData }) => {
                   </NavDropdown>
                 )}
                 <NavDropdown.Item href="/reports">Create a Report</NavDropdown.Item>
-                <NavDropdown.Item href="/create-room">Add a Room</NavDropdown.Item>
                 <NavDropdown.Item href="/catalog">View the Catalog</NavDropdown.Item>
+                <NavDropdown.Item href="/create-room">Add a Room</NavDropdown.Item>
                 <NavDropdown.Item href="/_laptopEntry">Add a Laptop</NavDropdown.Item>
                 <NavDropdown.Item href="/_calculatorEntry">Add a Calculator</NavDropdown.Item>
                 <NavDropdown.Item href="/nice">PERSONAL VIEW ONLY</NavDropdown.Item>

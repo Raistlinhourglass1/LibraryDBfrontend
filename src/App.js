@@ -108,6 +108,7 @@ function App() {
         <Route path="/reserve-room" element={<ProtectedRoute><RoomReservation /></ProtectedRoute>} />
         <Route path="/feedback" element={<ProtectedRoute><Feedback /></ProtectedRoute>} />
         <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
+
         <Route path="/catalog-entry/book" element={<ProtectedRoute><BookEntry /></ProtectedRoute>} />
         <Route path="/catalog-entry/audiobook" element={<ProtectedRoute><AudioBookEntry /></ProtectedRoute>} />
         <Route path="/catalog-entry/ebook" element={<ProtectedRoute><EBookEntry /></ProtectedRoute>} />
@@ -116,6 +117,9 @@ function App() {
         <Route path="/advanced-search" element={<ProtectedRoute><AdvancedSearch /></ProtectedRoute>} />
         <Route path="/search-results" element={<ProtectedRoute><BookSearchResults /></ProtectedRoute>} />
         <Route path="/books/:book_id" element={<ProtectedRoute><BookDetail /></ProtectedRoute>} />
+        <Route path="/catalog" element={<ProtectedRoute><StaffCatalog /></ProtectedRoute>} />
+        
+
         <Route path="/_laptopEntry" element={<ProtectedRoute><_laptopEntry /></ProtectedRoute>} />
         <Route path="/_laptopSearch" element={<ProtectedRoute><_laptopSearch /></ProtectedRoute>} />
         <Route path="/_calculatorEntry" element={<ProtectedRoute><_calculatorEntry /></ProtectedRoute>} />
