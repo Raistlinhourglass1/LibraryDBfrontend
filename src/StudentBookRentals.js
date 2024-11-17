@@ -156,7 +156,7 @@ import axios from 'axios';
       const token = localStorage.getItem('token');
 
       axios
-        .get('http://https://librarydbbackend.onrender.com/user/book_reservations', {
+        .get('https://librarydbbackend.onrender.com/user/book_reservations', {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((response) => {
@@ -190,6 +190,22 @@ import axios from 'axios';
       { field: 'author', headerName: 'Author', width: 200 },
       { field: 'reservation_date_time', headerName: 'Reservation Date', width: 180 },
       { field: 'queue_position', headerName: 'Queue Position', width: 150 },
+      {
+        field: 'actions',
+        headerName: 'Actions',
+        width: 150,
+        renderCell: (params) => {
+          const { reservation_id, book_id } = params.row;
+          return (
+            <button
+              onClick={() => handleCancelReservation(reservation_id, book_id)}
+              style={{ backgroundColor: '#28a745', color: '#fff', border: 'none', padding: '5px 10px', cursor: 'pointer' }}
+            >
+              Cancel
+            </button>
+             );
+            },
+          },
     ];
   
     const checkedOutColumns = [
@@ -230,10 +246,23 @@ import axios from 'axios';
 
   const handleReturn = async (reservationId, bookId) => {
     try {
+      const token = localStorage.getItem('token');
+    
+      // If no token is found, you can alert the user or handle the error
+      if (!token) {
+        alert('User not authenticated');
+        return;
+      }
       const response = await axios.put('https://librarydbbackend.onrender.com/return-book', {
         reservation_id: reservationId,
         book_id: bookId,
-      });
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // Add the token to the headers
+        },
+      }
+    );
 
       if (response.status === 200) {
         alert('Book returned successfully');
@@ -246,6 +275,40 @@ import axios from 'axios';
   };
 
   ////////////RETURN BOOK END
+
+  ////////CANCEL RESERVATION START
+  const handleCancelReservation = async (reservationId, bookId, userId) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('User not authenticated');
+        return;
+      }
+      const response = await axios.put('https://librarydbbackend.onrender.com/cancel-reservation', {
+        reservation_id: reservationId,
+        book_id: bookId,
+        user_id: userId,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // Add the token to the headers
+        },
+      }
+    );
+  
+      if (response.status === 200) {
+        alert('Reservation canceled successfully');
+        fetchData(); // Refresh data after canceling
+      } else {
+        alert('Failed to cancel reservation');
+      }
+    } catch (error) {
+      console.error('Error canceling reservation:', error);
+      alert('Error canceling reservation');
+    }
+  };
+
+  /////CANCEL RESERVATION END
 
   return(
       <AppTheme {...props}>
