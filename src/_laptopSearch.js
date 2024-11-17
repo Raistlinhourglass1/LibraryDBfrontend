@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+
 const MainContent = styled.div`
   max-width-xl p-6 mx-auto bg-white rounded-lg shadow-md
 `;
@@ -22,6 +23,10 @@ const Input = styled.input`
   w-full p-2 border rounded-md
 `;
 
+const Select = styled.select`
+  w-full p-2 border rounded-md
+`;
+
 const Button = styled.button`
   w-full bg-red-600 text-white p-2 rounded-md hover:bg-red-700 disabled:bg-red-300
 `;
@@ -37,10 +42,11 @@ const ErrorText = styled.span`
 const LaptopSearch = () => {
   const [searchParams, setSearchParams] = useState({
     price: '',
+    price_comparison: '', // New field for price comparison
     model_name: '',
     serial_number: ''
   });
-  
+
   const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -55,11 +61,11 @@ const LaptopSearch = () => {
 
   const validateSearchParams = () => {
     const errors = {};
-    
+
     if (searchParams.price && isNaN(parseFloat(searchParams.price))) {
       errors.price = "Please enter a valid price";
     }
-    
+
     if (searchParams.serial_number && !/^[A-Za-z0-9]*$/.test(searchParams.serial_number)) {
       errors.serial_number = "Serial number must be alphanumeric";
     }
@@ -70,7 +76,7 @@ const LaptopSearch = () => {
   const handleSearch = async (e) => {
     e.preventDefault();
     setError('');
-    
+
     const validationErrors = validateSearchParams();
     if (Object.keys(validationErrors).length > 0) {
       setError('Please correct the form errors');
@@ -87,7 +93,7 @@ const LaptopSearch = () => {
       });
 
       const response = await fetch(`https://librarydbbackend.onrender.com/_laptopSearch?${queryParams.toString()}`);
-      
+
       if (!response.ok) {
         throw new Error('Search failed');
       }
@@ -105,6 +111,7 @@ const LaptopSearch = () => {
   const clearSearch = () => {
     setSearchParams({
       price: '',
+      price_comparison: '', // Reset price comparison
       model_name: '',
       serial_number: ''
     });
@@ -117,18 +124,30 @@ const LaptopSearch = () => {
       <MainContent>
         <h2 className="text-2xl font-bold mb-6">Laptop Search</h2>
         <p className="mb-4 text-gray-600">Search by any combination of criteria below:</p>
-        
+
         <SearchForm onSubmit={handleSearch}>
           <FormGroup>
             <Label>Price</Label>
-            <Input
-              type="number"
-              name="price"
-              value={searchParams.price}
-              onChange={handleInputChange}
-              placeholder="Enter maximum price"
-              step="0.01"
-            />
+            <div className="flex gap-2">
+              <Input
+                type="number"
+                name="price"
+                value={searchParams.price}
+                onChange={handleInputChange}
+                placeholder="Enter price"
+                step="0.01"
+              />
+              <Select
+                name="price_comparison"
+                value={searchParams.price_comparison}
+                onChange={handleInputChange}
+              >
+                <option value="">Select Price Comparison</option>
+                <option value="<=">Less than or equal to</option>
+                <option value=">=">Greater than or equal to</option>
+                <option value="=">Equal to</option>
+              </Select>
+            </div>
           </FormGroup>
 
           <FormGroup>

@@ -1,114 +1,226 @@
 import React, { useState, useEffect } from 'react';
+import { TextField, Button, FormControl, FormLabel, Typography, Box, CircularProgress, MenuItem, Select, Radio, RadioGroup, FormControlLabel } from '@mui/material';
 
-const CalculatorReservationForm = () => {
-  const [formData, setFormData] = useState({
-    userId: '',
-    calc_type: '',
-    reservation_date_time: ''
-  });
+const CalculatorReservation = () => {
+  const [calculators, setCalculators] = useState([]); 
+  const [selectedCalculator, setSelectedCalculator] = useState(''); 
+  const [selectedCalculatorType, setSelectedCalculatorType] = useState(''); 
+  const [reservationDate, setReservationDate] = useState(''); 
+  const [reservationTime, setReservationTime] = useState(''); 
+  const [duration, setDuration] = useState(0); 
+  const [loggedInUserId, setLoggedInUserId] = useState(''); 
+  const [successMessage, setSuccessMessage] = useState(''); 
+  const [errorMessage, setErrorMessage] = useState(''); 
+  const [loading, setLoading] = useState(false); 
 
-
+  // Fetch available calculators based on type when component mounts or type changes
   useEffect(() => {
-    const userId = localStorage.getItem('userId');
-    if (userId) {
-      setFormData((prevData) => ({ ...prevData, userId }));
-    }
-  }, []);
+    const fetchCalculators = async (calculatorType) => {
+      setLoading(true);
+      try {
+        const response = await fetch(`https://librarydbbackend.onrender.com/get-calculators?type=${calculatorType}`);
+        const data = await response.json();
+        setCalculators(data);
+      } catch (error) {
+        console.error('Error fetching calculators:', error);
+        setErrorMessage('Error fetching calculators.');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
+    if (selectedCalculatorType) {
+      fetchCalculators(selectedCalculatorType); // Fetch calculators when type is selected
+    }
+    
+    // Get logged-in user
+    setLoggedInUserId(localStorage.getItem('loggedInUserId'));
+  }, [selectedCalculatorType]); // Re-run whenever selectedCalculatorType changes
+
+  // Handle calculator type selection
+  const handleCalculatorTypeChange = (e) => {
+    setSelectedCalculatorType(e.target.value);
   };
 
+  // Handle calculator selection
+  const handleCalculatorSelection = (e) => {
+    setSelectedCalculator(e.target.value);
+  };
+
+  // Handle form submission for reservation
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const token = localStorage.getItem('token'); // fetch the token
-
-    try{
+    const token = localStorage.getItem('token'); // Fetch the token from local storage
+  
+    setErrorMessage(''); // Reset error message if any
+  
+    const reservationDateTime = `${reservationDate}T${reservationTime}`;
+  
+    try {
       const response = await fetch('https://librarydbbackend.onrender.com/_calculatorReservation', {
         method: 'POST',
-        headers: {
+        headers: { 
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          'Authorization': `Bearer ${token}`, // Authorization with token
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({
+          user_id: loggedInUserId,
+          calculatorId: selectedCalculator,
+          reservationDateTime: reservationDateTime,
+          duration: duration,
+          calculatorType: selectedCalculatorType, // Send selected calculator type
+        }),
       });
   
-      const data = await response.json();
-      
-      if (response.ok) {
-        alert('Reservation created successfully!');
-        // Reset form
-        setFormData({
-          userId: formData.userId,
-          reservation_date_time: '',
-          calc_type: ''
-        });
-      } else {
-        alert(`Error: ${data.message}`);
+      let result;
+      // Check if the response is a valid JSON
+      try {
+        result = await response.json();
+      } catch (error) {
+        // If JSON parsing fails, read the response as text to see the error message
+        const text = await response.text();
+        console.error('Response is not JSON:', text);
+        setErrorMessage('Server error: ' + text);
+        return;
       }
-    } catch(error){
-      console.error('Error submitting reservation:', error);
-    alert('Error submitting reservation. Please try again.');
-    }    
+  
+      if (response.ok) {
+        setSuccessMessage(result.message);
+        setTimeout(() => {
+          // Reset form
+          setDuration(0);
+          setReservationTime('');
+          setReservationDate('');
+          setSelectedCalculator('');
+          setSelectedCalculatorType('');
+          setSuccessMessage('');
+        }, 2000);
+      } else {
+        // Log and display any message from the server if the response is not OK (400 or 500)
+        console.error('Error from server:', result);
+        setErrorMessage(result.message || 'Error making reservation. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setErrorMessage('Error making reservation. Please try again.');
+      setSuccessMessage('');
+    }
   };
+  
 
   return (
-    <div>
-  <div style={{ padding: '20px', maxWidth: '500px', margin: '0 auto', background: '#fff', borderRadius: '8px', boxShadow: '0 0 10px rgba(0,0,0,0.1)' }}>
-    <h2 style={{ textAlign: 'center', color: '#333' }}>Calculator Reservation</h2>
-    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-      <div>
-        <label htmlFor="reservation_date_time">Reservation Date & Time:</label>
-        <input
-          type="date"
-          id="reservation_date_time"
-          name="reservation_date_time"
-          value={formData.reservation_date_time}
-          onChange={handleChange}
-          required
-          style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
-        />
-      </div>
+    <Box sx={{ maxWidth: 600, margin: 'auto', padding: 2 }}>
+      <Typography variant="h4" gutterBottom>
+        Calculator Reservation
+      </Typography>
 
-      <div>
-        <label htmlFor="calc_type">Reservation Type:</label>
-        <select
-          id="calc_type"
-          name="calc_type"
-          value={formData.calc_type}
-          onChange={handleChange}
-          style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
-        >
-          <option value="">Select type</option>
-          <option value="graphing">Graphing</option>
-          <option value="scientific">Scientific</option>
-        </select>
-      </div>
-      
+      {loading ? (
+        <CircularProgress />
+      ) : (
+        <form onSubmit={handleSubmit}>
+          {/* Type Selection */}
+          <FormControl fullWidth margin="normal">
+            <FormLabel>Select Calculator Type</FormLabel>
+            <RadioGroup
+              name="calculatorType"
+              value={selectedCalculatorType}
+              onChange={handleCalculatorTypeChange}
+              row
+            >
+              <FormControlLabel value="Graphing" control={<Radio />} label="Graphing" />
+              <FormControlLabel value="Scientific" control={<Radio />} label="Scientific" />
+            </RadioGroup>
+          </FormControl>
 
-      <button
-        type="submit"
-        style={{
-          width: '100%',
-          padding: '10px',
-          backgroundColor: '#d9534f',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer'
-        }}
-      >
-        Submit Reservation
-      </button>
-    </form>
-    </div>
-  </div>
+          {/* Available Calculators */}
+          <FormControl fullWidth margin="normal">
+            <FormLabel htmlFor="calculator">Available Calculators</FormLabel>
+            <Select
+              id="calculator"
+              value={selectedCalculator}
+              onChange={handleCalculatorSelection}
+              fullWidth
+              variant="outlined"
+              disabled={!selectedCalculatorType} // Disable if no type selected
+            >
+              <MenuItem value="" disabled>Select a calculator</MenuItem>
+              {calculators.map((calculator) => (
+                <MenuItem key={calculator.calculator_id} value={calculator.calculator_id}>
+                  {calculator.calculator_model} - {calculator.calc_type} ({calculator.model_name})
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          {/* Other form fields for reservation details */}
+          <FormControl fullWidth margin="normal">
+            <FormLabel htmlFor="reservationDate">Reservation Date</FormLabel>
+            <TextField
+              type="date"
+              id="reservationDate"
+              name="reservationDate"
+              value={reservationDate}
+              onChange={(e) => setReservationDate(e.target.value)}
+              fullWidth
+              variant="outlined"
+              required
+            />
+          </FormControl>
+
+          <FormControl fullWidth margin="normal">
+            <FormLabel htmlFor="reservationTime">Reservation Time</FormLabel>
+            <TextField
+              type="time"
+              id="reservationTime"
+              name="reservationTime"
+              value={reservationTime}
+              onChange={(e) => setReservationTime(e.target.value)}
+              fullWidth
+              variant="outlined"
+              required
+            />
+          </FormControl>
+
+          <FormControl fullWidth margin="normal">
+            <FormLabel htmlFor="duration">Duration (hours)</FormLabel>
+            <TextField
+              type="number"
+              id="duration"
+              name="duration"
+              value={duration}
+              onChange={(e) => setDuration(Number(e.target.value))}
+              fullWidth
+              variant="outlined"
+              required
+            />
+          </FormControl>
+
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            fullWidth
+            sx={{ marginTop: 2 }}
+            disabled={!selectedCalculator || !reservationDate || !reservationTime || !duration}
+          >
+            Reserve Calculator
+          </Button>
+        </form>
+      )}
+
+      {successMessage && (
+        <Typography variant="h6" color="green" sx={{ marginTop: 2 }}>
+          {successMessage}
+        </Typography>
+      )}
+
+      {errorMessage && (
+        <Typography variant="h6" color="red" sx={{ marginTop: 2 }}>
+          {errorMessage}
+        </Typography>
+      )}
+    </Box>
   );
 };
 
-export default CalculatorReservationForm;
+export default CalculatorReservation;

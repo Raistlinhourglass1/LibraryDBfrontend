@@ -1,12 +1,12 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Accordion, AccordionDetails , AccordionSummary } from '@mui/material';
 import {  Box, Button, Checkbox, MenuItem, Stack, TextField, Typography } from '@mui/material';
-import  { FormLabel, FormControl, FormControlLabel, FormGroup, FormHelperText } from '@mui/material';
+import  { FormLabel, FormControl, FormControlLabel, FormGroup, FormHelperText,  Radio, RadioGroup } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox';
 
 
-function BookSearchFilter() {
+function BookSearchFilter({ books, onFilter }) {
     const [state, setState] = React.useState({
         book: false,
         journal: false,
@@ -15,6 +15,8 @@ function BookSearchFilter() {
         digital: false,
         dvd: false
       });
+    const [searchTerm, setSearchTerm] = useState('');
+    const [statusFilter, setStatusFilter] = useState('all');
 
       const handleChange = (event) => {
         setState({
@@ -22,11 +24,43 @@ function BookSearchFilter() {
           [event.target.name]: event.target.checked,
         });
       };
+      const handleSearchChange = (e) => { //handles the search term
+        setSearchTerm(e.target.value);
+      };
+      
+      const handleStatusChange = (e) => { //handles book status filter
+        setStatusFilter(e.target.value);
+      };
     
+      const handleFilterClick = () => {
+        let result = books;
+    
+        // Filter by search term
+        /*
+        if (searchTerm) {
+          result = result.filter(
+            (book) =>
+              book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              book.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              book.publisher.toLowerCase().includes(searchTerm.toLowerCase())
+          );
+        }*/
+    
+        // Filter by status
+        if (statusFilter !== 'all') {
+          result = result.filter((book) => book.book_status === statusFilter);
+        }
+    
+        // Pass the filtered books to the parent component
+        onFilter(result);
+      };
+
+      
       const { book, journal, magazine, newspaper, digital, dvd } = state;
       const error = [book, journal, magazine, newspaper, digital, dvd].filter((v) => v).length !== 2;
   return (
     <>
+    <Typography>Filter By:</Typography>
     <Stack
           direction="column"
           sx={{
@@ -38,6 +72,18 @@ function BookSearchFilter() {
             minWidth: '100%'
           }}
         >
+          {/* Status Filter */}
+          <Typography>Book Status</Typography>
+        <FormControl component="fieldset" variant="standard">
+          <RadioGroup value={statusFilter} onChange={handleStatusChange}>
+            <FormControlLabel value="all" control={<Radio />} label="All" />
+            <FormControlLabel value="available" control={<Radio />} label="Available" />
+            <FormControlLabel value="checked_out" control={<Radio />} label="Checked Out" />
+            <FormControlLabel value="reserved" control={<Radio />} label="Reserved" />
+            <FormControlLabel value="lost" control={<Radio />} label="Lost" />
+          </RadioGroup>
+        </FormControl>
+
           <Typography>Exclude</Typography>
           <Accordion>
             <AccordionSummary
@@ -108,6 +154,16 @@ function BookSearchFilter() {
             </Typography>
           </AccordionDetails>
         </Accordion>
+
+        {/* Apply Filter Button */}
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleFilterClick}
+          sx={{ mt: 2 }}
+        >
+          Apply Filters
+        </Button>
         </Stack>
       </>
   )

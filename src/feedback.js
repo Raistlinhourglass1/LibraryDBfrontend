@@ -52,14 +52,15 @@ const FeedbackContainer = styled(Stack)(({ theme }) => ({
   },
 }));
 
-function Feedback(props) {
+function Feedback({ onClose, book, ...props }) {
   const [formData, setFormData] = useState({
     userId: '', // Initialize userId field
     type: '',
-    bookName: '', 
-    bookAuthor: '', 
+    bookName: book.book_title, 
+    bookAuthor: book.author, 
     rating: '', 
-    comments: ''
+    comments: '',
+    bookIsbn: book.isbn || '',
   });
 
   const [message, setMessage] = useState(null);
@@ -135,6 +136,7 @@ function Feedback(props) {
         setTimeout(() => {
           setMessage(null);
           setMessageType('');
+          if (onClose) onClose(); // Call the onClose function if it exists
         }, 2000);
       } else if (response.status === 400) {
         setMessage(responseData.message || 'Validation Error');

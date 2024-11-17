@@ -37,6 +37,16 @@ import _laptopEntry from './_laptopEntry';
 import Home from './HomePage';
 import TestBookSearch from './TestBookSearch';
 import AddStaff from './addstaff';
+import HomePage from './HomePage';
+import BookCheckout from './BookCheckout';
+import StaffCatalog from './StaffCatalog';
+import LandingPage from './landingPage';
+import NavbarComponent from './Navbar'; // Ensure this line is present and correctly spelled
+
+
+
+
+
 
 function App() {
   const [userInfo, setUserInfo] = useState(null);
@@ -71,17 +81,20 @@ function App() {
 
   return (
     <Router>
-      {/* Pass userInfo, handleLogout, and fetchUserData to Navbar */}
-      < Navbar userInfo={userInfo} onLogout={handleLogout} fetchProfileData={fetchUserData} />
-
+{/* Conditionally render NavbarComponent based on the current path */}
+{window.location.pathname !== '/' &&
+        window.location.pathname !== '/SignIn' &&
+        window.location.pathname !== '/SignUp' && (
+          <NavbarComponent userInfo={userInfo} onLogout={handleLogout} fetchProfileData={fetchUserData} />
+      )}
       <Routes>
         {/* Public routes */}
-        <Route path="/" element={<SignIn onLoginSuccess={() => fetchUserData(localStorage.getItem('token'))} />} />
+        <Route path="/" element={<LandingPage onLoginSuccess={() => fetchUserData(localStorage.getItem('token'))} />} />
         <Route path="/signin" element={<SignIn onLoginSuccess={() => fetchUserData(localStorage.getItem('token'))} />} />
         <Route path="/signup" element={<SignUp />} />
 
         {/* Protected routes */}
-        <Route path="/home" element={<ProtectedRoute><ProfilePage2 /></ProtectedRoute>} />
+        <Route path="/home" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
         <Route path="/addstaff" element={<ProtectedRoute><AddStaff /></ProtectedRoute>} />
         <Route path="/fines" element={<ProtectedRoute><Fines /></ProtectedRoute>} />
         <Route path="/StudentBookFines" element={<ProtectedRoute><StudentBookFines /></ProtectedRoute>} />
@@ -95,6 +108,7 @@ function App() {
         <Route path="/reserve-room" element={<ProtectedRoute><RoomReservation /></ProtectedRoute>} />
         <Route path="/feedback" element={<ProtectedRoute><Feedback /></ProtectedRoute>} />
         <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
+
         <Route path="/catalog-entry/book" element={<ProtectedRoute><BookEntry /></ProtectedRoute>} />
         <Route path="/catalog-entry/audiobook" element={<ProtectedRoute><AudioBookEntry /></ProtectedRoute>} />
         <Route path="/catalog-entry/ebook" element={<ProtectedRoute><EBookEntry /></ProtectedRoute>} />
@@ -103,6 +117,9 @@ function App() {
         <Route path="/advanced-search" element={<ProtectedRoute><AdvancedSearch /></ProtectedRoute>} />
         <Route path="/search-results" element={<ProtectedRoute><BookSearchResults /></ProtectedRoute>} />
         <Route path="/books/:book_id" element={<ProtectedRoute><BookDetail /></ProtectedRoute>} />
+        <Route path="/catalog" element={<ProtectedRoute><StaffCatalog /></ProtectedRoute>} />
+        
+
         <Route path="/_laptopEntry" element={<ProtectedRoute><_laptopEntry /></ProtectedRoute>} />
         <Route path="/_laptopSearch" element={<ProtectedRoute><_laptopSearch /></ProtectedRoute>} />
         <Route path="/_calculatorEntry" element={<ProtectedRoute><_calculatorEntry /></ProtectedRoute>} />

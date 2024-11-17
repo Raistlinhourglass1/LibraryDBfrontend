@@ -1,16 +1,34 @@
-import React, { useEffect, useState } from 'react'
-import { Breadcrumbs, Box, Button, Card, CardMedia, CardContent, Container, Grid2, Link, TextField, Typography } from '@mui/material';
+import React, { useEffect, useState, useCallback } from 'react'
+import { Breadcrumbs, Box, Button, Card, CardMedia, CardContent, Container, Grid2, Link, TextField, Typography, IconButton } from '@mui/material';
 import BookSearchResults from './BookSearchResults';
-import { useNavigate } from 'react-router-dom';
+import SearchIcon from '@mui/icons-material/Search';
+import { useNavigate, useLocation } from 'react-router-dom';
+import bgImage from './external//books1.jpg';
 
 function BookSearch() {
+    const location = useLocation();
+    const navigate = useNavigate();
+
     const [term, setTerm] = useState('');
     const [books, setBooks] = useState([]);
-
-    const navigate = useNavigate();
+    const [hasSearched, setHasSearched] = useState(false);
+    const [isLoading, setIsLoading] = useState(true); // New state to track loading
     
-    const handleSearch = async () => {
+    useEffect(() => {
+      const params = new URLSearchParams(location.search);
+      const searchTerm = params.get('term') || '';
+      console.log('Search term:::', searchTerm);
+      setTerm(searchTerm);
+      if (searchTerm) {
+        setHasSearched(true);
+        handleSearch(searchTerm);
+      }
+    }, [location.search]);
+
+
+    const handleSearch = async (term) => {
         //e.preventDefault();
+        setIsLoading(true);
         navigate(`/search?term=${encodeURIComponent(term)}`, { replace: true });
         console.log('Search initiated with term:', term);
         setBooks([]); 
@@ -23,37 +41,46 @@ function BookSearch() {
             const data = await response.json();
             console.log('Data fetched:', data);
             setBooks(Array.isArray(data) ? data : []); //check that its an array
+            console.log('Books in BookSearch:', books);
         } catch (error) {
             console.error('Error fetching books:', error);
         }
-    }
-    
-    useEffect(() => {
-      if (term) {
-         handleSearch();
-        }
-      }, [term]);
+        setIsLoading(false);
+      }
+
+    const onSearchClick = (e) => {
+      e.preventDefault();
+      if (term.trim()) {
+        navigate(`https://librarydbbackend.onrender.com/search?term=${encodeURIComponent(term)}`, { replace: true });
+        setHasSearched(true);
+        handleSearch(term);
+      }
+    };
       
   return (
     <>
-    <Container maxWidth="xl">
-    <Box sx={{ bgcolor: '#f2f2f2', height: '100%' }}>
-        <Breadcrumbs aria-label="breadcrumb">
-            <Link underline="hover" color="inherit" href="/">
-                Home
-            </Link>
-            <Link
-                underline="hover"
-                color="inherit"
-                href="./BookEntry"
-            >
-                Books
-            </Link>
-            <Typography sx={{ color: 'text.primary' }}>Search</Typography>
-        </Breadcrumbs>
+    {/*
+    <Breadcrumbs aria-label="breadcrumb">
+        <Link underline="hover" color="inherit" href="/">
+            Home
+        </Link>
+        <Link
+            underline="hover"
+            color="inherit"
+            href="./BookEntry"
+        >
+            Books
+        </Link>
+        <Typography sx={{ color: 'text.primary' }}>Search</Typography>
+    </Breadcrumbs> */}
 
-        <Typography variant="h4">Search</Typography>
-        <Typography variant="subtitle1">Search for books, journals, newspapers, magazines and more</Typography>
+
+    <Box sx={{ backgroundImage: `url(${bgImage})`, backgroundSize: 'cover', backgroundPosition: 'center', padding: 8, marginBottom: 0, width: '100%'}}> 
+    <Container maxWidth='lg'>
+    <Box sx={{padding: 4, borderRadius: 2, bgcolor: 'background.paper'}}>
+  
+        <Typography variant="h4" sx={{ color: 'primary.main' }}>Browse Our Catalog</Typography>
+        <Typography variant="subtitle1" sx={{ color: 'text.secondary' }}>Search for books, journals, newspapers, magazines and more</Typography>
         <Box
             display="flex"
             justifyContent="center"
@@ -70,13 +97,30 @@ function BookSearch() {
                 value={term}
                 onChange={(e) => setTerm(e.target.value)}
             />
-            <Button type="submit" variant="contained" onClick={(e) => { e.preventDefault(); handleSearch();}}>Enter</Button>
-            <Button component={Link} href="/advanced-search" variant="text">Advanced Search</Button>
+            <IconButton type="submit" variant="contained" size="large" color='primary' onClick={onSearchClick}>
+              <SearchIcon fontSize="inherit" />
+            </IconButton>
+            <Button component={Link} href="/advanced-search" variant="text" size="small" >Advanced Search</Button>
         </Box>
-        {books.length > 0 && <BookSearchResults books={books} term={term} />}
+    </Box> 
+    </Container>
     </Box>
 
+    <Container maxWidth="xl">
+      {/* Display a message only after search attempt */}
+      {hasSearched && !isLoading && books.length === 0 ? (
+        <Typography variant="h6" color="text.secondary">
+          No books found matching your search criteria.
+        </Typography>
+      ) : (
+        books.length > 0 && (
+          <Box sx={{ padding: 3, borderRadius: 2 }}>
+            <BookSearchResults books={books} term={term} />
+          </Box>
+        )
+      )}
     </Container>
+    
     </>
   )
 }
