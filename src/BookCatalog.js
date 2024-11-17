@@ -8,7 +8,6 @@ const BookCatalog = ({ catalogData, fetchData }) => {
 console.log('Catalog Data: ', catalogData);
 const [openAddDialog, setOpenAddDialog] = useState(false);
 const [selectedBook, setSelectedBook] = useState(null); // Used for editing an existing book
-const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
 
   // Function to open the add dialog
   const handleOpenAddDialog = () => {
@@ -23,17 +22,10 @@ const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
     setOpenAddDialog(true);
   };
 
-    // Function to open the details dialog
-    const handleOpenDetailsDialog = (book) => {
-      setSelectedBook(book);
-      setOpenDetailsDialog(true);
-    };
-
   // Function to close the dialog
   const handleCloseDialog = () => {
 
     setOpenAddDialog(false);
-    setOpenDetailsDialog(false);
     setSelectedBook(null); // Clear selected book when dialog is closed
   };
 
@@ -152,14 +144,12 @@ const filteredBooks = books.filter((book) => {
             <Typography variant="body2" color="textSecondary" gutterBottom>
               <strong>Year of Copyright:</strong> {item.year_copyright || 'N/A'}
             </Typography>
-            {/*
             <Typography variant="body2" color="textSecondary" gutterBottom>
               <strong>Edition:</strong> {item.edition || 'N/A'}
-            </Typography>*/}
+            </Typography>
             <Typography variant="body2" color="textSecondary" gutterBottom>
               <strong>Media Type:</strong> {item.media_type || 'N/A'}
             </Typography>
-            {/*
             <Typography variant="body2" color="textSecondary" gutterBottom>
               <strong>Language:</strong> {item.language || 'N/A'}
             </Typography>
@@ -171,7 +161,7 @@ const filteredBooks = books.filter((book) => {
             </Typography>
             <Typography variant="body2" color="textSecondary">
               <strong>Notes:</strong> {item.book_notes || 'No additional notes.'}
-            </Typography>*/}
+            </Typography>
             <Typography variant="body2" color="textSecondary" gutterBottom>
               <strong>Status:</strong> {item.book_status || 'N/A'}
             </Typography>
@@ -181,14 +171,6 @@ const filteredBooks = books.filter((book) => {
 
 
             {/*buttons*/}
-            <Button 
-            onClick={() => handleOpenDetailsDialog(item)} 
-            size="small" 
-            color="primary"
-          >
-            Show Details
-          </Button>
-
             <Box mt={2}>
             {!item.deleted && (
             <Button onClick={() => handleOpenEditDialog(item)} color="primary">
@@ -257,35 +239,6 @@ const filteredBooks = books.filter((book) => {
         <Typography variant="h6" color="textSecondary">No books found.</Typography>
       )}
 
-      {/* Dialog for displaying book details */}
-      <Dialog 
-        open={openDetailsDialog} 
-        onClose={handleCloseDialog}
-        maxWidth="md"
-        fullWidth
-      >
-        <DialogTitle>Book Details</DialogTitle>
-        <DialogContent>
-          <Typography variant="h6">{selectedBook?.book_title}</Typography>
-          <Typography variant="body2"><strong>ISBN:</strong> {selectedBook?.isbn}</Typography>
-          <Typography variant="body2"><strong>Author:</strong> {selectedBook?.author}</Typography>
-          <Typography variant="body2"><strong>Publisher:</strong> {selectedBook?.publisher}</Typography>
-          <Typography variant="body2"><strong>Category:</strong> {selectedBook?.book_category || 'N/A'}</Typography>
-          <Typography variant="body2"><strong>Status:</strong> {selectedBook?.book_status || 'N/A'}</Typography>
-          <Typography variant="body2"><strong>Year of Copyright:</strong> {selectedBook?.year_copyright || 'N/A'}</Typography>
-          <Typography variant="body2"><strong>Edition:</strong> {selectedBook?.edition || 'N/A'}</Typography>
-          <Typography variant="body2"><strong>Media Type:</strong> {selectedBook?.media_type || 'N/A'}</Typography>
-          <Typography variant="body2"><strong>Language:</strong> {selectedBook?.language  || 'N/A'}</Typography>
-          <Typography variant="body2"><strong>Page Count:</strong> {selectedBook?.num_pages || 'N/A'}</Typography>
-          <Typography variant="body2"><strong>Summary:</strong> {selectedBook?.book_summary || 'No summary available.'}</Typography>
-          <Typography variant="body2"><strong>Status:</strong> {selectedBook?.book_status || 'N/A'}</Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog} color="primary">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
 
 
        {/* Dialog for adding/editing a book */}
@@ -296,7 +249,7 @@ const filteredBooks = books.filter((book) => {
           fullWidth       // Ensures the dialog takes the full width of the container
           sx={{ 
             '& .MuiDialogContent-root': {
-              padding: '20px', // Optional: You can add padding to the content
+              padding: '24px', // Optional: You can add padding to the content
             },
             '& .MuiDialog-paper': {
               width: '80%', // You can set this to any percentage or fixed pixel value

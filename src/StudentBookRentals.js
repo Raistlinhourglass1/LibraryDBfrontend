@@ -1,7 +1,7 @@
 import AppTheme from './AppTheme';
 import ColorModeSelect from './ColorModeSelect';
 import React, { useState, useEffect } from 'react';
-import { Avatar, Box, Button, Card, CardContent, Chip, IconButton, Tabs, Tab, InputAdornment, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography} from '@mui/material';
+import { Avatar, Box, Card, CardContent, Chip, IconButton, Tabs, Tab, InputAdornment, Paper, Typography} from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import Grid from '@mui/material/Grid2';
 import PropTypes from 'prop-types';
@@ -248,11 +248,11 @@ import axios from 'axios';
     try {
       const token = localStorage.getItem('token');
     
-    // If no token is found, you can alert the user or handle the error
-    if (!token) {
-      alert('User not authenticated');
-      return;
-    }
+      // If no token is found, you can alert the user or handle the error
+      if (!token) {
+        alert('User not authenticated');
+        return;
+      }
       const response = await axios.put('https://librarydbbackend.onrender.com/return-book', {
         reservation_id: reservationId,
         book_id: bookId,
@@ -275,7 +275,6 @@ import axios from 'axios';
   };
 
   ////////////RETURN BOOK END
-
 
   ////////CANCEL RESERVATION START
   const handleCancelReservation = async (reservationId, bookId, userId) => {
@@ -310,111 +309,66 @@ import axios from 'axios';
   };
 
   /////CANCEL RESERVATION END
+
   return(
       <AppTheme {...props}>
-          <Box sx={{ boxShadow: 3, borderRadius: 2, padding: 2, bgcolor: 'background.paper' }}>
-        <Typography variant="h4" gutterBottom>Your Books</Typography>
+          <Box
+      sx={{
+          boxShadow: 3, // Add a shadow to the enclosing box
+          borderRadius: 2, // Optional: rounded corners
+          padding: 2, // Optional: some padding around the table
+          bgcolor: 'background.paper', // Optional: change the background color of the box
+      }}
+    >
+      <Typography variant="h4" gutterBottom>Your Books</Typography>
 
-        {/* Pending Books Table */}
-        <Box sx={{ marginBottom: 4 }}>
-          <Typography variant="h6" gutterBottom>Pending Reservations</Typography>
-          <TableContainer component={Box} sx={{ height: 400 }}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Book Title</TableCell>
-                  <TableCell>Author</TableCell>
-                  <TableCell>Reservation Date</TableCell>
-                  <TableCell>Queue Position</TableCell>
-                  <TableCell>Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {pendingBooks.map((row) => (
-                  <TableRow key={row.reservation_id}>
-                    <TableCell>{row.book_title}</TableCell>
-                    <TableCell>{row.author}</TableCell>
-                    <TableCell>{row.reservation_date_time}</TableCell>
-                    <TableCell>{row.queue_position}</TableCell>
-                    <TableCell>
-                      <Button
-                        onClick={() => handleCancelReservation(row.reservation_id, row.book_id)}
-                        sx={{ backgroundColor: '#28a745', color: '#fff' }}
-                      >
-                        Cancel
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Box>
+{/* Pending Books DataGrid */}
+<Box sx={{ marginBottom: 4 }}>
+  <Typography variant="h6" gutterBottom>Pending Reservations</Typography>
+  <div style={{ height: 400, width: '100%' }}>
+    <DataGrid
+      rows={pendingBooks}
+      columns={pendingColumns}
+      pageSize={5}
+      rowsPerPageOptions={[5]}
+      checkboxSelection
+      disableSelectionOnClick
+      getRowId={(row) => row.reservation_id}
+    />
+  </div>
+</Box>
 
-        {/* Checked Out Books Table */}
-        <Box sx={{ marginBottom: 4 }}>
-          <Typography variant="h6" gutterBottom>Checked Out Books</Typography>
-          <TableContainer component={Box} sx={{ height: 400 }}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Book Title</TableCell>
-                  <TableCell>Author</TableCell>
-                  <TableCell>Date Borrowed</TableCell>
-                  <TableCell>Due Date</TableCell>
-                  <TableCell>Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {checkedOutBooks.map((row) => (
-                  <TableRow key={row.reservation_id}>
-                    <TableCell>{row.book_title}</TableCell>
-                    <TableCell>{row.author}</TableCell>
-                    <TableCell>{row.date_borrowed}</TableCell>
-                    <TableCell>{row.date_due}</TableCell>
-                    <TableCell>
-                      <Button
-                        onClick={() => handleReturn(row.reservation_id, row.book_id)}
-                        sx={{ backgroundColor: '#28a745', color: '#fff' }}
-                      >
-                        Return
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Box>
+{/* Checked Out Books DataGrid */}
+<Box sx={{ marginBottom: 4 }}>
+  <Typography variant="h6" gutterBottom>Checked Out Books</Typography>
+  <div style={{ height: 400, width: '100%' }}>
+    <DataGrid
+      rows={checkedOutBooks}
+      columns={checkedOutColumns}
+      pageSize={5}
+      rowsPerPageOptions={[5]}
+      checkboxSelection
+      disableSelectionOnClick
+      getRowId={(row) => row.reservation_id}
+    />
+  </div>
+</Box>
 
-        {/* History Books Table */}
-        <Box sx={{ marginBottom: 4 }}>
-          <Typography variant="h6" gutterBottom>Book History</Typography>
-          <TableContainer component={Box} sx={{ height: 400 }}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Book Title</TableCell>
-                  <TableCell>Author</TableCell>
-                  <TableCell>Date Borrowed</TableCell>
-                  <TableCell>Date Returned</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {historyBooks.map((row) => (
-                  <TableRow key={row.reservation_id}>
-                    <TableCell>{row.book_title}</TableCell>
-                    <TableCell>{row.author}</TableCell>
-                    <TableCell>{row.date_borrowed}</TableCell>
-                    <TableCell>{row.date_returned}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Box>
-
-      </Box>
+{/* History Books DataGrid */}
+<Box sx={{ marginBottom: 4 }}>
+  <Typography variant="h6" gutterBottom>Book History</Typography>
+  <div style={{ height: 400, width: '100%' }}>
+    <DataGrid
+      rows={historyBooks}
+      columns={historyColumns}
+      pageSize={5}
+      rowsPerPageOptions={[5]}
+      checkboxSelection
+      disableSelectionOnClick
+      getRowId={(row) => row.reservation_id}
+    />
+  </div>
+</Box>
       {/*
     <DataGrid
             rows={rows}
@@ -431,7 +385,7 @@ import axios from 'axios';
             checkboxSelection
             disableRowSelectionOnClick
           /> */}
+    </Box>
     </AppTheme>
   )
 }
-

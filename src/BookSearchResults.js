@@ -17,8 +17,7 @@ function BookSearchResults({books = [], term}) {
     const [filteredBooks, setFilteredBooks] = useState(books);
 
     const handleFilterBooks = (filteredResults) => {
-        const filtered = filteredResults.filter(book => book.deleted === 0);
-        setFilteredBooks(filtered);
+        setFilteredBooks(filteredResults);
       };
 
     const handleReserve = (book) => {

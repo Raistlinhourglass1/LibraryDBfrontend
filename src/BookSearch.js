@@ -12,12 +12,11 @@ function BookSearch() {
     const [term, setTerm] = useState('');
     const [books, setBooks] = useState([]);
     const [hasSearched, setHasSearched] = useState(false);
-    const [isLoading, setIsLoading] = useState(false); // New state to track loading
+    const [isLoading, setIsLoading] = useState(true); // New state to track loading
     
     useEffect(() => {
       const params = new URLSearchParams(location.search);
-      const searchTerm = params.get('term');
-      setTerm(searchTerm || '')
+      const searchTerm = params.get('term') || '';
       console.log('Search term:::', searchTerm);
       setTerm(searchTerm);
       if (searchTerm) {
@@ -51,10 +50,11 @@ function BookSearch() {
 
     const onSearchClick = (e) => {
       e.preventDefault();
-      e.preventDefault();
-        if (term.trim()) {
-            handleSearch(term); // Initiate search
-        }
+      if (term.trim()) {
+        navigate(`https://librarydbbackend.onrender.com/search?term=${encodeURIComponent(term)}`, { replace: true });
+        setHasSearched(true);
+        handleSearch(term);
+      }
     };
       
   return (
@@ -100,10 +100,7 @@ function BookSearch() {
             <IconButton type="submit" variant="contained" size="large" color='primary' onClick={onSearchClick}>
               <SearchIcon fontSize="inherit" />
             </IconButton>
-            
-            {/* Rest in peace Advanced Search button :,(
             <Button component={Link} href="/advanced-search" variant="text" size="small" >Advanced Search</Button>
-            */}
         </Box>
     </Box> 
     </Container>
