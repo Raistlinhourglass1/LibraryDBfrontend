@@ -104,6 +104,7 @@ function App() {
         <Route path="/Nice" element={<ProtectedRoute><Nice /></ProtectedRoute>} />
         <Route path="/StudentRoomReservationTable" element={<ProtectedRoute><StudentRoomReservationTable /></ProtectedRoute>} />
         <Route path="/TestBookSearch" element={<ProtectedRoute><TestBookSearch /></ProtectedRoute>} />
+
         <Route path="/create-room" element={<ProtectedRoute><CreateRoom /></ProtectedRoute>} />
         <Route path="/reserve-room" element={<ProtectedRoute><RoomReservation /></ProtectedRoute>} />
         <Route path="/feedback" element={<ProtectedRoute><Feedback /></ProtectedRoute>} />
@@ -116,6 +117,8 @@ function App() {
         <Route path="/advanced-search" element={<ProtectedRoute><AdvancedSearch /></ProtectedRoute>} />
         <Route path="/search-results" element={<ProtectedRoute><BookSearchResults /></ProtectedRoute>} />
         <Route path="/books/:book_id" element={<ProtectedRoute><BookDetail /></ProtectedRoute>} />
+        <Route path="/catalog" element={<ProtectedRoute><StaffCatalog /></ProtectedRoute>} />
+
         <Route path="/_laptopEntry" element={<ProtectedRoute><_laptopEntry /></ProtectedRoute>} />
         <Route path="/_laptopSearch" element={<ProtectedRoute><_laptopSearch /></ProtectedRoute>} />
         <Route path="/_calculatorEntry" element={<ProtectedRoute><_calculatorEntry /></ProtectedRoute>} />

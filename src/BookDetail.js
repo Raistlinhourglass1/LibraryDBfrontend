@@ -1,24 +1,35 @@
 import React, {useEffect, useState} from 'react'
-import { Box, Button, Card, CardContent, CardMedia, Container, Stack, Paper, Rating, Typography } from '@mui/material';
+import { Alert, Box, Button, Card, CardContent, CardMedia, CircularProgress, Container, Snackbar, Stack, Paper, Rating, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import bookCover from './external/book-cover.png';
 import { useParams, Link } from 'react-router-dom';
 import { useNavigate, useLocation } from 'react-router-dom';
+import axios from 'axios';
 
 function BookDetail() {
   
   const { book_id } = useParams();
   const [book, setBook] = useState(null);
+  const [isAdding, setIsAdding] = useState(false);
+  const [error, setError] = useState('');
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+  const [isInUserList, setIsInUserList] = useState(false); // State to track if the book is in the user's list 
   
+
   const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const term = queryParams.get('term'); // Extracts the search term
   console.log('Search term:', term);
 
+
+
   const handleBackToSearch = () => {
     console.log('Search term before navigation:', term);
-    navigate(`/search?term=${encodeURIComponent(term)}`);
+    const searchTerm = term ? encodeURIComponent(term) : '';
+    navigate(`/search?term=${encodeURIComponent(searchTerm)}`);
   };
 
   const handleReserve = (book) => {
@@ -32,6 +43,7 @@ function BookDetail() {
 
 
   const [reviews, setReviews] = useState([]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -41,29 +53,136 @@ function BookDetail() {
         const bookData = await bookResponse.json();
         setBook(bookData);
         console.log('the book: ', bookData);
+  
         // Fetch reviews only if the book has an ISBN
         if (bookData.isbn) {
-          console.log('ISBN found:', bookData.isbn); 
+          console.log('ISBN found:', bookData.isbn);
           const reviewsResponse = await fetch(`https://librarydbbackend.onrender.com/reviews/${bookData.isbn}`);
-
           if (!reviewsResponse.ok) throw new Error('Error fetching reviews');
-
+  
           const reviewsData = await reviewsResponse.json();
           setReviews(reviewsData);
-
           console.log('the reviews: ', reviewsData);
         }
+  
+        // Check if the book is in the user's list
+        const checkIfInUserList = async () => {
+          const token = localStorage.getItem('token'); // Assuming token is stored in localStorage
+          if (!bookData?.isbn) return; // Ensure ISBN is present before making the request
+        
+          try {
+            console.log('ISBN sending:', bookData.isbn);
+        
+            const response = await fetch(`https://librarydbbackend.onrender.com/user-list/${bookData.isbn}`, {
+              method: 'GET',
+              headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json', // If needed by your server
+              },
+            });
+        
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+        
+            const responseData = await response.json();
+            console.log('got back:', responseData);
+        
+            // Check if responseData is an array and has elements
+            const bookFavorited = Array.isArray(responseData) && responseData.length > 0;
+            setIsInUserList(bookFavorited);
+        
+            console.log('user list:', bookFavorited);
+        
+          } catch (error) {
+            console.error('Error checking user list:', error);
+          }
+        };
+  
+        // Call the function to check if the book is in the user's list
+        checkIfInUserList();
+        
       } catch (error) {
         console.error('Error fetching data:', error);
-        setBook(null);  // Handle book fetch error
-        setReviews([]);  // Handle reviews fetch error
+        setBook(null); // Handle book fetch error
+        setReviews([]); // Handle reviews fetch error
       }
     };
-
+  
     fetchData();
-  }, [book_id]); // Run this effect whenever the 'book_id' changes
+  }, [book_id]); 
 
 
+    const handleUserList = async () => {
+    const token = localStorage.getItem('token'); // Assuming token is stored in localStorage
+    if (!token) {
+      setError('You must be logged in to add books to your list');
+      setSnackbarMessage('You must be logged in to add books to your list');
+      setSnackbarSeverity('error');
+      setOpenSnackbar(true);
+      return;
+    }
+    if (isInUserList) {
+      // Remove from list
+      try {
+        const response = await fetch('https://librarydbbackend.onrender.com/user-list', {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            book_id: book.book_id,
+            isbn: book.isbn,
+          }),
+        });
+    
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+    
+        setIsInUserList(false); // Update the UI after removing the book
+    
+        // Show success snackbar
+        setSnackbarMessage('Book removed from your list');
+        setSnackbarSeverity('success');
+        setOpenSnackbar(true);
+    
+      } catch (error) {
+        console.error('Error removing book from user list:', error);
+        // Show error snackbar if there was an issue
+        setSnackbarMessage('Failed to remove book from list');
+        setSnackbarSeverity('error');
+        setOpenSnackbar(true);
+      }
+    } else {
+
+      try {
+        setIsAdding(true);
+        const response = await axios.post('https://librarydbbackend.onrender.com/add-to-list', 
+          { book_id: book.book_id,
+            isbn: book.isbn
+          }, 
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setIsInUserList(true);
+        console.log(response.data); 
+
+        setSnackbarMessage('Book added to your list successfully!');
+        setSnackbarSeverity('success');
+        setOpenSnackbar(true);
+      } catch (error) {
+        console.error('Error adding book to list:', error);
+        setSnackbarMessage('Failed to add book to list');
+        setSnackbarSeverity('error');
+        setOpenSnackbar(true);
+      } 
+      
+      finally {
+        setIsAdding(false);
+      }
+    }
+  };
 
   /////REVIEWS END
   if (!book) return <p>Loading...</p>;
@@ -159,8 +278,33 @@ function BookDetail() {
                   Reserve
               </Button>
               )}
+              {/*add/remove from list button */}
+              <Button 
+                variant="contained" 
+                color="primary" 
+                onClick={handleUserList}
+                disabled={isAdding}
+                startIcon={isAdding && <CircularProgress size={20} />}
+              >
+                {isAdding ? 'Adding...' : (isInUserList ? 'Remove from List' : 'Add to List')}
+              </Button>
 
-            <Button variant="outlined">Add to List</Button>
+              <Snackbar 
+                open={openSnackbar} 
+                autoHideDuration={6000} 
+                onClose={() => setOpenSnackbar(false)}
+              >
+                <Alert 
+                  onClose={() => setOpenSnackbar(false)} 
+                  severity={snackbarSeverity} 
+                  sx={{ width: '100%' }}
+                >
+                  {snackbarMessage}
+                </Alert>
+              </Snackbar>
+
+
+              {/*back to search*/}
             <Button onClick={handleBackToSearch}>
             Back to Search
           </Button>
