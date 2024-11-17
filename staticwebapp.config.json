@@ -1,5 +1,6 @@
 {
     "routes": [
+      { "route": "/home", "rewrite": "/index.html" },
       { "route": "/SignIn", "rewrite": "/index.html" },
       { "route": "/SignUp", "rewrite": "/index.html" },
       { "route": "/fines", "rewrite": "/index.html" },
@@ -17,10 +18,12 @@
       { "route": "/catalog-entry/audiobook", "rewrite": "/index.html" },
       { "route": "/catalog-entry/ebook", "rewrite": "/index.html" },
       { "route": "/catalog-entry/periodical", "rewrite": "/index.html" },
+      { "route": "/catalog", "rewrite": "/index.html" },
       { "route": "/search", "rewrite": "/index.html" },
       { "route": "/advanced-search", "rewrite": "/index.html" },
       { "route": "/search-results", "rewrite": "/index.html" },
       { "route": "/books/:book_id", "rewrite": "/index.html" },
+      { "route": "/checkout", "rewrite": "/index.html" },
       { "route": "/_laptopEntry", "rewrite": "/index.html" },
       { "route": "/_laptopSearch", "rewrite": "/index.html" },
       { "route": "/_calculatorEntry", "rewrite": "/index.html" },

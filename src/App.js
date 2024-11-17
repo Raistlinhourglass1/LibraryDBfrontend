@@ -34,7 +34,6 @@ import _laptopSearch from './_laptopSearch';
 import _calculatorEntry from './_calculatorEntry';
 import _calculatorSearch from './_calculatorSearch';
 import _laptopEntry from './_laptopEntry';
-import Home from './HomePage';
 import TestBookSearch from './TestBookSearch';
 import AddStaff from './addstaff';
 import HomePage from './HomePage';
@@ -118,6 +117,7 @@ function App() {
         <Route path="/search-results" element={<ProtectedRoute><BookSearchResults /></ProtectedRoute>} />
         <Route path="/books/:book_id" element={<ProtectedRoute><BookDetail /></ProtectedRoute>} />
         <Route path="/catalog" element={<ProtectedRoute><StaffCatalog /></ProtectedRoute>} />
+        <Route path="/checkout" element={<ProtectedRoute><BookCheckout /></ProtectedRoute>} />
         
 
         <Route path="/_laptopEntry" element={<ProtectedRoute><_laptopEntry /></ProtectedRoute>} />
