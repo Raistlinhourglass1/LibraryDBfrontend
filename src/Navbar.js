@@ -37,12 +37,11 @@ const NavbarComponent = ({ userInfo, onLogout, fetchProfileData }) => {
                 {userInfo.user_level === 'Admin' && (
                   <NavDropdown title="Admin Functions" id="admin-functions-dropdown" drop="end">
                     <NavDropdown.Item href="/addstaff">Add a Staff Member</NavDropdown.Item>
-                    <NavDropdown.Item href="/catalog">View the Catalog</NavDropdown.Item>
                   </NavDropdown>
                 )}
                 <NavDropdown.Item href="/reports">Create a Report</NavDropdown.Item>
                 <NavDropdown.Item href="/create-room">Add a Room</NavDropdown.Item>
-                <NavDropdown.Item href="/catalog-entry/book">Add a Book</NavDropdown.Item>
+                <NavDropdown.Item href="/catalog">View the Catalog</NavDropdown.Item>
                 <NavDropdown.Item href="/_laptopEntry">Add a Laptop</NavDropdown.Item>
                 <NavDropdown.Item href="/_calculatorEntry">Add a Calculator</NavDropdown.Item>
                 <NavDropdown.Item href="/nice">PERSONAL VIEW ONLY</NavDropdown.Item>
