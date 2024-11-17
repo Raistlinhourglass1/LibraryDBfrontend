@@ -295,7 +295,6 @@ export default function ProfilePage2(props) {
                     <Tab label="Laptop Rentals" {...a11yProps(2)} />
                     <Tab label="Calculator Rentals" {...a11yProps(3)} />
                     <Tab label="Reservations" {...a11yProps(4)} />
-                    <Tab label="Fines Due" {...a11yProps(5)} />
                   </Tabs>
                   <CustomTabPanel value={value} index={0}>
                     <Box>
@@ -322,9 +321,6 @@ export default function ProfilePage2(props) {
                   </CustomTabPanel>
                   <CustomTabPanel value={value} index={4}>
                     <RoomReserveTable userId={userInfo.user_ID} />
-                  </CustomTabPanel>
-                  <CustomTabPanel value={value} index={5}>
-                    <Typography>Fines Due</Typography>
                   </CustomTabPanel>
                 </Box>
               </Paper>
