@@ -98,58 +98,62 @@ const sendOverdueEmail = (reservation_id, overdueDays, amount_due) => {
 
 
   const columns = [
-    {
-      field: 'reservation_date_time',
-      headerName: 'Reservation Date & Time',
-      width: 200,
+  {
+    field: 'status',
+    headerName: 'Status',
+    width: 100,
+    sortable: false,
+    renderCell: (params) => {
+      const { status } = calculateTimeDue(params.row.reservation_date_time);
+      return renderStatus(status);
     },
-    {
-      field: 'status',
-      headerName: 'Status',
-      width: 100,
-      sortable: false,
-      renderCell: (params) => {
-        const { status } = calculateTimeDue(params.row.reservation_date_time);
-        return renderStatus(status);
-      },
+  },
+  {
+    field: 'reservation_date_time',
+    headerName: 'Reservation Date & Time',
+    width: 200,
+    renderCell: (params) => {
+      const formattedDate = format(new Date(params.value), 'MM/dd/yyyy hh:mm a'); // e.g., "08/17/2024 02:30 PM"
+      return formattedDate;
     },
-    {
-      field: 'time_due',
-      headerName: 'Time Due',
-      width: 160,
-      sortable: false,
-      renderCell: (params) => {
-        const { timeDue } = calculateTimeDue(params.row.reservation_date_time);
-        return timeDue;
-      },
+  },
+  {
+    field: 'time_due',
+    headerName: 'Time Due',
+    width: 160,
+    sortable: false,
+    renderCell: (params) => {
+      const { timeDue } = calculateTimeDue(params.row.reservation_date_time);
+      return timeDue;
     },
-    {
-      field: 'amount_due',
-      headerName: 'Amount Due',
-      width: 140,
-      sortable: false,
-      renderCell: (params) => {
-        const { overdueDays } = calculateTimeDue(params.row.reservation_date_time);
-        const amountDue = calculateAmountDue(overdueDays);
-        return `$${amountDue}`;
-      },
+  },
+  {
+    field: 'amount_due',
+    headerName: 'Amount Due',
+    width: 140,
+    sortable: false,
+    renderCell: (params) => {
+      const { overdueDays } = calculateTimeDue(params.row.reservation_date_time);
+      const amountDue = calculateAmountDue(overdueDays);
+      return `$${amountDue}`;
     },
-    {
-      field: 'cancel',
-      headerName: 'Cancel Reservation',
-      width: 160,
-      sortable: false,
-      renderCell: (params) => (
-        <Button
-          variant="outlined"
-          color="secondary"
-          onClick={() => handleCancelReservation(params.row.reservation_id, params.row.laptop_id)}
-        >
-          Cancel
-        </Button>
-      ),
-    },
-  ];
+  },
+  {
+    field: 'cancel',
+    headerName: 'Cancel Reservation',
+    width: 160,
+    sortable: false,
+    renderCell: (params) => (
+      <Button
+        variant="outlined"
+        color="secondary"
+        onClick={() => handleCancelReservation(params.row.reservation_id, params.row.laptop_id)}
+      >
+        Cancel
+      </Button>
+    ),
+  },
+];
 
   useEffect(() => {
     const token = localStorage.getItem('token');
