@@ -35,7 +35,7 @@ const calculateTimeDue = (reservationDateTime) => {
     return { status: 'Early', timeDue: `${Math.abs(daysDifference)} days remaining`, overdueDays: 0 };
   }
 };
-
+/*
 const handleCancelReservation = async (reservationId, calculatorId, setRows) => {
   try {
     const token = localStorage.getItem('token');
@@ -58,7 +58,42 @@ const handleCancelReservation = async (reservationId, calculatorId, setRows) => 
     console.error('Error cancelling reservation:', error);
   }
 };
+*/
 
+
+const handleCancelClick = (reservationId) => {
+  setSelectedReservation(reservationId);
+  setOpenDialog(true);
+};
+
+const handleConfirmCancel = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await axios.post('https://librarydbbackend.onrender.com/cancel-cal-reservation', {
+      reservationId: selectedReservation,
+    }, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (response.data.error) {
+      // If the backend returns an error, display it in the snackbar
+      setSnackbar({ open: true, message: response.data.error, severity: 'error' });
+      return;
+    }
+
+    setRows(rows.map(row => (
+      row.reservation_id === selectedReservation
+        ? { ...row, reservation_status: 'Cancelled' }
+        : row
+    )));
+    setSnackbar({ open: true, message: 'Reservation cancelled successfully!', severity: 'success' });
+  } catch (error) {
+    setSnackbar({ open: true, message: 'Failed to cancel reservation.', severity: 'error' });
+  } finally {
+    setOpenDialog(false);
+    setSelectedReservation(null);
+  }
+};
 
 const calculateAmountDue = (overdueDays) => {
   const ratePerDay = 20;
@@ -103,18 +138,15 @@ const columns = [
     },
   },
   {
-    field: 'cancel',
-    headerName: 'Cancel Reservation',
-    width: 160,
-    sortable: false,
+    field: 'actions',
+    headerName: 'Actions',
+    width: 150,
     renderCell: (params) => (
-      <Button
-        variant="outlined"
-        color="secondary"
-        onClick={() => handleCancelReservation(params.row.reservation_id, params.row.calculator_id)} // Pass calculator_id
-      >
-        Cancel
-      </Button>
+      params.row.reservation_status !== 'Cancelled' && (
+        <Button size="small" color="secondary" onClick={() => handleCancelClick(params.row.reservation_id)}>
+          Cancel
+        </Button>
+      )
     ),
   },
   { field: 'calc_type', headerName: 'Calculator Type', width: 150 },
@@ -124,35 +156,31 @@ const columns = [
 const StudentCalculatorRentals = ({ userId, ...props }) => {
   const [rows, setRows] = useState([]);
 
-  // Send overdue email
-  const sendOverdueEmail = (reservationDetails) => {
-    const token = localStorage.getItem('token');
-    return axios.post(
-      'https://librarydbbackend.onrender.com/send-overdue-email',
-      { reservationDetails },
-      { headers: { Authorization: `Bearer ${token}` } }
-    )
-    .then(() => console.log('Overdue email sent'))
-    .catch((error) => console.error('Error sending overdue email:', error));
-  };
-
 
   
 
 
 
 
-
-
-
-
-
-
-
-
-
   useEffect(() => {
     const token = localStorage.getItem('token');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // Fetch calculator reservations
     axios.get('https://librarydbbackend.onrender.com/calculator_reservations', {
@@ -193,34 +221,37 @@ const StudentCalculatorRentals = ({ userId, ...props }) => {
 
   return (
     <AppTheme {...props}>
-      <Box
-        sx={{
-          height: 390,
-          width: '100%',
-          display: 'flex',
-          boxShadow: 3,
-          borderRadius: 2,
-          padding: 1,
-          bgcolor: 'background.paper',
-        }}
-      >
+      <Box sx={{ height: 650, width: '100%' }}>
         <DataGrid
           rows={rows}
           columns={columns}
-          getRowId={(row) => row.reservation_id}
-          initialState={{
-            pagination: {
-              paginationModel: {
-                pageSize: 10,
-              },
-            },
-          }}
-          pageSizeOptions={[5, 10]}
-          checkboxSelection
+          pageSize={10}
           disableRowSelectionOnClick
+          getRowId={(row) => row.reservation_id}
         />
+
+        <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+          <DialogTitle>Cancel Reservation</DialogTitle>
+          <DialogContent>
+            <DialogContentText>Are you sure you want to cancel this reservation?</DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setOpenDialog(false)}>No</Button>
+            <Button onClick={handleConfirmCancel} color="secondary">
+              Yes
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        <Snackbar
+          open={snackbar.open}
+          autoHideDuration={3000}
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+        >
+          <Alert severity={snackbar.severity}>{snackbar.message}</Alert>
+        </Snackbar>
       </Box>
     </AppTheme>
   );
-}
+};
 export default StudentCalculatorRentals;
