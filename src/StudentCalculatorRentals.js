@@ -24,7 +24,12 @@ function renderStatus(status) {
   return <Chip label={status} color={colors[status]} size="small" />;
 }
 
-const calculateTimeDue = (reservationDateTime) => {
+// Update calculateTimeDue to handle "Cancelled" status
+const calculateTimeDue = (reservationDateTime, status) => {
+  if (status === 'Cancelled') {
+    return { status: 'Cancelled', timeDue: '', overdueDays: 0 };
+  }
+
   const now = new Date();
   const reservationDate = new Date(reservationDateTime);
   const dueDate = addDays(reservationDate, 14);
@@ -95,9 +100,10 @@ const StudentCalculatorRentals = ({ userId, ...props }) => {
         return;
       }
   
+      // Update the row state to reflect cancellation
       setRows(rows.map(row =>
         row.reservation_id === reservationId
-          ? { ...row, reservation_status: 'Cancelled' }
+          ? { ...row, reservation_status: 'Cancelled', time_due: '' }
           : row
       ));
       setSnackbar({ open: true, message: 'Reservation canceled successfully!', severity: 'success' });
@@ -122,7 +128,7 @@ const StudentCalculatorRentals = ({ userId, ...props }) => {
       width: 100,
       sortable: false,
       renderCell: (params) => {
-        const { status } = calculateTimeDue(params.row.reservation_date_time);
+        const { status } = calculateTimeDue(params.row.reservation_date_time, params.row.reservation_status);
         return renderStatus(status);
       },
     },
@@ -132,7 +138,7 @@ const StudentCalculatorRentals = ({ userId, ...props }) => {
       width: 160,
       sortable: false,
       renderCell: (params) => {
-        const { timeDue } = calculateTimeDue(params.row.reservation_date_time);
+        const { timeDue } = calculateTimeDue(params.row.reservation_date_time, params.row.reservation_status);
         return timeDue;
       },
     },
@@ -142,26 +148,27 @@ const StudentCalculatorRentals = ({ userId, ...props }) => {
       width: 140,
       sortable: false,
       renderCell: (params) => {
-        const { overdueDays } = calculateTimeDue(params.row.reservation_date_time);
+        const { overdueDays } = calculateTimeDue(params.row.reservation_date_time, params.row.reservation_status);
         const amountDue = calculateAmountDue(overdueDays);
         return `$${amountDue}`;
       },
     },
     {
-    field: 'cancel',
-    headerName: 'Cancel Reservation',
-    width: 160,
-    sortable: false,
-    renderCell: (params) => (
-      <Button
-        variant="outlined"
-        color="secondary"
-        onClick={() => handleCancelClick(params.row.reservation_id, params.row.calculator_id)}
-      >
-        Cancel
-      </Button>
-    ),
-  },
+      field: 'cancel',
+      headerName: 'Cancel Reservation',
+      width: 160,
+      sortable: false,
+      renderCell: (params) => (
+        <Button
+          variant="outlined"
+          color="secondary"
+          onClick={() => handleCancelClick(params.row.reservation_id, params.row.calculator_id)}
+          disabled={params.row.reservation_status === 'Cancelled'}
+        >
+          Cancel
+        </Button>
+      ),
+    },
     { field: 'calc_type', headerName: 'Calculator Type', width: 150 },
     { field: 'model_name', headerName: 'Model Name', width: 150 },
   ];
