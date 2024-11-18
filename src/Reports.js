@@ -11,6 +11,7 @@ import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import AppTheme from './AppTheme';
 import ColorModeSelect from './ColorModeSelect';
+import { Select, MenuItem } from '@mui/material';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -84,8 +85,10 @@ function Reports(props) {
   const [bookName, setBookName] = useState('');
   const [bookIsbn, setBookIsbn] = useState('');
   const [roomNum, setRoomNum] = useState('');
+  const [mediaType, setmediaType] = useState('');
   const [reportData, setReportData] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
+  const [topBooks, setTopBooks] = useState(5);
 
   // Clear irrelevant filters when the specification changes
   useEffect(() => {
@@ -99,7 +102,9 @@ function Reports(props) {
     setLaptopId('');
     setPeriodType('');
     setRoomNum('');
+    setTopBooks('');
     setActivityType('');
+    setmediaType('');
   }, [specification]);
 
   const handleSubmit = async (e) => {
@@ -118,7 +123,7 @@ function Reports(props) {
       payload.book_name = bookName;
       payload.book_isbn = bookIsbn;
     }
-    if (specification === 'user activity') {
+    if (specification === 'user transactions') {
       payload.activity_type = activityType;
       payload.user_id = userId;
     }
@@ -126,16 +131,19 @@ function Reports(props) {
     if (specification === 'session activity') {
       payload.user_id = userId;
     }
+    if (specification === 'catalog') {
+      payload.media_type = mediaType;
+    }
 
 
 
     try {
-      const response = await fetch('https://librarydbbackend.onrender.com/get-reports', {
+      const response = await fetch('http://localhost:5000/get-reports', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ specification, date, user_id: userId, book_name: bookName, book_isbn: bookIsbn, staff_id: staffId, teach_email: teachEmail, laptop_id: laptopId, calc_id: calcId, period_type: periodType, room_num: roomNum, activityType: activityType}),
+        body: JSON.stringify({ specification, date, user_id: userId, book_name: bookName, book_isbn: bookIsbn, staff_id: staffId, teach_email: teachEmail, laptop_id: laptopId, calc_id: calcId, period_type: periodType, room_num: roomNum, activityType: activityType, media_type: mediaType, topBooks:topBooks}),
       });
       if (!response.ok) {
         throw new Error('Error fetching reports');
@@ -393,7 +401,7 @@ function Reports(props) {
                 </FormControl>
               )}
 
-              {(specification === 'user activity') && (
+              {(specification === 'user transactions') && (
                 <>
                   <FormControl>
                   <FormLabel htmlFor="userId">By User ID (optional)</FormLabel>
@@ -424,6 +432,49 @@ function Reports(props) {
                 </FormControl>
                 </>
               )}
+
+
+              {(specification === 'most liked') && (
+                <>
+                  <FormControl>
+                    <FormLabel htmlFor="topBooks">Select Top Books</FormLabel>
+                    <Select
+                      id="topBooks"
+                      value={topBooks}
+                      onChange={(e) => setTopBooks(e.target.value)}
+                      fullWidth
+                      variant="outlined"
+                    >
+                      <MenuItem value={5}>Top 5</MenuItem>
+                      <MenuItem value={10}>Top 10</MenuItem>
+                      <MenuItem value={50}>Top 50</MenuItem>
+                    </Select>
+              </FormControl>
+                </>
+              )}
+
+
+
+
+              {
+                specification === 'catalog' && (
+                  <FormControl fullWidth variant="outlined">
+                    <FormLabel htmlFor="mediaType">By Media Type</FormLabel>
+                    <Select
+                      id="mediaType"
+                      name="mediaType"
+                      value={mediaType}
+                      onChange={(e) => setmediaType(e.target.value)}
+                      label="Media Type"
+                    >
+                      <MenuItem value="book">Book</MenuItem>
+                      <MenuItem value="audiobook">Audiobook</MenuItem>
+                      <MenuItem value="ebook">Ebook</MenuItem>
+                      <MenuItem value="periodical">Periodical</MenuItem>
+                    </Select>
+                  </FormControl>
+                )
+              }
 
               <Button type="submit" fullWidth variant="contained">
                 Generate
