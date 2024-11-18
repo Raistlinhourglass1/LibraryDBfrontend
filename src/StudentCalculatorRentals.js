@@ -82,29 +82,30 @@ const StudentCalculatorRentals = ({ userId, ...props }) => {
   const handleConfirmCancel = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.post('https://librarydbbackend.onrender.com/cancel-cal-reservation', {
-        reservationId: selectedReservation,
-      }, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const { reservationId, calculatorId } = selectedReservation;
+
+      const response = await axios.post(
+        'https://librarydbbackend.onrender.com/cancel-cal-reservation',
+        { reservationId, calculatorId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
       if (response.data.error) {
-        // If the backend returns an error, display it in the snackbar
         setSnackbar({ open: true, message: response.data.error, severity: 'error' });
         return;
       }
 
-      setRows(rows.map(row => (
-        row.reservation_id === selectedReservation
+      setRows(rows.map(row =>
+        row.reservation_id === reservationId
           ? { ...row, reservation_status: 'Cancelled' }
           : row
-      )));
-      setSnackbar({ open: true, message: 'Reservation cancelled successfully!', severity: 'success' });
+      ));
+      setSnackbar({ open: true, message: 'Reservation canceled successfully!', severity: 'success' });
     } catch (error) {
       setSnackbar({ open: true, message: 'Failed to cancel reservation.', severity: 'error' });
     } finally {
       setOpenDialog(false);
-      setSelectedReservation(null);
+      setSelectedReservation({ reservationId: null, calculatorId: null });
     }
   };
 
