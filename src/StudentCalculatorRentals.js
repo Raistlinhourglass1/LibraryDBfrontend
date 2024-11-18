@@ -28,11 +28,11 @@ const calculateTimeDue = (reservationDateTime) => {
   const daysDifference = differenceInDays(now, dueDate);
 
   if (daysDifference > 0) {
-    return { status: 'Late', timeDue: ${daysDifference} days overdue, overdueDays: daysDifference };
+    return { status: 'Late', timeDue: `${daysDifference} days overdue`, overdueDays: daysDifference };
   } else if (daysDifference === 0) {
     return { status: 'Early', timeDue: 'Due today', overdueDays: 0 };
   } else {
-    return { status: 'Early', timeDue: ${Math.abs(daysDifference)} days remaining, overdueDays: 0 };
+    return { status: 'Early', timeDue: `${Math.abs(daysDifference)} days remaining`, overdueDays: 0 };
   }
 };
 
@@ -45,12 +45,12 @@ const handleCancelReservation = async (reservationId, calculatorId, setRows) => 
       reservationId,
       calculatorId
     }, {
-      headers: { Authorization: Bearer ${token} }
+      headers: { Authorization: `Bearer ${token}` }
     });
 
     // Refresh the data after successful cancellation
     const response = await axios.get('https://librarydbbackend.onrender.com/calculator_reservations', {
-      headers: { Authorization: Bearer ${token} }
+      headers: { Authorization: `Bearer ${token}` }
     });
     
     setRows(response.data);
@@ -58,8 +58,6 @@ const handleCancelReservation = async (reservationId, calculatorId, setRows) => 
     console.error('Error cancelling reservation:', error);
   }
 };
-
-
 
 
 const calculateAmountDue = (overdueDays) => {
@@ -101,7 +99,7 @@ const columns = [
     renderCell: (params) => {
       const { overdueDays } = calculateTimeDue(params.row.reservation_date_time);
       const amountDue = calculateAmountDue(overdueDays);
-      return $${amountDue};
+      return `$${amountDue}`;
     },
   },
   {
@@ -132,7 +130,7 @@ const StudentCalculatorRentals = ({ userId, ...props }) => {
     return axios.post(
       'https://librarydbbackend.onrender.com/send-overdue-email',
       { reservationDetails },
-      { headers: { Authorization: Bearer ${token} } }
+      { headers: { Authorization: `Bearer ${token}` } }
     )
     .then(() => console.log('Overdue email sent'))
     .catch((error) => console.error('Error sending overdue email:', error));
@@ -158,7 +156,7 @@ const StudentCalculatorRentals = ({ userId, ...props }) => {
 
     // Fetch calculator reservations
     axios.get('https://librarydbbackend.onrender.com/calculator_reservations', {
-      headers: { Authorization: Bearer ${token} },
+      headers: { Authorization: `Bearer ${token}` },
     })
     .then((response) => {
       // Filter reservations by userId
@@ -195,38 +193,34 @@ const StudentCalculatorRentals = ({ userId, ...props }) => {
 
   return (
     <AppTheme {...props}>
-      <Box sx={{ height: 650, width: '100%' }}>
+      <Box
+        sx={{
+          height: 390,
+          width: '100%',
+          display: 'flex',
+          boxShadow: 3,
+          borderRadius: 2,
+          padding: 1,
+          bgcolor: 'background.paper',
+        }}
+      >
         <DataGrid
           rows={rows}
           columns={columns}
-          pageSize={10}
-          disableRowSelectionOnClick
           getRowId={(row) => row.reservation_id}
+          initialState={{
+            pagination: {
+              paginationModel: {
+                pageSize: 10,
+              },
+            },
+          }}
+          pageSizeOptions={[5, 10]}
+          checkboxSelection
+          disableRowSelectionOnClick
         />
-
-        <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-          <DialogTitle>Cancel Reservation</DialogTitle>
-          <DialogContent>
-            <DialogContentText>Are you sure you want to cancel this reservation?</DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setOpenDialog(false)}>No</Button>
-            <Button onClick={handleConfirmCancel} color="secondary">
-              Yes
-            </Button>
-          </DialogActions>
-        </Dialog>
-
-        <Snackbar
-          open={snackbar.open}
-          autoHideDuration={3000}
-          onClose={() => setSnackbar({ ...snackbar, open: false })}
-        >
-          <Alert severity={snackbar.severity}>{snackbar.message}</Alert>
-        </Snackbar>
       </Box>
     </AppTheme>
   );
-};
-
-export default CalculatorReserveTable;
+}
+export default StudentCalculatorRentals;
