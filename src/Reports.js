@@ -172,7 +172,7 @@ function Reports(props) {
       </thead>
     );
   };
-
+ 
   const renderTableRows = () => {
     return reportData.map((item, index) => (
       <tr key={index}>

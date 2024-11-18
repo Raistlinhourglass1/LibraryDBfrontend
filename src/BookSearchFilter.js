@@ -80,7 +80,6 @@ function BookSearchFilter({ books, onFilter }) {
             <FormControlLabel value="available" control={<Radio />} label="Available" />
             <FormControlLabel value="checked_out" control={<Radio />} label="Checked Out" />
             <FormControlLabel value="reserved" control={<Radio />} label="Reserved" />
-            <FormControlLabel value="lost" control={<Radio />} label="Lost" />
           </RadioGroup>
         </FormControl>
 {/*
