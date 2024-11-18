@@ -130,7 +130,6 @@ const LaptopEntry = () => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [originalSerialNumber, setOriginalSerialNumber] = useState('');
 
-
   const fetchCatalog = async () => {
     try {
       const response = await fetch('https://librarydbbackend.onrender.com/_laptopCatalog');
@@ -203,7 +202,7 @@ const LaptopEntry = () => {
         if (response.ok) {
           setSubmitStatus('success');
           alert(data.message);
-         resetForm();
+          resetForm();
           fetchCatalog(); // Refresh catalog after adding or editing laptop
         } else {
           setSubmitStatus('error');
@@ -241,11 +240,11 @@ const LaptopEntry = () => {
     setValues({
       model_name: laptop.model_name,
       serial_number: laptop.serial_number,
-      price: laptop.price
+      price: laptop.price,
     });
 
-     // Save original serial number to track during update
-  setOriginalSerialNumber(laptop.serial_number);  // Store original serial number
+    // Save original serial number to track during update
+    setOriginalSerialNumber(laptop.serial_number); // Store original serial number
   };
 
   return (
