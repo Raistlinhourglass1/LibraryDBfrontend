@@ -9,6 +9,8 @@ import red from './themePrimitives'
 import { DataGrid, GridRowsProp, GridColDef, gridDateTimeFormatter } from '@mui/x-data-grid';
 import { differenceInDays } from 'date-fns';
 import axios from 'axios';
+import { format } from 'date-fns';
+
 
 
 
@@ -36,6 +38,19 @@ import axios from 'axios';
     } else {
       return { status: 'Early', timeDue: `${Math.abs(daysDifference)} days remaining`, overdueDays: 0 }; // Early
     }
+  };
+
+  const calculateFormattedDate = (dateTime) => {
+    if (!dateTime) return { formattedDate: 'N/A' };
+    
+    const date = new Date(dateTime);
+    const formattedDate = date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    });
+    
+    return { formattedDate };
   };
 
   const calculateAmountDue = (overdueDays) => {
@@ -188,7 +203,16 @@ import axios from 'axios';
     const pendingColumns = [
       { field: 'book_title', headerName: 'Book Title', width: 250 },
       { field: 'author', headerName: 'Author', width: 200 },
-      { field: 'reservation_date_time', headerName: 'Reservation Date', width: 180 },
+      {
+        field: 'reservation_date_time',
+        headerName: 'Reservation Date',
+        width: 180,
+        sortable: false,
+        renderCell: (params) => {
+          const { formattedDate } = calculateFormattedDate(params.row.reservation_date_time);
+          return formattedDate;
+        },
+      },
       { field: 'queue_position', headerName: 'Queue Position', width: 150 },
       {
         field: 'actions',
@@ -211,8 +235,26 @@ import axios from 'axios';
     const checkedOutColumns = [
       { field: 'book_title', headerName: 'Book Title', width: 250 },
       { field: 'author', headerName: 'Author', width: 200 },
-      { field: 'date_borrowed', headerName: 'Date Borrowed', width: 180 },
-      { field: 'date_due', headerName: 'Due Date', width: 180 },
+      {
+        field: 'date_borrowed',
+        headerName: 'Date Borrowed',
+        width: 180,
+        sortable: false,
+        renderCell: (params) => {
+          const { formattedDate } = calculateFormattedDate(params.row.date_borrowed);
+          return formattedDate;
+        },
+      },
+      {
+        field: 'date_due',
+        headerName: 'Due Date',
+        width: 180,
+        sortable: false,
+        renderCell: (params) => {
+          const { formattedDate } = calculateFormattedDate(params.row.date_due);
+          return formattedDate;
+        },
+      },
       {
         field: 'actions',
         headerName: 'Actions',
@@ -234,8 +276,26 @@ import axios from 'axios';
     const historyColumns = [
       { field: 'book_title', headerName: 'Book Title', width: 250 },
       { field: 'author', headerName: 'Author', width: 200 },
-      { field: 'date_borrowed', headerName: 'Date Borrowed', width: 180 },
-      { field: 'date_returned', headerName: 'Date Returned', width: 180 },
+      {
+        field: 'date_borrowed',
+        headerName: 'Date Borrowed',
+        width: 180,
+        sortable: false,
+        renderCell: (params) => {
+          const { formattedDate } = calculateFormattedDate(params.row.date_borrowed);
+          return formattedDate;
+        },
+      },
+      {
+        field: 'date_returned',
+        headerName: 'Date Returned',
+        width: 180,
+        sortable: false,
+        renderCell: (params) => {
+          const { formattedDate } = calculateFormattedDate(params.row.date_returned);
+          return formattedDate;
+        },
+      }
     ];
   
 
@@ -335,8 +395,8 @@ import axios from 'axios';
                   <TableRow key={row.reservation_id}>
                     <TableCell>{row.book_title}</TableCell>
                     <TableCell>{row.author}</TableCell>
-                    <TableCell>{row.date_borrowed}</TableCell>
-                    <TableCell>{row.date_due}</TableCell>
+                    <TableCell>{calculateFormattedDate(row.date_borrowed).formattedDate}</TableCell>
+                    <TableCell>{calculateFormattedDate(row.date_due).formattedDate}</TableCell>
                     <TableCell>
                       <Button
                         onClick={() => handleReturn(row.reservation_id, row.book_id)}
@@ -372,7 +432,7 @@ import axios from 'axios';
                   <TableRow key={row.reservation_id}>
                     <TableCell>{row.book_title}</TableCell>
                     <TableCell>{row.author}</TableCell>
-                    <TableCell>{row.reservation_date_time}</TableCell>
+                    <TableCell>{calculateFormattedDate(row.reservation_date_time).formattedDate}</TableCell>
                     <TableCell>{row.queue_position}</TableCell>
                     <TableCell>
                       <Button
@@ -409,8 +469,8 @@ import axios from 'axios';
                   <TableRow key={row.reservation_id}>
                     <TableCell>{row.book_title}</TableCell>
                     <TableCell>{row.author}</TableCell>
-                    <TableCell>{row.date_borrowed}</TableCell>
-                    <TableCell>{row.date_returned}</TableCell>
+                    <TableCell>{calculateFormattedDate(row.date_borrowed).formattedDate}</TableCell>
+                    <TableCell>{calculateFormattedDate(row.date_returned).formattedDate}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
