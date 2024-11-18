@@ -86,7 +86,6 @@ const RoomReserveTable = (props) => {
         return renderStatus(status);
       },
     },
-    { field: 'room_number', headerName: 'Room Number', width: 150 },
     {
       field: 'reservation_date',
       headerName: 'Date',
@@ -105,6 +104,8 @@ const RoomReserveTable = (props) => {
         }
       },
     },
+    { field: 'room_number', headerName: 'Room Number', width: 150 },
+    
     { field: 'reservation_reason', headerName: 'Reason', width: 160 },
     { field: 'reservation_duration_hrs', headerName: 'Duration (hrs)', width: 160 },
     { field: 'party_size', headerName: 'Party Size', width: 150 },
