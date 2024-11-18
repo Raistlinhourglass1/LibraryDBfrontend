@@ -7,23 +7,64 @@ import PeriodicalCatalog from './PeriodicalCatalog';
 
 const StaffCatalog = () => {
 
-  const [catalogData, setCatalogData] = useState([]);
+  //const [catalogData, setCatalogData] = useState([]);
+  const [bookData, setBookData] = useState([]);
+  const [audiobookData, setAudiobookData] = useState([]);
+  const [ebookData, setEbookData] = useState([]);
+  const [periodicalData, setPeriodicalData] = useState([]);
+
   const [selectedTab, setSelectedTab] = useState(0); // Tab index state
   // Fetch data from your backend
   
+  /*
   const fetchData = async () => {
-      const response = await fetch('https://librarydbbackend.onrender.com/catalog');
+      const response = await fetch('http://localhost:5000/catalog');
       const data = await response.json();
       setCatalogData(data);
-    };
+    }; */
 
     const handleTabChange = (event, newValue) => {
       setSelectedTab(newValue);
     };
 
+    const fetchBooks = async () => {
+      const response = await fetch('http://localhost:5000/get-all-books');
+      const data = await response.json();
+      setBookData(data);
+    };
+
+    const fetchAudioBooks = async () => {
+      const response = await fetch('http://localhost:5000/get-all-audiobooks');
+      const data = await response.json();
+      setAudiobookData(data);
+    };
+
+    const fetchEBooks = async () => {
+      const response = await fetch('http://localhost:5000/get-all-ebooks');
+      const data = await response.json();
+      setEbookData(data);
+    };
+
+    const fetchPeriodicals = async () => {
+      const response = await fetch('http://localhost:5000/get-all-periodicals');
+      const data = await response.json();
+      setPeriodicalData(data);
+    };
+
+
   useEffect(() => {
-    fetchData();
+    //fetchData();
+    fetchBooks();
+    fetchAudioBooks();
+    fetchEBooks();
+    fetchPeriodicals();
+
   }, []);
+
+  //const booksData = catalogData.filter((item) => item.item_type === 'book');
+  //const audioBooksData = catalogData.filter((item) => item.item_type === 'audiobook');
+  //const eBooksData = catalogData.filter((item) => item.item_type === 'ebook');
+  //const periodicalsData = catalogData.filter((item) => item.item_type === 'periodical');
 
   return (
     <div style={{ padding: '20px' }}>
@@ -39,13 +80,12 @@ const StaffCatalog = () => {
 
       {/* Tab Content */}
       <Box sx={{ marginTop: 2 }}>
-        {selectedTab === 0 && <BookCatalog catalogData={catalogData} fetchData={fetchData} />}
-        {selectedTab === 1 && <AudioBookCatalog catalogData={catalogData} fetchData={fetchData} />}
-        {selectedTab === 2 && <EBookCatalog catalogData={catalogData} fetchData={fetchData} />}
-        {selectedTab === 3 && <PeriodicalCatalog catalogData={catalogData} fetchData={fetchData}/>} 
+        {selectedTab === 0 && <BookCatalog catalogData={bookData} fetchData={fetchBooks} />}
+        {selectedTab === 1 && <AudioBookCatalog catalogData={audiobookData} fetchData={fetchAudioBooks} />}
+        {selectedTab === 2 && <EBookCatalog catalogData={ebookData} fetchData={fetchEBooks} />}
+        {/*selectedTab === 3 && <PeriodicalCatalog catalogData={periodicalData} fetchData={fetchPeriodicals}/>*/} 
         
-        {/*selectedTab === 2 && <div>eBook Catalog (coming soon)</div>*/}  {/* Placeholder for eBooks */}
-        {/*selectedTab === 3 && <div>Periodical Catalog (coming soon)</div>*/}  {/* Placeholder for Periodicals */}
+        {selectedTab === 3 && <div>Periodical Catalog (coming soon)</div>} 
       </Box>
     </div>
   );

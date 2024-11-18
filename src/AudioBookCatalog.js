@@ -34,18 +34,17 @@ const AudioBookCatalog = ({ catalogData, fetchData }) => {
       return dateB - dateA; // Sort descending
     });
 
-
   // Deleting Audiobook
-  const handleDelete = async (audiobookId) => {/*
+  const handleDelete = async (audiobookId) => {
     if (!window.confirm('Are you sure you want to delete this audiobook?')) return;
     
     try {
-      const response = await fetch('http://localhost:5000/soft-delete-audiobook', {
+      const response = await fetch('https://librarydbbackend.onrender.com/soft-delete-audiobook', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ audiobook_id: audiobookId }),
+        body: JSON.stringify({ book_id: audiobookId }),
       });
   
       const data = await response.json();
@@ -59,17 +58,17 @@ const AudioBookCatalog = ({ catalogData, fetchData }) => {
       console.error('Error deleting audiobook:', error);
       alert('Failed to delete the audiobook. Please try again.');
     }
-  */};
+  };
 
   // Restoring Audiobook
-  const handleRestore = async (audiobookId) => {/*
+  const handleRestore = async (audiobookId) => {
     try {
-      const response = await fetch('http://localhost:5000/restore-audiobook', {
+      const response = await fetch('https://librarydbbackend.onrender.com/restore-audiobook', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ audiobook_id: audiobookId }),
+        body: JSON.stringify({ book_id: audiobookId }),
       });
       const data = await response.json();
       console.log('Restore Response:', data);
@@ -84,7 +83,7 @@ const AudioBookCatalog = ({ catalogData, fetchData }) => {
     } catch (error) {
       console.error('Error restoring audiobook:', error);
     }
-    */}; 
+  };
 
   // Toggle for deleted audiobooks visibility
   const [viewOption, setViewOption] = useState('showNormal'); // Default to show normal audiobooks only
@@ -116,28 +115,37 @@ const AudioBookCatalog = ({ catalogData, fetchData }) => {
             backgroundColor: item.deleted ? '#f0f0f0' : 'white' }}>
           <CardContent>
             <Typography variant="h6" component="div" gutterBottom>
-              {item.audiobook_title}
+              {item.audio_title}
             </Typography>
             <Typography variant="body2" color="textSecondary" gutterBottom>
-              <strong>ISBN:</strong> {item.isbn}
+              <strong>ISBN:</strong> {item.audio_isbn}
             </Typography>
             <Typography variant="body2" color="textSecondary" gutterBottom>
-              <strong>Author:</strong> {item.author}
+              <strong>Author:</strong> {item.audio_author}
             </Typography>
             <Typography variant="body2" color="textSecondary" gutterBottom>
-              <strong>Publisher:</strong> {item.publisher}
+              <strong>Narrator:</strong> {item.audio_narrator}
+            </Typography>
+            <Typography variant="body2" color="textSecondary" gutterBottom>
+              <strong>Publisher:</strong> {item.audio_publisher}
+            </Typography>
+            <Typography variant="body2" color="textSecondary" gutterBottom>
+              <strong>Category:</strong> {item.audio_category}
+            </Typography>
+            <Typography variant="body2" color="textSecondary" gutterBottom>
+              <strong>Edition:</strong> {item.audio_edition || 'N/A'}
             </Typography>
             <Typography variant="body2" color="textSecondary" gutterBottom>
               <strong>Duration:</strong> {item.duration || 'N/A'}
             </Typography>
             <Typography variant="body2" color="textSecondary" gutterBottom>
-              <strong>Language:</strong> {item.language || 'N/A'}
+              <strong>Language:</strong> {item.audio_language || 'N/A'}
             </Typography>
             <Typography variant="body2" color="textSecondary" gutterBottom>
-              <strong>Summary:</strong> {item.summary || 'No summary available.'}
+              <strong>Summary:</strong> {item.audio_summary || 'No summary available.'}
             </Typography>
             <Typography variant="body2" color="textSecondary" gutterBottom>
-              <strong>Notes:</strong> {item.notes || 'No additional notes.'}
+              <strong>Notes:</strong> {item.audio_notes || 'No additional notes.'}
             </Typography>
             <Typography variant="body2" color="textSecondary" gutterBottom>
               <strong>Status:</strong> {item.status || 'N/A'}

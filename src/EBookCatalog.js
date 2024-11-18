@@ -34,18 +34,17 @@ const EBookCatalog = ({ catalogData, fetchData }) => {
       return dateB - dateA; // Sort descending
     });
 
-  
   // Deleting eBook
-  const handleDelete = async (eBookId) => {/*
+  const handleDelete = async (eBookId) => {
     if (!window.confirm('Are you sure you want to delete this eBook?')) return;
 
     try {
-      const response = await fetch('http://localhost:5000/soft-delete-ebook', {
+      const response = await fetch('https://librarydbbackend.onrender.com/soft-delete-ebook', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ ebook_id: eBookId }),
+        body: JSON.stringify({ book_id: eBookId }),
       });
 
       const data = await response.json();
@@ -59,17 +58,17 @@ const EBookCatalog = ({ catalogData, fetchData }) => {
       console.error('Error deleting eBook:', error);
       alert('Failed to delete the eBook. Please try again.');
     }
-  */};
+  };
 
   // Restoring eBook
-  const handleRestore = async (eBookId) => {/*
+  const handleRestore = async (eBookId) => {
     try {
-      const response = await fetch('http://localhost:5000/restore-ebook', {
+      const response = await fetch('https://librarydbbackend.onrender.com/restore-ebook', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ ebook_id: eBookId }),
+        body: JSON.stringify({ book_id: eBookId }),
       });
       const data = await response.json();
       console.log('Restore Response:', data);
@@ -83,8 +82,8 @@ const EBookCatalog = ({ catalogData, fetchData }) => {
     } catch (error) {
       console.error('Error restoring eBook:', error);
     }
-  */};
- 
+  };
+
   // Toggle deleted eBook visibility
   const [viewOption, setViewOption] = useState('showNormal'); // Default to show normal eBooks only
 
@@ -117,34 +116,34 @@ const EBookCatalog = ({ catalogData, fetchData }) => {
         }}>
           <CardContent>
             <Typography variant="h6" component="div" gutterBottom>
-              {item.title}
+              {item.ebook_title}
             </Typography>
             <Typography variant="body2" color="textSecondary" gutterBottom>
-              <strong>ISBN:</strong> {item.isbn}
+              <strong>ISBN:</strong> {item.ebook_isbn}
             </Typography>
             <Typography variant="body2" color="textSecondary" gutterBottom>
-              <strong>Author:</strong> {item.author}
+              <strong>Author:</strong> {item.ebook_author}
             </Typography>
             <Typography variant="body2" color="textSecondary" gutterBottom>
-              <strong>Publisher:</strong> {item.publisher}
+              <strong>Publisher:</strong> {item.ebook_publisher}
             </Typography>
             <Typography variant="body2" color="textSecondary" gutterBottom>
-              <strong>Category:</strong> {item.category || 'N/A'}
+              <strong>Category:</strong> {item.ebook_category || 'N/A'}
             </Typography>
             <Typography variant="body2" color="textSecondary" gutterBottom>
-              <strong>Year of Copyright:</strong> {item.year_copyright || 'N/A'}
+              <strong>Year of Copyright:</strong> {item.ebook_year || 'N/A'}
             </Typography>
             <Typography variant="body2" color="textSecondary" gutterBottom>
-              <strong>Format:</strong> {item.format || 'N/A'}
+              <strong>Resource Type:</strong> {item.resource_type || 'N/A'}
             </Typography>
             <Typography variant="body2" color="textSecondary" gutterBottom>
-              <strong>Language:</strong> {item.language || 'N/A'}
+              <strong>Language:</strong> {item.ebook_language || 'N/A'}
             </Typography>
             <Typography variant="body2" color="textSecondary" gutterBottom>
-              <strong>Summary:</strong> {item.summary || 'No summary available.'}
+              <strong>Summary:</strong> {item.ebook_summary || 'No summary available.'}
             </Typography>
             <Typography variant="body2" color="textSecondary">
-              <strong>Status:</strong> {item.status || 'N/A'}
+              <strong>URL:</strong> {item.url || 'N/A'}
             </Typography>
             <Typography variant="body2" color="textSecondary" gutterBottom>
               <strong>Date Added:</strong> {formattedDate}

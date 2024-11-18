@@ -106,7 +106,7 @@ const HomePage = () => {
   return (
     <Box>
       {/* Navbar */}
-      <AppBar position="static" sx={{ height: '100px', justifyContent: 'flex-end', paddingBottom: '10px' }}>
+      <AppBar position="static" sx={{ height: '100px', justifyContent: 'flex-end', paddingBottom: '10px' }}> {/*
         <Toolbar sx={{ height: '100%', display: 'flex', alignItems: 'flex-end' }}>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1, cursor: 'pointer' }} onClick={() => navigate('/home')}>
             My Library
@@ -140,7 +140,7 @@ const HomePage = () => {
         </MenuItem>
       </Menu>
           <Button color="inherit">Sign Out</Button>
-        </Toolbar>
+        </Toolbar> */}
       </AppBar>
 
       {/* Hero Section */}
