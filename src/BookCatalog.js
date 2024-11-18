@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {Card, CardContent, Dialog, DialogActions, DialogContent, DialogTitle, ToggleButtonGroup, ToggleButton, Typography, Button, Paper, Box } from '@mui/material';
+import {Card, CardContent, Dialog, DialogActions, DialogContent, DialogTitle, TextField, ToggleButtonGroup, ToggleButton, Typography, Button, Paper, Box } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import BookEntry from './BookEntry';
 
@@ -9,6 +9,8 @@ console.log('Catalog Data: ', catalogData);
 const [openAddDialog, setOpenAddDialog] = useState(false);
 const [selectedBook, setSelectedBook] = useState(null); // Used for editing an existing book
 const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
+const [searchInput, setSearchInput] = useState(''); // Search input state
+const [viewOption, setViewOption] = useState('showNormal');
 
   // Function to open the add dialog
   const handleOpenAddDialog = () => {
@@ -101,18 +103,20 @@ const handleRestore = async (bookId) => {
 
 /////TOGGLE DELETED BOOKS VISIBILITY
 
-const [viewOption, setViewOption] = useState('showNormal'); // Default to show normal books only
-
-const filteredBooks = books.filter((book) => {
-  if (viewOption === 'showNormal') {
-    return !book.deleted; // Show only non-deleted books
-  } else if (viewOption === 'showDeleted') {
-    return true; // Show all books, including deleted
-  } else if (viewOption === 'showOnlyDeleted') {
-    return book.deleted; // Show only deleted books
-  }
-  return true;
-});
+const filteredBooks = books
+    .filter((book) => {
+      if (viewOption === 'showNormal') return !book.deleted;
+      if (viewOption === 'showDeleted') return true;
+      if (viewOption === 'showOnlyDeleted') return book.deleted;
+      return true;
+    })
+    .filter((book) => {
+      const lowerSearch = searchInput.toLowerCase();
+      return (
+        book.book_title.toLowerCase().includes(lowerSearch) ||
+        book.isbn.toLowerCase().includes(lowerSearch)
+      );
+    });
 
 
     const handleViewChange = (event, newViewOption) => {
@@ -225,6 +229,8 @@ const filteredBooks = books.filter((book) => {
 
   return (
     <Paper sx={{ padding: 2, backgroundColor: '#f4f4f4' }}>
+<Grid container spacing={2}>
+  <Grid item size={8}>
       <ToggleButtonGroup
         value={viewOption}
         exclusive
@@ -242,6 +248,20 @@ const filteredBooks = books.filter((book) => {
           Show Deleted Books Only
         </ToggleButton>
       </ToggleButtonGroup>
+</Grid>
+<Grid item size={4}>
+      <TextField
+        label="Search by Title or ISBN"
+        variant="outlined"
+        fullWidth
+        sx={{ marginBottom: 3 }}
+        value={searchInput}
+        onChange={(e) => setSearchInput(e.target.value)}
+      />
+      </Grid>
+</Grid>
+
+
       <Typography variant="h4" component="h1" gutterBottom>
         Book Catalog
       </Typography>

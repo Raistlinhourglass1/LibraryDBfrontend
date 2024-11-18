@@ -50,6 +50,10 @@ const HomePage = () => {
 
   };
 
+  const handleDetails = (bookId) => {
+    navigate(`/books/${bookId}`);
+  };
+
 
   // Fetch data for Staff's Choice and Latest Entries
   useEffect(() => {
@@ -190,9 +194,13 @@ const HomePage = () => {
                   height="200"
                 />
                 <CardContent>
-                <Link href={`/books/${book.book_id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                  <Typography variant="subtitle2">{book.book_title}</Typography>
-                  </Link>
+                <Typography
+                  onClick={() => handleDetails(book.book_id)}
+                  style={{ cursor: 'pointer', color: 'inherit' }}
+                >
+                  {book.book_title}
+                </Typography>
+
                 </CardContent>
               </Card>
             </Grid>
@@ -212,9 +220,13 @@ const HomePage = () => {
                   height="200"
                 />
                 <CardContent>
-                <Link href={`/books/${book.book_id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                  <Typography variant="subtitle2">{book.book_title}</Typography>
-                </Link>
+                <Typography
+                  onClick={() => handleDetails(book.book_id)}
+                  style={{ cursor: 'pointer', color: 'inherit' }}
+                >
+                  {book.book_title}
+                </Typography>
+
                 </CardContent>
               </Card>
             </Grid>
