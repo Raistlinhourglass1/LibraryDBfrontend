@@ -3,7 +3,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import Chip from '@mui/material/Chip';
 import axios from 'axios';
 import AppTheme from './AppTheme';
-import { addDays, differenceInDays } from 'date-fns';
+import { addDays, differenceInDays, format } from 'date-fns';
 import {
   Box,
   Button,
@@ -118,11 +118,6 @@ const StudentCalculatorRentals = ({ userId, ...props }) => {
 
   const columns = [
     {
-      field: 'reservation_date_time',
-      headerName: 'Reservation Date & Time',
-      width: 200,
-    },
-    {
       field: 'status',
       headerName: 'Status',
       width: 100,
@@ -132,6 +127,18 @@ const StudentCalculatorRentals = ({ userId, ...props }) => {
         return renderStatus(status);
       },
     },
+    {
+      field: 'reservation_date_time',
+      headerName: 'Reservation Date & Time',
+      width: 200,
+      renderCell: (params) => {
+        const formattedDate = params.row.reservation_date_time
+          ? format(new Date(params.row.reservation_date_time), 'yyyy-MM-dd HH:mm')
+          : 'N/A';
+        return formattedDate;
+      },
+    },
+    
     {
       field: 'time_due',
       headerName: 'Time Due',
