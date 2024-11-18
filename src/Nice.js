@@ -28,7 +28,7 @@ const Nice = (props) => {
             textAlign: 'center',
           }}
         >
-          BITCHNESS
+          SUPRISE
         </Typography>
       </Box>
     </AppTheme>
