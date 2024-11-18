@@ -9,7 +9,7 @@ function AdvancedSearch() {
   return (
     <>
     <Container>
-    <Box sx={{ bgcolor: '#f2f2f2', height: '100%' }}>
+    <Box sx={{ height: '100%' }}>
     <Breadcrumbs aria-label="breadcrumb">
             <Link underline="hover" color="inherit" href="/Home">
                 Home

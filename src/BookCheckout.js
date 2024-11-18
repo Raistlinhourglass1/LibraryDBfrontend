@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Typography, Box, Paper, Snackbar, Alert } from '@mui/material';
 import { useLocation } from 'react-router-dom';
+import bgImage from './external/iStock-1193287049.jpg';
 
 const BookCheckout = () => {
   const location = useLocation();
@@ -63,54 +64,69 @@ const BookCheckout = () => {
     <Paper
       sx={{
         height: '100vh',
+        backgroundImage: `url(${bgImage})`,
+        opacity: '90%',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        textAlign: 'center',
       }}
     >
-      {/* Animation page */}
-      {isAnimating && (
-        <Box>
-          <Typography variant="h5" component="h2">
-            Reserving your book...
-          </Typography>
-          <div className="loading-animation">
-            <Typography variant="h6" color="primary">
-              Please wait...
-            </Typography>
-          </div>
-        </Box>
-      )}
-
-      {/* Checkout Page (After animation finishes) */}
-      {!isAnimating && isReadyForCheckout && (
-        <Box>
-          <Typography variant="h4" component="h1" gutterBottom>
-            Your book is ready for checkout!
-          </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => handleCheckout(book.id)}
-            sx={{ marginTop: 2 }}
-          >
-            Checkout
-          </Button>
-        </Box>
-      )}
-
-      {/* Snackbar for feedback messages */}
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      {/* Main Content Box with rounded corners */}
+      <Box
+        sx={{
+          backgroundColor: 'rgba(255, 255, 255, 0.95)', // Semi-transparent white background
+          padding: 4,
+          borderRadius: 2,
+          width: '100%',
+          maxWidth: '500px',
+          textAlign: 'center',
+        }}
       >
-        <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
+        {/* Animation page */}
+        {isAnimating && (
+          <Box>
+            <Typography variant="h5" component="h2">
+              Reserving your book...
+            </Typography>
+            <div className="loading-animation">
+              <Typography variant="h6" color="primary">
+                Please wait...
+              </Typography>
+            </div>
+          </Box>
+        )}
+
+        {/* Checkout Page (After animation finishes) */}
+        {!isAnimating && isReadyForCheckout && (
+          <Box>
+            <Typography variant="h4" component="h1" gutterBottom>
+              Your book is ready for checkout!
+            </Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => handleCheckout(book.id)}
+              sx={{ marginTop: 2 }}
+            >
+              Checkout
+            </Button>
+          </Box>
+        )}
+
+        {/* Snackbar for feedback messages */}
+        <Snackbar
+          open={snackbarOpen}
+          autoHideDuration={3000}
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        >
+          <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
+      </Box>
     </Paper>
   );
 };

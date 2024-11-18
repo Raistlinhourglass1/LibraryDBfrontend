@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Tabs, Tab, Box } from '@mui/material';
+import { AppBar, Tabs, Tab, Box } from '@mui/material';
 import BookCatalog from './BookCatalog';
 import AudioBookCatalog from './AudioBookCatalog';
 import EBookCatalog from './EBookCatalog';
 import PeriodicalCatalog from './PeriodicalCatalog';
+import bgImage from './external/iStock-1411029939-L.jpg';
 
 const StaffCatalog = () => {
 
@@ -69,14 +70,17 @@ const StaffCatalog = () => {
   return (
     <div style={{ padding: '20px' }}>
       <h1>Catalog Page</h1>
-      
+      <AppBar position="static" sx={{ backgroundImage: `url(${bgImage})`, height: '200px', justifyContent: 'flex-end', paddingBottom: '10px' }}></AppBar>
       {/* Tabs for switching between catalogs */}
+
+      <Box sx={{ marginTop: 2 }}>
       <Tabs value={selectedTab} onChange={handleTabChange} aria-label="catalog tabs" centered>
         <Tab label="Books" />
         <Tab label="Audiobooks" />
         <Tab label="eBooks" />
         <Tab label="Periodicals" />
       </Tabs>
+      </Box>
 
       {/* Tab Content */}
       <Box sx={{ marginTop: 2 }}>

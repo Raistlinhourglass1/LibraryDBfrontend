@@ -220,14 +220,8 @@ export default function ProfilePage2(props) {
                       <Link href="/Nice" variant="body2" display="block" gutterBottom>
                         Nice
                       </Link>
-                      <Link href="/catalog-entry/ebook" variant="body2" display="block" gutterBottom>
-                        Add E-Book
-                      </Link>
-                      <Link href="/catalog-entry/audiobook" variant="body2" display="block" gutterBottom>
-                        Add Audiobook
-                      </Link>
-                      <Link href="/catalog-entry/periodical" variant="body2" display="block" gutterBottom>
-                        Add Periodical
+                      <Link href="/catalog" variant="body2" display="block" gutterBottom>
+                        View Catalog
                       </Link>
                     </>
                   )}
