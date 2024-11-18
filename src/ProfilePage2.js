@@ -212,9 +212,6 @@ export default function ProfilePage2(props) {
                   <Link onClick={handleLogout} variant="body1" display="block" gutterBottom>
                     Sign out
                   </Link>
-                  <Link href="/feedback" variant="body2" display="block" gutterBottom>
-                    Feedback
-                  </Link>
                   <Link href="/reserve-room" variant="body2" display="block" gutterBottom>
                     Room Reservation
                   </Link>
