@@ -26,13 +26,6 @@ function BookSearch() {
       }
     }, [location.search]);
 
-    const fetchAllBooks = async () => {
-      const response = await fetch('https://librarydbbackend.onrender.com/catalog');
-      const data = await response.json();
-      setBooks(data);
-    };
-
-
 
     const handleSearch = async (term) => {
         //e.preventDefault();
@@ -107,10 +100,8 @@ function BookSearch() {
             <IconButton type="submit" variant="contained" size="large" color='primary' onClick={onSearchClick}>
               <SearchIcon fontSize="inherit" />
             </IconButton>
-            <Button variant="text" size="small" onClick={fetchAllBooks}>Show All Books</Button>
-            {/* 
+          
             <Button component={Link} href="/advanced-search" variant="text" size="small" >Advanced Search</Button>
-            */}
         </Box>
     </Box> 
     </Container>
