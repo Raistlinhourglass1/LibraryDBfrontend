@@ -110,7 +110,8 @@ function Reports(props) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     // Prepare the payload based on the selected specification
-    const payload = { specification, date };
+    const payload = { specification };
+    if (date && specification !== 'most liked') payload.date = date;
     if (specification === 'users') payload.user_id = userId;
     if (specification === 'staff') payload.staff_id = staffId;
     if (specification === 'teacher') payload.teach_email = teachEmail;
@@ -248,6 +249,7 @@ function Reports(props) {
               </FormControl>
 
               {/* Date Filter - Always shown */}
+              {specification !== 'most liked' && (
               <FormControl>
                 <FormLabel htmlFor="date">By Date (optional, YYYY-MM-DD)</FormLabel>
                 <TextField
@@ -259,6 +261,8 @@ function Reports(props) {
                   variant="outlined"
                 />
               </FormControl>
+            )}
+
 
               {/* Conditional filters based on selected specification */}
               {(specification === 'users') && (
