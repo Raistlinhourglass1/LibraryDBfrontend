@@ -100,7 +100,7 @@ const RoomReserveTable = (props) => {
           return <span>{formattedDate}</span>;
         } catch (error) {
           console.error("Error parsing or formatting date:", error);
-          return <span>Invalid Date</span>; // Display a fallback if date is invalid
+          return <span>Invalid Date</span>; //Display a fallback if date is invalid
         }
       },
     },
