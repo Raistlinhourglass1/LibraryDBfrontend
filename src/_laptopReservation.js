@@ -12,14 +12,12 @@ const LaptopReservation = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Fetch available laptops when component mounts
   useEffect(() => {
     const fetchLaptops = async () => {
       setLoading(true);
       try {
         const response = await fetch('https://librarydbbackend.onrender.com/get-laptops');
         const data = await response.json();
-        // Handle the new response format
         if (data.success) {
           setLaptops(data.data);
         } else {
@@ -105,7 +103,6 @@ const LaptopReservation = () => {
         <CircularProgress />
       ) : (
         <form onSubmit={handleSubmit}>
-          {/* Available Laptops */}
           <FormControl fullWidth margin="normal">
             <FormLabel htmlFor="laptop">Available Laptops</FormLabel>
             <Select
@@ -126,19 +123,19 @@ const LaptopReservation = () => {
           </FormControl>
 
           {/* Laptop Details */}
-          // {selectedLaptop && laptops.find(l => l.laptop_ID === selectedLaptop) && (
-          //   <Box sx={{ marginY: 2, padding: 2, bgcolor: '#f5f5f5', borderRadius: 1 }}>
-          //     <Typography variant="subtitle2">
-          //       {`Processor: ${laptops.find(l => l.laptop_ID === selectedLaptop).processor || 'N/A'}`}
-          //     </Typography>
-          //     <Typography variant="subtitle2">
-          //       {`Memory: ${laptops.find(l => l.laptop_ID === selectedLaptop).memory || 'N/A'}`}
-          //     </Typography>
-          //     <Typography variant="subtitle2">
-          //       {`Storage: ${laptops.find(l => l.laptop_ID === selectedLaptop).storage || 'N/A'}`}
-          //     </Typography>
-          //   </Box>
-          // )}
+          {selectedLaptop && laptops.find(l => l.laptop_ID === selectedLaptop) && (
+            <Box sx={{ marginY: 2, padding: 2, bgcolor: '#f5f5f5', borderRadius: 1 }}>
+              <Typography variant="subtitle2">
+                {`Processor: ${laptops.find(l => l.laptop_ID === selectedLaptop).processor || 'N/A'}`}
+              </Typography>
+              <Typography variant="subtitle2">
+                {`Memory: ${laptops.find(l => l.laptop_ID === selectedLaptop).memory || 'N/A'}`}
+              </Typography>
+              <Typography variant="subtitle2">
+                {`Storage: ${laptops.find(l => l.laptop_ID === selectedLaptop).storage || 'N/A'}`}
+              </Typography>
+            </Box>
+          )}
 
           {/* Reservation Date */}
           <FormControl fullWidth margin="normal">
