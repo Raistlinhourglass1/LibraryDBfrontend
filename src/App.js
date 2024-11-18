@@ -50,6 +50,17 @@ import NavbarComponent from './Navbar'; // Ensure this line is present and corre
 function App() {
   const [userInfo, setUserInfo] = useState(null);
 
+
+
+
+  const processNotificationQueue = require('./jobs/processNotifications');
+
+  // Run `processNotificationQueue` every minute (60000 ms)
+  setInterval(processNotificationQueue, 60000); // 60000ms = 1 minute
+  
+
+
+
   // Function to fetch user data and update `userInfo`
   const fetchUserData = async (token) => {
     try {

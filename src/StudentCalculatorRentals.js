@@ -74,8 +74,8 @@ const StudentCalculatorRentals = ({ userId, ...props }) => {
     });
   }, [userId]);
 
-  const handleCancelClick = (reservationId) => {
-    setSelectedReservation(reservationId);
+  const handleCancelClick = (reservationId, calculatorId) => {
+    setSelectedReservation({ reservationId, calculatorId });
     setOpenDialog(true);
   };
 
@@ -83,18 +83,18 @@ const StudentCalculatorRentals = ({ userId, ...props }) => {
     try {
       const token = localStorage.getItem('token');
       const { reservationId, calculatorId } = selectedReservation;
-
+  
       const response = await axios.post(
         'https://librarydbbackend.onrender.com/cancel-cal-reservation',
         { reservationId, calculatorId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
+  
       if (response.data.error) {
         setSnackbar({ open: true, message: response.data.error, severity: 'error' });
         return;
       }
-
+  
       setRows(rows.map(row =>
         row.reservation_id === reservationId
           ? { ...row, reservation_status: 'Cancelled' }
@@ -108,6 +108,7 @@ const StudentCalculatorRentals = ({ userId, ...props }) => {
       setSelectedReservation({ reservationId: null, calculatorId: null });
     }
   };
+
 
   const columns = [
     {
@@ -147,20 +148,20 @@ const StudentCalculatorRentals = ({ userId, ...props }) => {
       },
     },
     {
-      field: 'cancel',
-      headerName: 'Cancel Reservation',
-      width: 160,
-      sortable: false,
-      renderCell: (params) => (
-        <Button
-          variant="outlined"
-          color="secondary"
-          onClick={() => handleCancelClick(params.row.reservation_id)}
-        >
-          Cancel
-        </Button>
-      ),
-    },
+    field: 'cancel',
+    headerName: 'Cancel Reservation',
+    width: 160,
+    sortable: false,
+    renderCell: (params) => (
+      <Button
+        variant="outlined"
+        color="secondary"
+        onClick={() => handleCancelClick(params.row.reservation_id, params.row.calculator_id)}
+      >
+        Cancel
+      </Button>
+    ),
+  },
     { field: 'calc_type', headerName: 'Calculator Type', width: 150 },
     { field: 'model_name', headerName: 'Model Name', width: 150 },
   ];
