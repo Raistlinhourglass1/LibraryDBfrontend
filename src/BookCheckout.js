@@ -107,7 +107,7 @@ const BookCheckout = () => {
             <Button
               variant="contained"
               color="primary"
-              onClick={() => handleCheckout(book.id)}
+              onClick={() => handleCheckout(book.id || book.book_id)}
               sx={{ marginTop: 2 }}
             >
               Checkout
