@@ -29,25 +29,25 @@ const StaffCatalog = () => {
     };
 
     const fetchBooks = async () => {
-      const response = await fetch('http://localhost:5000/get-all-books');
+      const response = await fetch('https://librarydbbackend.onrender.com/get-all-books');
       const data = await response.json();
       setBookData(data);
     };
 
     const fetchAudioBooks = async () => {
-      const response = await fetch('http://localhost:5000/get-all-audiobooks');
+      const response = await fetch('https://librarydbbackend.onrender.com/get-all-audiobooks');
       const data = await response.json();
       setAudiobookData(data);
     };
 
     const fetchEBooks = async () => {
-      const response = await fetch('http://localhost:5000/get-all-ebooks');
+      const response = await fetch('https://librarydbbackend.onrender.com/get-all-ebooks');
       const data = await response.json();
       setEbookData(data);
     };
 
     const fetchPeriodicals = async () => {
-      const response = await fetch('http://localhost:5000/get-all-periodicals');
+      const response = await fetch('https://librarydbbackend.onrender.com/get-all-periodicals');
       const data = await response.json();
       setPeriodicalData(data);
     };

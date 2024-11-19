@@ -62,7 +62,7 @@ const RoomReserveTable = (props) => {
   const handleCancelReservation = async (reservationId, roomId) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.post('https://librarydbbackend.onrender.com/cancel-reservation', { reservationId, roomId }, {
+      await axios.post('https://librarydbbackend.onrender.com/cancel-room-reservation', { reservationId, roomId }, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const response = await axios.get('https://librarydbbackend.onrender.com/RoomReserveTable', {
