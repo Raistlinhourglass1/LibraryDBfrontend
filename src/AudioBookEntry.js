@@ -9,7 +9,7 @@ import ClaudeTheme from './ClaudeTheme';
 const format = [
     { value: 'mp3', label: 'MP3' },
     { value: 'cd', label: 'CD' },
-    { value: 'digitaldownload', label: 'Digital Download' }
+    { value: 'digital download', label: 'Digital Download' }
 ];
 
 function AudioBookEntry({audiobook, onClose, fetchData}) {

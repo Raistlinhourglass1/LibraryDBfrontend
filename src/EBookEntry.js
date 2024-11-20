@@ -56,7 +56,7 @@ function EBookEntry({ ebook, onClose, fetchData }) {
                 ebDate: ebook.ebook_year || '',
                 ebFormat: ebook.resource_type || '',
                 ebUrl: ebook.url || '',
-                ebAccessType: ebook.accessType || '',
+                ebAccessType: ebook.access_type || '',
                 ebSummary: ebook.ebook_summary || '',
                 ebNotes: ebook.ebook_notes || '',
             });

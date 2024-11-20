@@ -140,7 +140,7 @@ function BookDetail() {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            book_id: book.book_id,
+            book_id: book.book_id || book.id,
             isbn: book.isbn,
           }),
         });
@@ -167,12 +167,17 @@ function BookDetail() {
 
       try {
         setIsAdding(true);
-        const response = await axios.post('https://librarydbbackend.onrender.com/add-to-list', 
-          { book_id: book.book_id,
-            isbn: book.isbn
-          }, 
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        const response = await fetch('https://librarydbbackend.onrender.com/add-to-list', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            book_id: book.book_id || book.id,
+            isbn: book.isbn,
+          }),
+        });
         setIsInUserList(true);
         console.log(response.data); 
 

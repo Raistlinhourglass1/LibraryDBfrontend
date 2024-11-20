@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
-import { Box, Button, Card, CardContent, CardActions, CardMedia, Container, Link, Paper, Stack, Typography } from '@mui/material';
+import { Box, Button, Card, CardContent, CardActions, CardMedia, CssBaseline, Container, Link, Paper, Stack, ThemeProvider, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import bookCover from './external/book-cover.png';
 import { useNavigate, useLocation } from 'react-router-dom';
 import BookSearchFilter from './BookSearchFilter';
+import ClaudeTheme from './ClaudeTheme';
 
 function BookSearchResults({books = [], term}) {
     
@@ -17,7 +18,7 @@ function BookSearchResults({books = [], term}) {
     const [filteredBooks, setFilteredBooks] = useState(books);
 
     const handleFilterBooks = (filteredResults) => {
-        const filtered = filteredResults.filter(book => book.deleted === 0);
+        let filtered = filteredResults.filter(book => book.deleted === 0);
         setFilteredBooks(filtered);
       };
 
@@ -36,10 +37,10 @@ function BookSearchResults({books = [], term}) {
       };
 
     const groupedBooks = {
-        book: books.filter((book) => book.source === 'book'),
-        audiobook: books.filter((book) => book.source === 'audiobook'),
-        ebook: books.filter((book) => book.source === 'ebook'),
-        periodical: books.filter((book) => book.source === 'periodical'),
+        book: filteredBooks.filter((book) => book.source === 'book'),
+        audiobook: filteredBooks.filter((book) => book.source === 'audiobook'),
+        ebook: filteredBooks.filter((book) => book.source === 'ebook'),
+        periodical: filteredBooks.filter((book) => book.source === 'periodical'),
     };
 
     const renderSection = (title, items) => (
@@ -47,7 +48,7 @@ function BookSearchResults({books = [], term}) {
             {items.length > 0 && (
                 <Container maxWidth="lg" sx={{ marginBottom: '20px' }}>
                     <Typography variant="h5" sx={{ marginBottom: '10px' }}>{title}</Typography>
-                    <Box sx={{ bgcolor: '#f2f2f2', padding: '10px', borderRadius: '8px' }}>
+                    <Box sx={{ boxShadow: 3, padding: '10px', borderRadius: '8px' }}>
                         <Stack spacing={2}>
                             {items.map((book) => (
                                 <Paper square elevation={3} key={book.isbn}>
@@ -140,31 +141,34 @@ function BookSearchResults({books = [], term}) {
 
     return (
         <>
-        <Grid container spacing={2} sx={{ marginTop: '1px' }}>
-            {/* Filter Bar */}
-            <Grid item size={2.5}>
-                <Box sx={{ padding: '10px', bgcolor: '#f2f2f2', borderRadius: '8px' }}>
-                    <Typography variant="h6">Filter Results</Typography>
-                    <BookSearchFilter books={books} onFilter={handleFilterBooks} />
-                </Box>
-            </Grid>
+         <ThemeProvider theme={ClaudeTheme}>
+            <CssBaseline />
+            <Grid container spacing={2} sx={{ marginTop: '1px' }}>
+                {/* Filter Bar */}
+                <Grid item size={2.5}>
+                    <Box sx={{ padding: '10px', bgcolor: '#f2f2f2', borderRadius: '8px' }}>
+                        <Typography variant="h6">Filter Results</Typography>
+                        <BookSearchFilter books={books} onFilter={handleFilterBooks} />
+                    </Box>
+                </Grid>
 
-            {/* Book Results Section */}
-            <Grid item size={8}>
-                {filteredBooks.length === 0 ? (
-                    <Typography variant="h6" color="text.secondary">
-                        No books found matching your search criteria.
-                    </Typography>
-                ) : (
-                    <>
-                        {renderSection('Books', groupedBooks.book)}
-                        {renderSection('Ebooks', groupedBooks.ebook)}
-                        {renderSection('Audiobooks', groupedBooks.audiobook)}
-                        {renderSection('Periodicals', groupedBooks.periodical)}
-                    </>
-                )}
+                {/* Book Results Section */}
+                <Grid item size={8}>
+                    {filteredBooks.length === 0 ? (
+                        <Typography variant="h6" color="text.secondary">
+                            No books found matching your search criteria.
+                        </Typography>
+                    ) : (
+                        <>
+                            {renderSection('Books', groupedBooks.book)}
+                            {renderSection('Ebooks', groupedBooks.ebook)}
+                            {renderSection('Audiobooks', groupedBooks.audiobook)}
+                            {renderSection('Periodicals', groupedBooks.periodical)}
+                        </>
+                    )}
+                </Grid>
             </Grid>
-        </Grid>
+        </ThemeProvider>
     </>
 );
 }

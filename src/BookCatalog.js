@@ -228,7 +228,7 @@ const filteredBooks = books
   };
 
   return (
-    <Paper sx={{ padding: 2, backgroundColor: '#f4f4f4' }}>
+    <Paper sx={{ boxShadow: 3, padding: 2, backgroundColor: '#FFFFFF' }}>
 <Grid container spacing={2}>
   <Grid item size={8}>
       <ToggleButtonGroup
@@ -239,13 +239,13 @@ const filteredBooks = books
         sx={{ marginBottom: 3 }}
       >
         <ToggleButton value="showNormal" aria-label="Hide Deleted Books">
-          Hide Deleted Books
+        Default
         </ToggleButton>
         <ToggleButton value="showDeleted" aria-label="Show Deleted Books">
-          Show All Books
+        All
         </ToggleButton>
         <ToggleButton value="showOnlyDeleted" aria-label="Show Only Deleted Books">
-          Show Deleted Books Only
+        Deleted Only
         </ToggleButton>
       </ToggleButtonGroup>
 </Grid>

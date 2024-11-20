@@ -10,6 +10,7 @@ import { DataGrid, GridRowsProp, GridColDef, gridDateTimeFormatter } from '@mui/
 import { differenceInDays } from 'date-fns';
 import axios from 'axios';
 import { format } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -160,6 +161,44 @@ import { format } from 'date-fns';
 
   export default function StudentBookRentals(props) {
 
+    const navigate = useNavigate();
+
+    ///////GET USER LIST
+const [userListBooks, setUserListBooks] = useState([]);
+
+const handleList = async () => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    alert('User not authenticated');
+    return;
+  }
+
+  try {
+    console.log('trying...');
+    const response = await fetch('https://librarydbbackend.onrender.com/all-user-list', {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+      const responseData = await response.json();
+      console.log('got back:', responseData);
+
+      setUserListBooks(responseData); // Save books to state
+  
+  } catch (error) {
+    console.error('Error fetching user list:', error);
+    alert('Error fetching user list');
+  }
+};
+
+//////GET USERLIST END
+
     //////////GET BOOK DATA START
     const [rows, setRows] = useState([]);
     const [pendingBooks, setPendingBooks] = useState([]);
@@ -198,8 +237,10 @@ import { format } from 'date-fns';
     }
     useEffect(() => {
       fetchData();
+      handleList();
     }, []);
 
+/*
     const pendingColumns = [
       { field: 'book_title', headerName: 'Book Title', width: 250 },
       { field: 'author', headerName: 'Author', width: 200 },
@@ -296,7 +337,7 @@ import { format } from 'date-fns';
           return formattedDate;
         },
       }
-    ];
+    ];*/
   
 
 
@@ -368,6 +409,12 @@ import { format } from 'date-fns';
       alert('Error canceling reservation');
     }
   };
+
+    ///////DETAILS
+
+    const handleDetails = (bookId) => {
+      navigate(`/books/${bookId}`);
+    };
 
   /////CANCEL RESERVATION END
   return(
@@ -471,6 +518,66 @@ import { format } from 'date-fns';
                     <TableCell>{row.author}</TableCell>
                     <TableCell>{calculateFormattedDate(row.date_borrowed).formattedDate}</TableCell>
                     <TableCell>{calculateFormattedDate(row.date_returned).formattedDate}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Box>
+        
+        <Box sx={{ marginBottom: 4 }}>
+          <Typography variant="h6" gutterBottom>User List</Typography>
+          <TableContainer component={Box} sx={{ height: 400 }}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Book Title</TableCell>
+                  <TableCell>Author</TableCell>
+                  <TableCell>Date Added</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {userListBooks.map((row) => (
+                  <TableRow key={row.id}>
+                    <TableCell>{row.book_title}</TableCell>
+                    <TableCell>{row.author}</TableCell>
+                    <TableCell><Button 
+                        variant="outlined" 
+                        onClick={() => handleDetails(row.book_id)} // Pass the row id to handleDetails
+                      >
+                        View Details
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Box>
+
+        <Box sx={{ marginBottom: 4 }}>
+          <Typography variant="h6" gutterBottom>User List</Typography>
+          <TableContainer component={Box} sx={{ height: 400 }}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Book Title</TableCell>
+                  <TableCell>Author</TableCell>
+                  <TableCell>Date Added</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {userListBooks.map((row) => (
+                  <TableRow key={row.id}>
+                    <TableCell>{row.book_title}</TableCell>
+                    <TableCell>{row.author}</TableCell>
+                    <TableCell><Button 
+                        variant="outlined" 
+                        onClick={() => handleDetails(row.book_id)} // Pass the row id to handleDetails
+                      >
+                        View Details
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>

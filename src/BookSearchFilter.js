@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Accordion, AccordionDetails , AccordionSummary } from '@mui/material';
-import {  Box, Button, Checkbox, MenuItem, Stack, TextField, Typography } from '@mui/material';
+import {  Box, Button, Container, Checkbox, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import  { FormLabel, FormControl, FormControlLabel, FormGroup, FormHelperText,  Radio, RadioGroup } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox';
@@ -15,36 +15,14 @@ function BookSearchFilter({ books, onFilter }) {
         digital: false,
         dvd: false
       });
-    const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
 
-      const handleChange = (event) => {
-        setState({
-          ...state,
-          [event.target.name]: event.target.checked,
-        });
-      };
-      const handleSearchChange = (e) => { //handles the search term
-        setSearchTerm(e.target.value);
-      };
-      
       const handleStatusChange = (e) => { //handles book status filter
         setStatusFilter(e.target.value);
       };
     
       const handleFilterClick = () => {
         let result = books;
-    
-        // Filter by search term
-        /*
-        if (searchTerm) {
-          result = result.filter(
-            (book) =>
-              book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              book.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              book.publisher.toLowerCase().includes(searchTerm.toLowerCase())
-          );
-        }*/
     
         // Filter by status
         if (statusFilter !== 'all') {
@@ -60,6 +38,7 @@ function BookSearchFilter({ books, onFilter }) {
       const error = [book, journal, magazine, newspaper, digital, dvd].filter((v) => v).length !== 2;
   return (
     <>
+    <Container sx={{ boxShadow: 3, borderRadius:3, padding: 2 }}>
     <Typography>Filter By:</Typography>
     <Stack
           direction="column"
@@ -164,6 +143,7 @@ function BookSearchFilter({ books, onFilter }) {
           Apply Filters
         </Button>
         </Stack>
+        </Container>
       </>
   )
 }

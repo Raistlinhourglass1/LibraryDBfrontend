@@ -291,7 +291,7 @@ function BookEntry({ book, onClose, fetchData }) {
     /////////////////END SCANNER STUFF/////////////////
 
     ////////////START IMAGE UPLOAD
-
+/*
       //for book cover image uploading
       const [coverPreview, setCoverPreview] = useState(null);  // state to store image preview
       const [imageError, setImageError] = useState(""); // Error state for image input
@@ -320,7 +320,7 @@ function BookEntry({ book, onClose, fetchData }) {
 
       
       /////END IMAGE UPLOAD
-
+*/
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -554,7 +554,7 @@ function BookEntry({ book, onClose, fetchData }) {
                 ))}
                 </TextField>
             </Grid>
-            {/* Book Cover Image Upload */}
+            {/* Book Cover Image Upload 
             <Typography variant="h6" gutterBottom>Book Cover Image</Typography>
                                 <input
                                 accept="image/*"
@@ -590,7 +590,7 @@ function BookEntry({ book, onClose, fetchData }) {
                                     style={{ width: 100, height: 150, objectFit: 'cover' }}
                                     />
                                 </Box>
-                                )}        
+                                )}*/}        
 
         {/* Action Buttons */}
         <Stack spacing={2} direction="row" justifyContent="flex-end" sx={{ marginTop: 3 }}>

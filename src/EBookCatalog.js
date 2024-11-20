@@ -184,7 +184,7 @@ const EBookCatalog = ({ catalogData, fetchData }) => {
   };
 
   return (
-    <Paper sx={{ padding: 2, backgroundColor: '#f4f4f4' }}>
+    <Paper sx={{ boxShadow: 3, padding: 2, backgroundColor: '#ffffff' }}>
       <ToggleButtonGroup
         value={viewOption}
         exclusive
@@ -193,13 +193,13 @@ const EBookCatalog = ({ catalogData, fetchData }) => {
         sx={{ marginBottom: 3 }}
       >
         <ToggleButton value="showNormal" aria-label="Hide Deleted eBooks">
-          Hide Deleted eBooks
+        Default
         </ToggleButton>
         <ToggleButton value="showDeleted" aria-label="Show Deleted eBooks">
-          Show All eBooks
+        All
         </ToggleButton>
         <ToggleButton value="showOnlyDeleted" aria-label="Show Only Deleted eBooks">
-          Show Deleted eBooks Only
+        Deleted Only
         </ToggleButton>
       </ToggleButtonGroup>
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { AppBar, Toolbar, Typography, Button, IconButton, Box, Container, TextField, Link, Menu, MenuItem, Card, CardMedia, CardContent } from '@mui/material';
+import { CssBaseline, ThemeProvider, AppBar, Toolbar, Typography, Button, IconButton, Box, Container, TextField, Link, Menu, MenuItem, Card, CardMedia, CardContent } from '@mui/material';
 import { Skeleton } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { useNavigate } from 'react-router-dom';
@@ -8,6 +8,7 @@ import bgImage from './external/library_homepage.jpg';
 import BookSearch from './BookSearch';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import axios from 'axios';
+import ClaudeTheme from './ClaudeTheme';
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -104,8 +105,10 @@ const HomePage = () => {
 
 
   return (
+    <ThemeProvider theme={ClaudeTheme}>
+        <CssBaseline />
     <Box>
-      {/* Navbar */}
+      {/* Navbar 
       <AppBar position="static" sx={{ height: '100px', justifyContent: 'flex-end', paddingBottom: '10px' }}> {/*
         <Toolbar sx={{ height: '100%', display: 'flex', alignItems: 'flex-end' }}>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1, cursor: 'pointer' }} onClick={() => navigate('/home')}>
@@ -140,8 +143,8 @@ const HomePage = () => {
         </MenuItem>
       </Menu>
           <Button color="inherit">Sign Out</Button>
-        </Toolbar> */}
-      </AppBar>
+        </Toolbar> 
+      </AppBar>*/}
 
       {/* Hero Section */}
       <Box sx={{ position: 'relative', width: '100%', height: '400px', backgroundImage: `url(${bgImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
@@ -180,10 +183,10 @@ const HomePage = () => {
         </Box>
 
       {/* Book Rows */}
-      <Container maxWidth='xl' sx={{ mt: 4 }}>
+      <Container maxWidth='xl' sx={{ mt: 4, boxShadow: 3, padding: 2, borderRadius: 3}}>
         {/* Staff's Choice */}
         <Typography variant="h5" sx={{ mb: 2 }}>Staff's Choice</Typography>
-        <Grid container spacing={3}>
+        <Grid container spacing={3} justifyContent={'center'}>
           {staffChoiceBooks.map((book) => (
             <Grid item size={2.25} key={book.book_id}>
               <Card sx={{ width: 250, height: 300 }}>
@@ -209,7 +212,7 @@ const HomePage = () => {
 
         {/* Latest Entries */}
         <Typography variant="h5" sx={{ mt: 4, mb: 2 }}>Latest Entries</Typography>
-        <Grid container spacing={2}>
+        <Grid container spacing={2} justifyContent={'center'}>
           {latestEntries.map((book) => (
             <Grid item size={2.25} key={book.book_id}>
               <Card sx={{ width: 250, height: 300 }}>
@@ -246,6 +249,7 @@ const HomePage = () => {
         </Container>
       </Box>
     </Box>
+    </ThemeProvider>
   );
 };
 

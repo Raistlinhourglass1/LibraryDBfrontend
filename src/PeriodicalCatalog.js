@@ -6,8 +6,18 @@ import {
 } from '@mui/material';
 import { Search } from '@mui/icons-material';
 import PeriodicalEntry from './PeriodicalEntry';
+import { format } from 'date-fns';
 
-const PeriodicalCatalog = ({ periodicalData, fetchData }) => {
+const calculateFormattedDate = (dateTime) => {
+  if (!dateTime) return { formattedDate: 'N/A' };
+  
+  const date = new Date(dateTime);
+  const formattedDate = format(date, 'MM/dd/yyyy'); // Format as 'MM/DD/YYYY'
+
+return { formattedDate };
+};
+
+const PeriodicalCatalog = ({ catalogData, fetchData }) => {
   const [periodicals, setPeriodicals] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [page, setPage] = useState(0);
@@ -20,8 +30,9 @@ const PeriodicalCatalog = ({ periodicalData, fetchData }) => {
 
   // Fetch periodicals from the passed data
   useEffect(() => {
-    setPeriodicals(periodicalData);
-  }, [periodicalData]);
+    console.log('Received periodicalData:', catalogData);
+    setPeriodicals(catalogData);
+  }, [catalogData]);
 
   // Handle search input change
   const handleSearchChange = (event) => {
@@ -50,8 +61,8 @@ const PeriodicalCatalog = ({ periodicalData, fetchData }) => {
         return true;
       })
       .filter((periodical) =>
-        periodical.pTitle.toLowerCase().includes(lowerSearch) ||
-        periodical.pAuthor.toLowerCase().includes(lowerSearch)
+        periodical.periodical_title.toLowerCase().includes(lowerSearch) ||
+        periodical.periodical_author.toLowerCase().includes(lowerSearch)
       );
 
     setFilteredPeriodicals(filtered);
@@ -121,6 +132,7 @@ const PeriodicalCatalog = ({ periodicalData, fetchData }) => {
   };
 
   const handleOpenEditDialog = (periodical) => {
+    console.log('Editing periodical:', periodical); // Log the selected periodical
     setSelectedPeriodical(periodical);
     setOpenAddDialog(true);
   };
@@ -134,6 +146,13 @@ const PeriodicalCatalog = ({ periodicalData, fetchData }) => {
     <Container maxWidth="lg">
       <Paper sx={{ bgcolor: '#f2f2f2', padding: 3 }}>
         <Typography variant="h4" gutterBottom>Periodical Catalog</Typography>
+
+         {/* Add Periodical Button */}
+         <Box sx={{ mb: 2, display: 'flex', justifyContent: 'flex-end' }}>
+          <Button variant="contained" color="primary" onClick={handleOpenAddDialog}>
+            Add Periodical
+          </Button>
+        </Box>
 
         {/* Search Bar */}
         <Box sx={{ mb: 2, display: 'flex', justifyContent: 'flex-end' }}>
@@ -185,14 +204,14 @@ const PeriodicalCatalog = ({ periodicalData, fetchData }) => {
               {filteredPeriodicals
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((periodical) => (
-                  <TableRow key={periodical.pIssn}>
-                    <TableCell>{periodical.pTitle}</TableCell>
-                    <TableCell>{periodical.pAuthor}</TableCell>
-                    <TableCell>{periodical.pPublisher}</TableCell>
-                    <TableCell>{periodical.pType}</TableCell>
-                    <TableCell>{periodical.pCategory}</TableCell>
-                    <TableCell>{periodical.pFrequency}</TableCell>
-                    <TableCell>{periodical.pIssueDate}</TableCell>
+                   <TableRow key={periodical.periodical_id}>
+                    <TableCell>{periodical.periodical_title}</TableCell>
+                    <TableCell>{periodical.periodical_author}</TableCell>
+                    <TableCell>{periodical.periodical_publisher}</TableCell>
+                    <TableCell>{periodical.periodical_type}</TableCell>
+                    <TableCell>{periodical.periodical_category}</TableCell>
+                    <TableCell>{periodical.frequency}</TableCell>
+                    <TableCell>{calculateFormattedDate(periodical.issue_date).formattedDate}</TableCell>
                     <TableCell>
                       <Stack direction="row" spacing={1}>
                         <Button onClick={() => handleOpenEditDialog(periodical)} variant="outlined" size="small" color="primary">Edit</Button>

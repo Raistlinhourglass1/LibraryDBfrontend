@@ -5,6 +5,8 @@ import AudioBookCatalog from './AudioBookCatalog';
 import EBookCatalog from './EBookCatalog';
 import PeriodicalCatalog from './PeriodicalCatalog';
 import bgImage from './external/iStock-1411029939-L.jpg';
+import BooksCheckedOut from './BooksCheckedOut';
+import BooksReserved from './BooksReserved';
 
 const StaffCatalog = () => {
 
@@ -13,6 +15,8 @@ const StaffCatalog = () => {
   const [audiobookData, setAudiobookData] = useState([]);
   const [ebookData, setEbookData] = useState([]);
   const [periodicalData, setPeriodicalData] = useState([]);
+  const [checkedOutBooks, setCheckedOutBooks] = useState([]);
+  const [reservedBooks, setReservedBooks] = useState([]);
 
   const [selectedTab, setSelectedTab] = useState(0); // Tab index state
   // Fetch data from your backend
@@ -52,6 +56,23 @@ const StaffCatalog = () => {
       setPeriodicalData(data);
     };
 
+    const fetchCheckedOutBooks = async () => {
+      try {
+        const response = await fetch('https://librarydbbackend.onrender.com/checked-out-books');
+        setCheckedOutBooks(data);
+      } catch (error) {
+        console.error('Error fetching checked out books:', error);
+      }
+    };
+  
+    const fetchReservedBooks = async () => {
+      try {
+        const response = await fetch('https://librarydbbackend.onrender.com/reserved-books');
+        setReservedBooks(data);
+      } catch (error) {
+        console.error('Error fetching reserved books:', error);
+      }
+    };
 
   useEffect(() => {
     //fetchData();
@@ -59,6 +80,8 @@ const StaffCatalog = () => {
     fetchAudioBooks();
     fetchEBooks();
     fetchPeriodicals();
+    fetchReservedBooks();
+    fetchCheckedOutBooks();
 
   }, []);
 
@@ -74,12 +97,14 @@ const StaffCatalog = () => {
       {/* Tabs for switching between catalogs */}
 
       <Box sx={{ marginTop: 2 }}>
-      <Tabs value={selectedTab} onChange={handleTabChange} aria-label="catalog tabs" centered>
-        <Tab label="Books" />
-        <Tab label="Audiobooks" />
-        <Tab label="eBooks" />
-        <Tab label="Periodicals" />
-      </Tabs>
+      <Tabs value={selectedTab} onChange={handleTabChange} aria-label="catalog and book views tabs" centered>
+          <Tab label="Books" />
+          <Tab label="Audiobooks" />
+          <Tab label="eBooks" />
+          <Tab label="Periodicals" />
+          <Tab label="Checked Out Books" />
+          <Tab label="Reserved Books" />
+        </Tabs>
       </Box>
 
       {/* Tab Content */}
@@ -87,9 +112,11 @@ const StaffCatalog = () => {
         {selectedTab === 0 && <BookCatalog catalogData={bookData} fetchData={fetchBooks} />}
         {selectedTab === 1 && <AudioBookCatalog catalogData={audiobookData} fetchData={fetchAudioBooks} />}
         {selectedTab === 2 && <EBookCatalog catalogData={ebookData} fetchData={fetchEBooks} />}
-        {/*selectedTab === 3 && <PeriodicalCatalog catalogData={periodicalData} fetchData={fetchPeriodicals}/>*/} 
-        
-        {selectedTab === 3 && <div>Periodical Catalog (coming soon)</div>} 
+        {selectedTab === 3 && <PeriodicalCatalog catalogData={periodicalData} fetchData={fetchPeriodicals} />}
+
+        {/* Book Views Content */}
+        {selectedTab === 4 && <BooksCheckedOut books={checkedOutBooks} />}
+        {selectedTab === 5 && <BooksReserved books={reservedBooks} />}
       </Box>
     </div>
   );
