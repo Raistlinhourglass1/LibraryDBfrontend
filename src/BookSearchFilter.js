@@ -26,7 +26,7 @@ function BookSearchFilter({ books, onFilter }) {
     
         // Filter by status
         if (statusFilter !== 'all') {
-          result = result.filter((book) => book.book_status === statusFilter);
+          result = result.filter((book) => book.status === statusFilter);
         }
     
         // Pass the filtered books to the parent component
