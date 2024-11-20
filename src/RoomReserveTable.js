@@ -18,7 +18,7 @@ function renderStatus(status) {
 }
 
 const calculateTimeDue = (reservationDateTime, reservationDuration, status) => {
-  if (status === 'Canceled') {
+  if (status === 'canceled') {
     return { status: 'Canceled', timeDue: '', overdueHours: 0 };
   }
 
