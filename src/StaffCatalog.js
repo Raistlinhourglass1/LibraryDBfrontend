@@ -59,6 +59,7 @@ const StaffCatalog = () => {
     const fetchCheckedOutBooks = async () => {
       try {
         const response = await fetch('https://librarydbbackend.onrender.com/checked-out-books');
+        const data = await response.json();
         setCheckedOutBooks(data);
       } catch (error) {
         console.error('Error fetching checked out books:', error);
@@ -68,6 +69,7 @@ const StaffCatalog = () => {
     const fetchReservedBooks = async () => {
       try {
         const response = await fetch('https://librarydbbackend.onrender.com/reserved-books');
+        const data = await response.json();
         setReservedBooks(data);
       } catch (error) {
         console.error('Error fetching reserved books:', error);

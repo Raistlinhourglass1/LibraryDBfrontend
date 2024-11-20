@@ -48,6 +48,8 @@ function PeriodicalEntry({ periodical, onClose, fetchData }) {
     const [messageType, setMessageType] = useState('');
     const [error, setError] = useState(false); 
     const [helperText, setHelperText] = useState('');
+    const [cleared, setCleared] = React.useState(false); //clears data in textboxes
+    
 
     useEffect(() => {
       if (periodical) {
@@ -112,6 +114,26 @@ function PeriodicalEntry({ periodical, onClose, fetchData }) {
             return () => clearTimeout(timeout);
         }
     }, [cleared]);
+
+    const handleClear = () => {
+      setFormData({
+      pIssn: '',
+      pTitle: '',
+      pAuthor: '',
+      pType: '',
+      pPublisher: '',
+      pCategory: '',
+      pFormat: '',
+      pUrl: '',
+      pFrequency: '',
+      pIssueDate: '',
+      pIssueVolume: '',
+      pIssueNumber: '',
+      pLanguage: '',
+      pDescription: '',
+      pNotes: '',
+    });
+  }
 
     return (
       <ThemeProvider theme={ClaudeTheme}>
@@ -327,6 +349,7 @@ function PeriodicalEntry({ periodical, onClose, fetchData }) {
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose} color="primary">Cancel</Button>
+          <Button variant="text" onClick={handleClear}>Clear All</Button>
           <Button onClick={handleSubmit} variant="contained" color="primary">{periodical ? 'Save Changes' : 'Add Periodical'}</Button>
         </DialogActions>
         {message && (
