@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
-import { Breadcrumbs, Box, Button, CssBaseline, Container, Link, MenuItem, Stack, TextField, ThemeProvider, Typography } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import {
+    Breadcrumbs, Box, Button, CssBaseline, Container, MenuItem, Stack, TextField, ThemeProvider, Typography,
+} from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -18,8 +20,7 @@ const access_type = [
     { value: 'library patrons only', label: 'Library Patrons Only' },
 ];
 
-function EBookEntry() {
-    const [cleared, setCleared] = useState(false);
+function EBookEntry({ ebook, onClose, fetchData }) {
     const [formData, setFormData] = useState({
         ebIsbn: '',
         ebTitle: '',
@@ -32,7 +33,6 @@ function EBookEntry() {
         ebFormat: '',
         ebUrl: '',
         ebAccessType: '',
-        ebNumCopies: '',
         ebSummary: '',
         ebNotes: '',
     });
@@ -42,30 +42,82 @@ function EBookEntry() {
     const [error, setError] = useState(false);
     const [helperText, setHelperText] = useState('');
 
+    // Populate form for editing
+    useEffect(() => {
+        if (ebook) {
+            setFormData({
+                ebIsbn: ebook.ebook_isbn || '',
+                ebTitle: ebook.ebook_title || '',
+                ebAuthor: ebook.ebook_author || '',
+                ebPublisher: ebook.ebook_publisher || '',
+                ebCategory: ebook.ebook_category || '',
+                ebEdition: ebook.ebook_edition || '',
+                ebLanguage: ebook.ebook_language || '',
+                ebDate: ebook.ebook_year || '',
+                ebFormat: ebook.resource_type || '',
+                ebUrl: ebook.url || '',
+                ebAccessType: ebook.accessType || '',
+                ebSummary: ebook.ebook_summary || '',
+                ebNotes: ebook.ebook_notes || '',
+            });
+            setIsbn(ebook.ebook_isbn)
+        }
+    }, [ebook]);
+
+    
+    /////formatting isbn start
+    const [isbn, setIsbn] = useState(formData.ebIsbn);
+
+    const formatIsbn = (isbn) => {
+        // Remove non-numeric characters
+        const cleanedIsbn = isbn.replace(/[^0-9]/g, '');
+    
+        // Format as ISBN-13 or ISBN-10
+        if (cleanedIsbn.length <= 10) {
+          return cleanedIsbn.replace(/(\d{3})(\d{1})(\d{4})(\d{4})/, '$1-$2-$3-$4');
+        } else if (cleanedIsbn.length <= 13) {
+          return cleanedIsbn.replace(/(\d{3})(\d{1})(\d{4})(\d{4})(\d{1})/, '$1-$2-$3-$4-$5');
+        }
+        return cleanedIsbn;
+      };
+    
+      // Handle ISBN change: store raw value and format for display
+      const handleIsbnChange = (event) => {
+        // Get the raw input value (remove dashes and non-numeric characters)
+        let rawIsbn = event.target.value.replace(/[^0-9]/g, '');
+        
+        // Limit to 13 characters
+        if (rawIsbn.length > 13) {
+          rawIsbn = rawIsbn.slice(0, 13); // Cut off excess characters
+        }
+    
+        setIsbn(rawIsbn); // Store raw ISBN (no dashes)
+        handleChange(event); // Call the parent handler for other form fields
+      };
+
+    ////////formatting isbn end
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
 
         if (name === 'ebIsbn' && !/^\d{10}|\d{13}$/.test(value)) {
             setError(true);
-            setHelperText("Invalid ISBN format");
+            setHelperText('Invalid ISBN format');
         } else {
             setError(false);
-            setHelperText("Enter the ISBN");
+            setHelperText('');
         }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (error || Object.values(formData).some(field => !field)) {
-            setMessage('Please fill all the required fields correctly');
-            setMessageType('danger');
-            return;
-        }
 
         try {
+            const method = ebook ? 'PUT' : 'POST';
+
             const response = await fetch('https://librarydbbackend.onrender.com/catalog-entry/ebook', {
-                method: 'POST',
+                method,
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -75,10 +127,12 @@ function EBookEntry() {
             const responseData = await response.json();
 
             if (response.ok) {
-                setMessage('eBook added successfully');
+                setMessage(ebook ? 'eBook updated successfully' : 'eBook added successfully');
                 setMessageType('success');
+                fetchData(); // Fetch updated list
+                onClose(); // Close dialog
             } else {
-                setMessage(responseData.message || 'Error adding eBook');
+                setMessage(responseData.message || 'Error submitting eBook');
                 setMessageType('danger');
             }
         } catch (error) {
@@ -101,7 +155,6 @@ function EBookEntry() {
             ebFormat: '',
             ebUrl: '',
             ebAccessType: '',
-            ebNumCopies: '',
             ebSummary: '',
             ebNotes: '',
         });
@@ -109,71 +162,59 @@ function EBookEntry() {
         setHelperText('');
     };
 
-    React.useEffect(() => {
-        if (cleared) {
-            const timeout = setTimeout(() => {
-                setCleared(false);
-            }, 1500);
-
-            return () => clearTimeout(timeout);
-        }
-        return () => {};
-    }, [cleared]);
-
     return (
-        <>
-    <ThemeProvider theme={ClaudeTheme}>
-      <CssBaseline />
-        <Container maxWidth="lg">
-            <Box component="form"
-                sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    '& .MuiTextField-root': { marginBottom: 5 },
-                    p: 3,
-                    borderRadius: 2, // Rounded corners
-                    boxShadow: 3, // Shadow for a card-like effect
-                }}
-                noValidate
-                autoComplete="off"
-                onSubmit={handleSubmit}>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Grid item size={6}>
-                        <TextField
-                            required
-                            helperText={helperText}
-                            error={error}
-                            id="standard-basic"
-                            label="ISBN"
-                            type="number"
-                            variant="standard"
-                            name="ebIsbn"
-                            value={formData.ebIsbn}
-                            onChange={handleChange}
-                            fullWidth
-                        />
-                    </Grid>
-                </Box>
-                <Grid container spacing={2}>
-                    
+        <ThemeProvider theme={ClaudeTheme}>
+            <CssBaseline />
+            <Container maxWidth="lg">
+                <Box
+                    component="form"
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        '& .MuiTextField-root': { marginBottom: 5 },
+                        p: 3,
+                        borderRadius: 2,
+                        boxShadow: 3,
+                    }}
+                    noValidate
+                    autoComplete="off"
+                    onSubmit={handleSubmit}
+                >
+                    <Typography variant="h5" gutterBottom>
+                        {ebook ? 'Edit eBook' : 'Add eBook'}
+                    </Typography>
                     <Grid item xs={12} sm={6}>
-                        <TextField
-                            required
-                            helperText="Enter the Title"
-                            id="standard-required"
-                            label="Title"
-                            variant="standard"
-                            name="ebTitle"
-                            value={formData.ebTitle}
-                            onChange={handleChange}
-                            fullWidth
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
+                            <TextField
+                                required
+                                helperText={helperText}
+                                error={error}
+                                id="standard-basic"
+                                label="ISBN"
+                                variant="standard"
+                                name="ebIsbn"
+                                value={formatIsbn(isbn)}
+                                onChange={handleIsbnChange}
+                                sx={{ width: '40%' }}
+                            />
+                        </Grid>
+                    <Grid container spacing={2}>
+                        
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                required
+                                helperText="Enter the Title"
+                                label="Title"
+                                variant="standard"
+                                name="ebTitle"
+                                value={formData.ebTitle}
+                                onChange={handleChange}
+                                fullWidth
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
                         <TextField
                             required
                             helperText="Enter the Author"
-                            id="standard-required"
                             label="Author"
                             variant="standard"
                             name="ebAuthor"
@@ -185,7 +226,6 @@ function EBookEntry() {
                     <Grid item xs={12} sm={6}>
                         <TextField
                             helperText="Enter the Publisher"
-                            id="standard-basic"
                             label="Publisher"
                             variant="standard"
                             name="ebPublisher"
@@ -197,7 +237,6 @@ function EBookEntry() {
                     <Grid item xs={12} sm={6}>
                         <TextField
                             helperText="Enter the Category"
-                            id="standard-basic"
                             label="Category"
                             variant="standard"
                             name="ebCategory"
@@ -206,10 +245,8 @@ function EBookEntry() {
                             fullWidth
                         />
                     </Grid>
-
-                    <Grid item xs={12} sm={6}>
+                    <Grid item size={2}>
                         <TextField
-                            id="standard-basic"
                             label="Edition"
                             variant="standard"
                             name="ebEdition"
@@ -220,7 +257,6 @@ function EBookEntry() {
                     </Grid>
                     <Grid item xs={12} sm={6}>
                         <TextField
-                            id="standard-basic"
                             label="Language"
                             variant="standard"
                             name="ebLanguage"
@@ -229,30 +265,7 @@ function EBookEntry() {
                             fullWidth
                         />
                     </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DatePicker
-                                variant="standard"
-                                slotProps={{
-                                    textField: { helperText: 'Year' },
-                                    field: { clearable: true, onClear: () => setCleared(true) },
-                                }}
-                                label="Copyright Year"
-                                views={['year']}
-                                name="ebDate"
-                                value={formData.ebDate ? dayjs(formData.ebDate, 'YYYY') : null}
-                                onChange={(newValue) => {
-                                    if (newValue) {
-                                        setFormData((prev) => ({ ...prev, ebDate: newValue.year() }));
-                                    } else {
-                                        setFormData((prev) => ({ ...prev, ebDate: null }));
-                                    }
-                                }}
-                                fullWidth
-                            />
-                        </LocalizationProvider>
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
+                    <Grid item size={3}>
                         <TextField
                             select
                             label="Format"
@@ -270,7 +283,29 @@ function EBookEntry() {
                             ))}
                         </TextField>
                     </Grid>
-                    <Grid item xs={12} sm={6}>
+                    <Grid item size={4}>
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DatePicker
+                                views={['year']}
+                                label="Copyright Year"
+                                name="ebDate"
+                                value={formData.ebDate ? dayjs(`${formData.ebDate}`, 'YYYY') : null}
+                                onChange={(newValue) => {
+                                    setFormData((prevFormData) => ({
+                                    ...prevFormData,
+                                    ebDate: newValue ? newValue.year() : null, // Store the year directly as a number
+                                    }));
+                                }}
+                                slo
+                                slotProps={{
+                                    textField: { helperText: 'Select the publication year' },
+                                }}
+                                fullWidth
+                            />
+                        </LocalizationProvider>
+                    </Grid>
+                    
+                    <Grid item size={8}>
                         <TextField
                             label="URL"
                             variant="standard"
@@ -298,35 +333,47 @@ function EBookEntry() {
                             ))}
                         </TextField>
                     </Grid>
-                    <TextField
-                        id="outlined-multiline-static"
-                        label="Summary"
-                        multiline
-                        rows={4}
-                        name="ebSummary"
-                        value={formData.ebSummary}
-                        onChange={handleChange}
-                        fullWidth
-                    />
-                    <TextField
-                        id="outlined-multiline-static"
-                        label="Notes"
-                        multiline
-                        rows={4}
-                        name="ebNotes"
-                        value={formData.ebNotes}
-                        onChange={handleChange}
-                        fullWidth
-                    />
-                </Grid>
-                <Stack spacing={2} direction="row" justifyContent="flex-end" sx={{ mt: 3 }}>
-                    <Button variant="outlined" onClick={handleClear}>Clear</Button>
-                    <Button variant="contained" type="submit">Submit</Button>
-                </Stack>
-            </Box>
-        </Container>
-    </ThemeProvider>
-    </>
+     
+                        <TextField
+                            label="Summary"
+                            multiline
+                            rows={4}
+                            name="ebSummary"
+                            value={formData.ebSummary}
+                            onChange={handleChange}
+                            fullWidth
+                        />
+
+                        <TextField
+                            label="Notes"
+                            multiline
+                            rows={4}
+                            name="ebNotes"
+                            value={formData.ebNotes}
+                            onChange={handleChange}
+                            fullWidth
+                        />
+                    </Grid>
+                    <Stack spacing={2} direction="row" justifyContent="flex-end" sx={{ mt: 3 }}>
+                        <Button variant="outlined" onClick={handleClear}>
+                            Clear
+                        </Button>
+                        <Button variant="contained" type="submit">
+                            {ebook ? 'Update' : 'Submit'}
+                        </Button>
+                    </Stack>
+                    {message && (
+                    <Typography
+                        variant="body2"
+                        color={messageType === 'success' ? 'green' : 'red'}
+                        sx={{ mt: 2 }}
+                    >
+                        {message}
+                    </Typography>
+                )}
+                </Box>
+            </Container>
+        </ThemeProvider>
     );
 }
 

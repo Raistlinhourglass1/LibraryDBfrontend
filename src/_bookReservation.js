@@ -52,7 +52,7 @@ const BookReservationForm = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({book_id: book.id})    //removed formData
+        body: JSON.stringify({book_id: book.id || book.book_id})    //removed formData
       });
   
       const data = await response.json();

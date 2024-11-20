@@ -12,7 +12,7 @@ const format = [
     { value: 'digitaldownload', label: 'Digital Download' }
 ];
 
-function AudioBookEntry({book, onClose, fetchData}) {
+function AudioBookEntry({audiobook, onClose, fetchData}) {
     const [cleared, setCleared] = useState(false);
 
     const [formData, setFormData] = useState({
@@ -35,29 +35,29 @@ function AudioBookEntry({book, onClose, fetchData}) {
 
         ////this is for editing book state
         useEffect(() => {
-            if (book) {
+            if (audiobook) {
                 
               setFormData({
-                abook_id: book.audio_id,
-                abIsbn: book.audio_isbn,
-                abTitle: book.audio_title,
-                abAuthor: book.audio_author,
-                abPublisher: book.audio_publisher,
-                abNarrator: book.audio_narrator,
-                abCategory: book.audio__category,
-                abEdition: book.audio_edition,
-                abDate: book.date_published,
-                abDuration: book.duration,
-                abFormat: book.format,
-                abLang: book.audio_language,
-                abSummary: book.audio_summary,
-                abNotes: book.audio_notes,
-                abFile: book.audio_file || null,
+                abook_id: audiobook.audiobook_id,
+                abIsbn: audiobook.audio_isbn,
+                abTitle: audiobook.audio_title,
+                abAuthor: audiobook.audio_author,
+                abPublisher: audiobook.audio_publisher,
+                abNarrator: audiobook.audio_narrator,
+                abCategory: audiobook.audio_category,
+                abEdition: audiobook.audio_edition,
+                abDate: audiobook.date_published,
+                abDuration: audiobook.duration,
+                abFormat: audiobook.format,
+                abLang: audiobook.audio_language,
+                abSummary: audiobook.audio_summary,
+                abNotes: audiobook.audio_notes,
+                abFile: audiobook.audio_file || null,
               });
-              setIsbn(book.audio_isbn)
+              setIsbn(audiobook.audio_isbn)
             }
-          }, [book]);
-          ////////////end book edit state
+          }, [audiobook]);
+          ////////////end audiobook edit state
 
     /////formatting isbn start
     const [isbn, setIsbn] = useState(formData.abIsbn);
@@ -122,12 +122,12 @@ function AudioBookEntry({book, onClose, fetchData}) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        const isEditMode = !!formData.book_id; // Check if we are editing (has book_id)
+        const isEditMode = !!formData.audiobook_id; // Check if we are editing (has book_id)
         const method = isEditMode ? 'PUT' : 'POST';
         
         const formDataObj = new FormData();
             formDataObj.append('abFile', formData.abFile);
-            formDataObj.append('abISBN', formData.abISBN);
+            formDataObj.append('abISBN', formData.abIsbn);
             formDataObj.append('abTitle', formData.abTitle);
             formDataObj.append('abAuthor', formData.abAuthor);
             formDataObj.append('abNarrator', formData.abNarrator);
@@ -144,16 +144,15 @@ function AudioBookEntry({book, onClose, fetchData}) {
         try {
             const response = await fetch('https://librarydbbackend.onrender.com/catalog-entry/audiobook', {
                 method: method,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
                 body: formDataObj,
             });
 
             if (response.ok) {
                 const successMessage = isEditMode ? 'Audiobook updated successfully!' : 'Audiobook added successfully!';
                 setMessage(successMessage);
-            setMessageType('success');
+                setMessageType('success');
+                fetchData();
+                onClose();
             } else {
                 const errorData = await response.json();
                 setMessage(errorData.message);
@@ -219,7 +218,6 @@ function AudioBookEntry({book, onClose, fetchData}) {
                             helperText={helperText}
                             error={error}
                             label="ISBN"
-                            type="number"
                             variant="standard"
                             name="abIsbn"
                             value={formatIsbn(isbn)}
@@ -315,7 +313,7 @@ function AudioBookEntry({book, onClose, fetchData}) {
                                 label="Date Published"
                                 views={['year', 'month', 'day']}
                                 name="abDate"
-                                value={formData.abDate ? dayjs(formData.abDate, 'YYYY-MM-DD') : null}
+                                value={formData.abDate ? dayjs(`${formData.abDate}`, 'YYYY-MM-DD') : null}
                                 onChange={(newValue) => {
                                     setFormData((prevFormData) => ({
                                         ...prevFormData,
@@ -381,7 +379,7 @@ function AudioBookEntry({book, onClose, fetchData}) {
 
                     <Stack spacing={2} direction="row" justifyContent="flex-end">
                         <Button variant="text" onClick={handleClear}>Clear</Button>
-                        <Button variant="contained" color="primary" onClick={handleSubmit}>{book ? 'Update Book' : 'Add Book'}</Button>
+                        <Button variant="contained" color="primary" onClick={handleSubmit}>{audiobook ? 'Update Audiobook' : 'Add Audiobook'}</Button>
                     </Stack>
                     {message && <div>{message}</div>} {/* Display success or error message */}
                 </Box>
