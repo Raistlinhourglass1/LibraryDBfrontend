@@ -554,37 +554,7 @@ const handleList = async () => {
             </Table>
           </TableContainer>
         </Box>
-
-        <Box sx={{ marginBottom: 4 }}>
-          <Typography variant="h6" gutterBottom>User List</Typography>
-          <TableContainer component={Box} sx={{ height: 400 }}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Book Title</TableCell>
-                  <TableCell>Author</TableCell>
-                  <TableCell>Date Added</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {userListBooks.map((row) => (
-                  <TableRow key={row.id}>
-                    <TableCell>{row.book_title}</TableCell>
-                    <TableCell>{row.author}</TableCell>
-                    <TableCell><Button 
-                        variant="outlined" 
-                        onClick={() => handleDetails(row.book_id)} // Pass the row id to handleDetails
-                      >
-                        View Details
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Box>
-
+        
       </Box>
       {/*
     <DataGrid
