@@ -409,6 +409,7 @@ const handleList = async () => {
       alert('Error canceling reservation');
     }
   };
+/////CANCEL RESERVATION END
 
     ///////DETAILS
 
@@ -416,145 +417,168 @@ const handleList = async () => {
       navigate(`/books/${bookId}`);
     };
 
-  /////CANCEL RESERVATION END
+  
+  //handle tabs
+  const [selectedTab, setSelectedTab] = useState(0); // Track the selected tab
+
+  // Handle tab change
+  const handleTabChange = (event, newValue) => {
+    setSelectedTab(newValue);
+  };
   return(
       <AppTheme {...props}>
           <Box sx={{ boxShadow: 3, borderRadius: 2, padding: 2, bgcolor: 'background.paper' }}>
         <Typography variant="h4" gutterBottom>Your Books</Typography>
 
 
-        {/* Checked Out Books Table */}
-        <Box sx={{ marginBottom: 4 }}>
-          <Typography variant="h6" gutterBottom>Checked Out Books</Typography>
-          <TableContainer component={Box} sx={{ height: 400 }}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Book Title</TableCell>
-                  <TableCell>Author</TableCell>
-                  <TableCell>Date Borrowed</TableCell>
-                  <TableCell>Due Date</TableCell>
-                  <TableCell>Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {checkedOutBooks.map((row) => (
-                  <TableRow key={row.reservation_id}>
-                    <TableCell>{row.book_title}</TableCell>
-                    <TableCell>{row.author}</TableCell>
-                    <TableCell>{calculateFormattedDate(row.date_borrowed).formattedDate}</TableCell>
-                    <TableCell>{calculateFormattedDate(row.date_due).formattedDate}</TableCell>
-                    <TableCell>
-                      <Button
-                        onClick={() => handleReturn(row.reservation_id, row.book_id)}
-                        sx={{ backgroundColor: '#28a745', color: '#fff' }}
-                      >
-                        Return
-                      </Button>
-                    </TableCell>
+         {/* Tabs */}
+      <Tabs variant="fullWidth" value={selectedTab} onChange={handleTabChange} aria-label="Your Books Tabs">
+        <Tab label="Checked Out Books"  />
+        <Tab label="Pending Reservations"/>
+        <Tab label="Book History" />
+        <Tab label="User List" />
+      </Tabs>
+
+      {/* Tab Panels */}
+      {/* Checked Out Books Table */}
+      {selectedTab === 0 && (
+        <Box sx={{ marginBottom: 4, boxShadow: 2, borderRadius: 3, padding: 2 }}>
+          <Paper elevation={1} sx={{ p: 2, minHeight: '100%', display: 'flex', flexDirection: 'column' }}>
+            <Typography variant="h6" gutterBottom>Checked Out Books</Typography>
+            <TableContainer component={Box} sx={{ height: 400 }}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Book Title</TableCell>
+                    <TableCell>Author</TableCell>
+                    <TableCell>Date Borrowed</TableCell>
+                    <TableCell>Due Date</TableCell>
+                    <TableCell>Actions</TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                </TableHead>
+                <TableBody>
+                  {checkedOutBooks.map((row) => (
+                    <TableRow key={row.reservation_id}>
+                      <TableCell>{row.book_title}</TableCell>
+                      <TableCell>{row.author}</TableCell>
+                      <TableCell>{calculateFormattedDate(row.date_borrowed).formattedDate}</TableCell>
+                      <TableCell>{calculateFormattedDate(row.date_due).formattedDate}</TableCell>
+                      <TableCell>
+                        <Button onClick={() => handleReturn(row.reservation_id, row.book_id)} sx={{ backgroundColor: '#28a745', color: '#fff' }}>
+                          Return
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Paper>
         </Box>
-
-
-        {/* Pending Books Table */}
-        <Box sx={{ marginBottom: 4 }}>
-          <Typography variant="h6" gutterBottom>Pending Reservations</Typography>
-          <TableContainer component={Box} sx={{ height: 400 }}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Book Title</TableCell>
-                  <TableCell>Author</TableCell>
-                  <TableCell>Reservation Date</TableCell>
-                  <TableCell>Queue Position</TableCell>
-                  <TableCell>Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {pendingBooks.map((row) => (
-                  <TableRow key={row.reservation_id}>
-                    <TableCell>{row.book_title}</TableCell>
-                    <TableCell>{row.author}</TableCell>
-                    <TableCell>{calculateFormattedDate(row.reservation_date_time).formattedDate}</TableCell>
-                    <TableCell>{row.queue_position}</TableCell>
-                    <TableCell>
-                      <Button
-                        onClick={() => handleCancelReservation(row.reservation_id, row.book_id)}
-                        sx={{ backgroundColor: '#28a745', color: '#fff' }}
-                      >
-                        Cancel
-                      </Button>
-                    </TableCell>
+      )}
+      
+      {/* Pending Books Table */}
+      {selectedTab === 1 && (
+        <Box sx={{ marginBottom: 4, boxShadow: 2, borderRadius: 3, padding: 2 }}>
+          <Paper elevation={1} sx={{ p: 2, minHeight: '100%', display: 'flex', flexDirection: 'column' }}>
+            <Typography variant="h6" gutterBottom>Pending Reservations</Typography>
+            <TableContainer component={Box} sx={{ height: 400 }}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Book Title</TableCell>
+                    <TableCell>Author</TableCell>
+                    <TableCell>Reservation Date</TableCell>
+                    <TableCell>Queue Position</TableCell>
+                    <TableCell>Actions</TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                </TableHead>
+                <TableBody>
+                  {pendingBooks.map((row) => (
+                    <TableRow key={row.reservation_id}>
+                      <TableCell>{row.book_title}</TableCell>
+                      <TableCell>{row.author}</TableCell>
+                      <TableCell>{calculateFormattedDate(row.reservation_date_time).formattedDate}</TableCell>
+                      <TableCell>{row.queue_position}</TableCell>
+                      <TableCell>
+                        <Button onClick={() => handleCancelReservation(row.reservation_id, row.book_id)} sx={{ backgroundColor: '#28a745', color: '#fff' }}>
+                          Cancel
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Paper>
         </Box>
+      )}
 
 
-
-        {/* History Books Table */}
-        <Box sx={{ marginBottom: 4 }}>
-          <Typography variant="h6" gutterBottom>Book History</Typography>
-          <TableContainer component={Box} sx={{ height: 400 }}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Book Title</TableCell>
-                  <TableCell>Author</TableCell>
-                  <TableCell>Date Borrowed</TableCell>
-                  <TableCell>Date Returned</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {historyBooks.map((row) => (
-                  <TableRow key={row.reservation_id}>
-                    <TableCell>{row.book_title}</TableCell>
-                    <TableCell>{row.author}</TableCell>
-                    <TableCell>{calculateFormattedDate(row.date_borrowed).formattedDate}</TableCell>
-                    <TableCell>{calculateFormattedDate(row.date_returned).formattedDate}</TableCell>
+      {/* History Books Table */}
+      {selectedTab === 2 && (
+        <Box sx={{ marginBottom: 4, boxShadow: 2, borderRadius: 3, padding: 2 }}>
+          <Paper elevation={1} sx={{ p: 2, minHeight: '100%', display: 'flex', flexDirection: 'column' }}>
+            <Typography variant="h6" gutterBottom>Book History</Typography>
+            <TableContainer component={Box} sx={{ height: 400 }}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Book Title</TableCell>
+                    <TableCell>Author</TableCell>
+                    <TableCell>Date Borrowed</TableCell>
+                    <TableCell>Date Returned</TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                </TableHead>
+                <TableBody>
+                  {historyBooks.map((row) => (
+                    <TableRow key={row.reservation_id}>
+                      <TableCell>{row.book_title}</TableCell>
+                      <TableCell>{row.author}</TableCell>
+                      <TableCell>{calculateFormattedDate(row.date_borrowed).formattedDate}</TableCell>
+                      <TableCell>{calculateFormattedDate(row.date_due).formattedDate}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Paper>
         </Box>
-        
-        <Box sx={{ marginBottom: 4 }}>
-          <Typography variant="h6" gutterBottom>User List</Typography>
-          <TableContainer component={Box} sx={{ height: 400 }}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Book Title</TableCell>
-                  <TableCell>Author</TableCell>
-                  <TableCell>Date Added</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {userListBooks.map((row) => (
-                  <TableRow key={row.id}>
-                    <TableCell>{row.book_title}</TableCell>
-                    <TableCell>{row.author}</TableCell>
-                    <TableCell><Button 
-                        variant="outlined" 
-                        onClick={() => handleDetails(row.book_id)} // Pass the row id to handleDetails
-                      >
-                        View Details
-                      </Button>
-                    </TableCell>
+      )}
+
+      {/* User List Table */}
+      {selectedTab === 3 && (
+        <Box sx={{ marginBottom: 4, boxShadow: 2, borderRadius: 3, padding: 2 }}>
+          <Paper elevation={1} sx={{ p: 2, minHeight: '100%', display: 'flex', flexDirection: 'column' }}>
+            <Typography variant="h6" gutterBottom>User List</Typography>
+            <TableContainer component={Box} sx={{ height: 400 }}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Book Title</TableCell>
+                    <TableCell>Author</TableCell>
+                    <TableCell>Action</TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                </TableHead>
+                <TableBody>
+                  {userListBooks.map((row) => (
+                    <TableRow key={row.id}>
+                      <TableCell>{row.book_title}</TableCell>
+                      <TableCell>{row.author}</TableCell>
+                      <TableCell>
+                        <Button variant="outlined" onClick={() => handleDetails(row.book_id)}>
+                          View Details
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Paper>
         </Box>
-        
+      )}
+
       </Box>
       {/*
     <DataGrid
