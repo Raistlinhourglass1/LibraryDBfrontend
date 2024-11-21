@@ -175,10 +175,8 @@ const HomePage = () => {
                   <SearchIcon fontSize="inherit" />
                 </IconButton>
             </Box>
+            
           </Box> 
-            <IconButton color="primary" sx={{ ml: 1 }}>
-              <SearchIcon />
-            </IconButton>
           </Container>
         </Box>
 
