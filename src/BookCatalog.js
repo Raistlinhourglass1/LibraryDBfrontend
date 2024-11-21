@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {Card, CardContent, Dialog, DialogActions, DialogContent, DialogTitle, TextField, ToggleButtonGroup, ToggleButton, Typography, Button, Paper, Box } from '@mui/material';
+import { MenuItem, Card, CardContent, Dialog, DialogActions, DialogContent, DialogTitle, TextField, ToggleButtonGroup, ToggleButton, Typography, Button, Paper, Box } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import BookEntry from './BookEntry';
 
@@ -11,6 +11,7 @@ const [selectedBook, setSelectedBook] = useState(null); // Used for editing an e
 const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
 const [searchInput, setSearchInput] = useState(''); // Search input state
 const [viewOption, setViewOption] = useState('showNormal');
+const [searchBy, setSearchBy] = useState('title'); // Default to 'title'
 
   // Function to open the add dialog
   const handleOpenAddDialog = () => {
