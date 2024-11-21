@@ -89,10 +89,14 @@ function Reports(props) {
   const [reportData, setReportData] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
   const [topBooks, setTopBooks] = useState(5);
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
 
   // Clear irrelevant filters when the specification changes
   useEffect(() => {
     setDate('');
+    setStartDate('');
+    setEndDate('');
     setUserId('');
     setStaffId('');
     setCalcId('');
@@ -111,7 +115,12 @@ function Reports(props) {
     e.preventDefault();
     // Prepare the payload based on the selected specification
     const payload = { specification };
-    if (date && specification !== 'most liked') payload.date = date;
+    if (startDate && endDate && specification !== 'most liked') {
+      payload.start_date = startDate;
+      payload.end_date = endDate;
+    } else if (date && specification !== 'most liked') {
+      payload.date = date;
+    }
     
     if (specification === 'user transactions') {
       payload.reservation_type = reservationType;
@@ -134,7 +143,7 @@ function Reports(props) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ specification, date, user_id: userId, book_name: bookName, book_isbn: bookIsbn, staff_id: staffId, teach_email: teachEmail, laptop_id: laptopId, calc_id: calcId, period_type: periodType, room_num: roomNum, media_type: mediaType, topBooks:topBooks, reservation_type: reservationType}),
+        body: JSON.stringify({ specification, date, user_id: userId, book_name: bookName, book_isbn: bookIsbn, staff_id: staffId, teach_email: teachEmail, laptop_id: laptopId, calc_id: calcId, period_type: periodType, room_num: roomNum, media_type: mediaType, topBooks:topBooks, reservation_type: reservationType, start_date: startDate, end_date: endDate}),
       });
       if (!response.ok) {
         throw new Error('Error fetching reports');
@@ -227,18 +236,48 @@ function Reports(props) {
 
               {/* Date Filter - Always shown */}
               {specification !== 'most liked' && (
-              <FormControl>
-                <FormLabel htmlFor="date">By Date (optional, YYYY-MM-DD)</FormLabel>
-                <TextField
-                  id="date"
-                  name="date"
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
-                  fullWidth
-                  variant="outlined"
-                />
-              </FormControl>
-            )}
+              <>
+                {/* Single Date Filter */}
+                <FormControl>
+                  <FormLabel htmlFor="date">By Date (optional, YYYY-MM-DD)</FormLabel>
+                  <TextField
+                    id="date"
+                    name="date"
+                    value={date}
+                    onChange={(e) => setDate(e.target.value)}
+                    fullWidth
+                    variant="outlined"
+                  />
+                </FormControl>
+
+                  {/* Date Range Filters */}
+                  <FormControl>
+                    <FormLabel htmlFor="startDate">Start Date (optional, YYYY-MM-DD)</FormLabel>
+                    <TextField
+                      id="startDate"
+                      name="startDate"
+                      type="date"
+                      value={startDate}
+                      onChange={(e) => setStartDate(e.target.value)}
+                      fullWidth
+                      variant="outlined"
+                    />
+                  </FormControl>
+
+                  <FormControl>
+                    <FormLabel htmlFor="endDate">End Date (optional, YYYY-MM-DD)</FormLabel>
+                    <TextField
+                      id="endDate"
+                      name="endDate"
+                      type="date"
+                      value={endDate}
+                      onChange={(e) => setEndDate(e.target.value)}
+                      fullWidth
+                      variant="outlined"
+                    />
+                  </FormControl>
+                </>
+              )}
 
 
             {(specification === 'user transactions') && (
@@ -325,6 +364,7 @@ function Reports(props) {
                       onChange={(e) => setmediaType(e.target.value)}
                       label="Media Type"
                     >
+                      <MenuItem value="all">All</MenuItem>
                       <MenuItem value="book">Book</MenuItem>
                       <MenuItem value="audiobook">Audiobook</MenuItem>
                       <MenuItem value="ebook">Ebook</MenuItem>
