@@ -123,12 +123,7 @@ const BookReservationForm = () => {
               display: 'inline-block',
             }}
           >
-            <Typography>{status}</Typography>
-            {queuePosition && (
-              <Typography variant="body1" sx={{ marginTop: 1 }}>
-                Queue Position: {queuePosition}
-              </Typography>
-            )}
+            <Typography>{status}</Typography> 
           </Box>
         )}
 
