@@ -112,10 +112,14 @@ const filteredBooks = books
     })
     .filter((book) => {
       const lowerSearch = searchInput.toLowerCase();
-      return (
-        book.book_title.toLowerCase().includes(lowerSearch) ||
-        book.isbn.toLowerCase().includes(lowerSearch)
-      );
+      if (searchBy === 'title') {
+        return book.book_title.toLowerCase().includes(lowerSearch);
+      } else if (searchBy === 'author') {
+        return book.author.toLowerCase().includes(lowerSearch);
+      } else if (searchBy === 'isbn') {
+        return book.isbn.toLowerCase().includes(lowerSearch);
+      }
+      return false;
     });
 
 
@@ -229,47 +233,67 @@ const filteredBooks = books
 
   return (
     <Paper sx={{ boxShadow: 3, padding: 2, backgroundColor: '#FFFFFF' }}>
-<Grid container spacing={2}>
-  <Grid item size={8}>
-      <ToggleButtonGroup
-        value={viewOption}
-        exclusive
-        onChange={handleViewChange}
-        aria-label="View option"
-        sx={{ marginBottom: 3 }}
-      >
-        <ToggleButton value="showNormal" aria-label="Hide Deleted Books">
-        Default
-        </ToggleButton>
-        <ToggleButton value="showDeleted" aria-label="Show Deleted Books">
-        All
-        </ToggleButton>
-        <ToggleButton value="showOnlyDeleted" aria-label="Show Only Deleted Books">
-        Deleted Only
-        </ToggleButton>
-      </ToggleButtonGroup>
-</Grid>
-<Grid item size={4}>
-      <TextField
-        label="Search by Title or ISBN"
-        variant="outlined"
-        fullWidth
-        sx={{ marginBottom: 3 }}
-        value={searchInput}
-        onChange={(e) => setSearchInput(e.target.value)}
-      />
-      </Grid>
-</Grid>
 
 
-      <Typography variant="h4" component="h1" gutterBottom>
+
+<Typography variant="h4" component="h1" gutterBottom>
         Book Catalog
       </Typography>
       <Button variant="contained" color="primary" onClick={handleOpenAddDialog} sx={{ marginBottom: 2 }}>
         Add New Book
       </Button>
 
-      {books.length > 0 ? (
+        <Grid container spacing={2} sx={{}}>   
+        {/* Search Query Input */}
+            <Grid item xs={4}>
+              <TextField
+                label="Search"
+                variant="outlined"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                fullWidth
+                sx={{ marginRight: 2 }}
+              />
+            </Grid>
+            
+            {/* Search By Dropdown */}
+            <Grid item>
+              <TextField
+                select
+                label="Search By"
+                value={searchBy}
+                onChange={(e) => setSearchBy(e.target.value)}
+                variant="outlined"
+                sx={{ minWidth: 150 }}
+              >
+                <MenuItem value="title">Title</MenuItem>
+                <MenuItem value="isbn">ISBN</MenuItem>
+                <MenuItem value="author">Author</MenuItem>
+              </TextField>
+            </Grid>
+             
+              <Grid item size="auto">
+              <ToggleButtonGroup
+                value={viewOption}
+                exclusive
+                onChange={handleViewChange}
+                aria-label="View option"
+                sx={{ marginBottom: 3 }}
+              >
+                <ToggleButton value="showNormal" aria-label="Hide Deleted Books">
+                  Default
+                </ToggleButton>
+                <ToggleButton value="showDeleted" aria-label="Show Deleted Books">
+                  All
+                </ToggleButton>
+                <ToggleButton value="showOnlyDeleted" aria-label="Show Only Deleted Books">
+                  Deleted Only
+                </ToggleButton>
+              </ToggleButtonGroup>
+        </Grid>
+        </Grid>
+        
+      {filteredBooks.length > 0 ? (
         <Grid container spacing={3}>
           {filteredBooks.map(renderBookItem)} {/* Render each book item */}
         </Grid>

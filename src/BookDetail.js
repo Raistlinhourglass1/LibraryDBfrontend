@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import { Alert, Box, Button, Card, CardContent, CardMedia, CircularProgress, Container, Dialog, Snackbar, Stack, Paper, Rating, Typography } from '@mui/material';
+import {  CssBaseline, ThemeProvider, Alert, Box, Button, CardMedia, CircularProgress, Container, Dialog, Snackbar, Stack, Paper, Rating, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import bookCover from './external/book-cover.png';
 import { useParams, Link } from 'react-router-dom';
@@ -7,6 +7,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import Feedback from './feedback'; // Import Feedback component
 import bgImage from './external/books1.jpg';
+import ClaudeTheme from './ClaudeTheme';
 
 function BookDetail() {
   
@@ -202,6 +203,8 @@ function BookDetail() {
   
   return (
     <>
+     <ThemeProvider theme={ClaudeTheme}>
+     <CssBaseline />
     <Box sx={{ height: '25vh', backgroundImage: `url(${bgImage})`}} > 
       
     </Box>
@@ -416,6 +419,7 @@ function BookDetail() {
     >
       <Feedback onClose={handleCloseFeedbackDialog} book={book} />
     </Dialog>
+    </ThemeProvider>
     </>
 );
 }

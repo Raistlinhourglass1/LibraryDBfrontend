@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { Breadcrumbs, Box, Button, Card, CardMedia, CardContent, Container, Grid2, Link, TextField, Typography, IconButton } from '@mui/material';
+import { CssBaseline, ThemeProvider, Breadcrumbs, Box, Button, Card, CardMedia, CardContent, Container, Grid2, Link, TextField, Typography, IconButton } from '@mui/material';
 import BookSearchResults from './BookSearchResults';
 import SearchIcon from '@mui/icons-material/Search';
 import { useNavigate, useLocation } from 'react-router-dom';
 import bgImage from './external//books1.jpg';
+import ClaudeTheme from './ClaudeTheme';
 
 function BookSearch() {
     const location = useLocation();
@@ -59,6 +60,8 @@ function BookSearch() {
       
   return (
     <>
+     <ThemeProvider theme={ClaudeTheme}>
+     <CssBaseline />
     {/*
     <Breadcrumbs aria-label="breadcrumb">
         <Link underline="hover" color="inherit" href="/">
@@ -86,7 +89,7 @@ function BookSearch() {
             justifyContent="center"
             alignItems="center"
             component="form"
-            sx={{ '& .MuiTextField-root': { m: 1, width: '50ch' } }}
+            sx={{ '& .MuiTextField-root': { m: 1, width: '60ch' } }}
             noValidate
             autoComplete="off"
             >
@@ -96,12 +99,14 @@ function BookSearch() {
                 variant="standard"
                 value={term}
                 onChange={(e) => setTerm(e.target.value)}
+                fullWidth
             />
             <IconButton type="submit" variant="contained" size="large" color='primary' onClick={onSearchClick}>
               <SearchIcon fontSize="inherit" />
             </IconButton>
-          
-            <Button component={Link} href="/advanced-search" variant="text" size="small" >Advanced Search</Button>
+          {/*
+            <Button component={Link} href="/advanced-search" variant="text" size="small" >Advanced Search</Button> 
+            */}
         </Box>
     </Box> 
     </Container>
@@ -121,7 +126,7 @@ function BookSearch() {
         )
       )}
     </Container>
-    
+    </ThemeProvider>
     </>
   )
 }

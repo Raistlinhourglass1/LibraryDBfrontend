@@ -1,5 +1,5 @@
-import React from 'react';
-import { Container, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import React, { useState } from 'react';
+import { Box, Container, MenuItem, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
 import { format } from 'date-fns';
 
 const calculateFormattedDate = (dateTime) => {
@@ -20,8 +20,49 @@ const isOverdue = (dueDate) => {
 };
 
 const CheckedOutBooksTable = ({ books }) => {
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchBy, setSearchBy] = useState('book_title'); // Default search by Book Title
+
+  // Filter books based on search query
+  const filteredBooks = books.filter((row) => {
+    const valueToSearch = searchBy === 'name'
+    ? `${row.first_name} ${row.last_name}`.toLowerCase() // Concatenate first and last name for User Name search
+    : row[searchBy]?.toLowerCase() || '';
+    return valueToSearch.includes(searchQuery.toLowerCase());
+  });
+
   return (
     <Container maxWidth="lg" sx={{ borderRadius: 2, boxShadow: 2, margin: '0 auto' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, marginBottom: 2 }}>
+        {/* Search Input */}
+        <TextField
+          label="Search"
+          variant="outlined"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          sx={{ flexGrow: 1 }}
+        />
+
+        {/* Toggle for Search By */}
+        <TextField
+          select
+          label="Search By"
+          value={searchBy}
+          onChange={(e) => setSearchBy(e.target.value)}
+          variant="outlined"
+          sx={{ minWidth: 150 }}
+        >
+          <MenuItem value="book_title">Book Title</MenuItem>
+          <MenuItem value="author">Author</MenuItem>
+          <MenuItem value="name">User Name</MenuItem>
+        </TextField>
+      </Box>
+
+      <Typography variant="h6" sx={{ marginBottom: 2 }}>
+        Showing {filteredBooks.length} result(s)
+      </Typography>
+      
       <TableContainer component="div">
         <Table>
           <TableHead>
@@ -35,7 +76,7 @@ const CheckedOutBooksTable = ({ books }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {books.map((row) => (
+            {filteredBooks.map((row) => (
               <TableRow key={row.id}>
                 <TableCell>{row.book_title}</TableCell>
                 <TableCell>{row.author}</TableCell>

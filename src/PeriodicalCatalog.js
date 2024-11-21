@@ -61,8 +61,7 @@ const PeriodicalCatalog = ({ catalogData, fetchData }) => {
         return true;
       })
       .filter((periodical) =>
-        periodical.periodical_title.toLowerCase().includes(lowerSearch) ||
-        periodical.periodical_author.toLowerCase().includes(lowerSearch)
+        periodical.periodical_title.toLowerCase().includes(lowerSearch)
       );
 
     setFilteredPeriodicals(filtered);
@@ -159,7 +158,7 @@ const PeriodicalCatalog = ({ catalogData, fetchData }) => {
           <TextField
             value={searchQuery}
             onChange={handleSearchChange}
-            label="Search by Title or Author"
+            label="Search by Title"
             variant="outlined"
             size="small"
             sx={{ width: '300px' }}

@@ -7,6 +7,8 @@ const AudioBookCatalog = ({ catalogData, fetchData }) => {
   console.log('Catalog Data: ', catalogData);
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [selectedAudiobook, setSelectedAudiobook] = useState(null); // Used for editing an existing audiobook
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchBy, setSearchBy] = useState('audio_title'); // Default search criterion
 
   // Function to open the add dialog
   const handleOpenAddDialog = () => {
@@ -89,13 +91,11 @@ const AudioBookCatalog = ({ catalogData, fetchData }) => {
   const [viewOption, setViewOption] = useState('showNormal'); // Default to show normal audiobooks only
 
   const filteredAudiobooks = audiobooks.filter((audiobook) => {
-    if (viewOption === 'showNormal') {
-      return !audiobook.deleted; // Show only non-deleted audiobooks
-    } else if (viewOption === 'showDeleted') {
-      return true; // Show all audiobooks, including deleted
-    } else if (viewOption === 'showOnlyDeleted') {
-      return audiobook.deleted; // Show only deleted audiobooks
-    }
+    const valueToSearch = audiobook[searchBy]?.toLowerCase() || '';
+    return valueToSearch.includes(searchQuery.toLowerCase());
+  }).filter((audiobook) => {
+    if (viewOption === 'showNormal') return !audiobook.deleted;
+    if (viewOption === 'showOnlyDeleted') return audiobook.deleted;
     return true;
   });
 
@@ -187,32 +187,67 @@ const AudioBookCatalog = ({ catalogData, fetchData }) => {
   };
 
   return (
-    <Paper sx={{ boxShadow: 3, padding: 2, backgroundColor: '#ffffff' }}>
-      <ToggleButtonGroup
-        value={viewOption}
-        exclusive
-        onChange={handleViewChange}
-        aria-label="View option"
-        sx={{ marginBottom: 3 }}
-      >
-        <ToggleButton value="showNormal" aria-label="Hide Deleted Audiobooks">
-        Default
-        </ToggleButton>
-        <ToggleButton value="showDeleted" aria-label="Show Deleted Audiobooks">
-        All
-        </ToggleButton>
-        <ToggleButton value="showOnlyDeleted" aria-label="Show Only Deleted Audiobooks">
-        Deleted Only
-        </ToggleButton>
-      </ToggleButtonGroup>
-      <Typography variant="h4" component="h1" gutterBottom>
+    <Paper sx={{ boxShadow: 3, padding: 2, backgroundColor: '#ffffff' }}> 
+    
+    <Typography variant="h4" component="h1" gutterBottom>
         Audiobook Catalog
       </Typography>
       <Button variant="contained" color="primary" onClick={handleOpenAddDialog} sx={{ marginBottom: 2 }}>
         Add New Audiobook
       </Button>
 
-      {audiobooks.length > 0 ? (
+      
+     
+      <Grid container spacing={2} sx={{}}>  
+      {/* Search Bar */}
+        <Grid item xs={4}>
+          <TextField
+            label="Search"
+            variant="outlined"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            fullWidth
+            sx={{ marginRight: 2 }}
+          />
+          </Grid>
+            
+            {/* Search By Dropdown */}
+            <Grid item>
+          <TextField
+            select
+            label="Search By"
+            value={searchBy}
+            onChange={(e) => setSearchBy(e.target.value)}
+            variant="outlined"
+            sx={{ minWidth: 150 }}
+          >
+            <MenuItem value="audio_title">Title</MenuItem>
+            <MenuItem value="audio_isbn">ISBN</MenuItem>
+          </TextField>
+        </Grid>
+
+        <Grid item size="auto">
+        <ToggleButtonGroup
+          value={viewOption}
+          exclusive
+          onChange={handleViewChange}
+          aria-label="View option"
+          sx={{ marginBottom: 3 }}
+        >
+          <ToggleButton value="showNormal" aria-label="Hide Deleted Audiobooks">
+            Default
+          </ToggleButton>
+          <ToggleButton value="showDeleted" aria-label="Show Deleted Audiobooks">
+            All
+          </ToggleButton>
+          <ToggleButton value="showOnlyDeleted" aria-label="Show Only Deleted Audiobooks">
+            Deleted Only
+          </ToggleButton>
+        </ToggleButtonGroup>
+        </Grid>
+      </Grid>
+
+      {filteredAudiobooks.length > 0 ? (
         <Grid container spacing={3}>
           {filteredAudiobooks.map(renderAudiobookItem)} {/* Render each audiobook item */}
         </Grid>

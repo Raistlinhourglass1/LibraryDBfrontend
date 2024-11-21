@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { AppBar, Tabs, Tab, Box } from '@mui/material';
+import { CssBaseline, ThemeProvider, AppBar, Tabs, Tab, Box } from '@mui/material';
 import BookCatalog from './BookCatalog';
 import AudioBookCatalog from './AudioBookCatalog';
 import EBookCatalog from './EBookCatalog';
@@ -7,6 +7,7 @@ import PeriodicalCatalog from './PeriodicalCatalog';
 import bgImage from './external/iStock-1411029939-L.jpg';
 import BooksCheckedOut from './BooksCheckedOut';
 import BooksReserved from './BooksReserved';
+import ClaudeTheme from './ClaudeTheme';
 
 const StaffCatalog = () => {
 
@@ -93,9 +94,11 @@ const StaffCatalog = () => {
   //const periodicalsData = catalogData.filter((item) => item.item_type === 'periodical');
 
   return (
+    <ThemeProvider theme={ClaudeTheme}>
+        <CssBaseline />
     <div style={{ padding: '20px' }}>
-      <h1>Catalog Page</h1>
-      <AppBar position="static" sx={{ backgroundImage: `url(${bgImage})`, height: '200px', justifyContent: 'flex-end', paddingBottom: '10px' }}></AppBar>
+       <Typography variant='h3'>Catalog</Typography>
+      <AppBar position="static" sx={{ backgroundImage: `url(${bgImage})`, height: '200px', justifyContent: 'flex-end', paddingBottom: '10px', marginTop: 1 }}></AppBar>
       {/* Tabs for switching between catalogs */}
 
       <Box sx={{ marginTop: 2 }}>
@@ -121,6 +124,7 @@ const StaffCatalog = () => {
         {selectedTab === 5 && <BooksReserved books={reservedBooks} />}
       </Box>
     </div>
+    </ThemeProvider>
   );
 };
 

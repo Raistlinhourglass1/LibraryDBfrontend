@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, CardContent, Dialog, DialogActions, DialogContent, DialogTitle, ToggleButtonGroup, ToggleButton, Typography, Button, Paper, Box } from '@mui/material';
+import { MenuItem, TextField, Card, CardContent, Dialog, DialogActions, DialogContent, DialogTitle, ToggleButtonGroup, ToggleButton, Typography, Button, Paper, Box } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import EBookEntry from './EBookEntry'; // Assuming EBookEntry component for eBooks
 
@@ -7,7 +7,9 @@ const EBookCatalog = ({ catalogData, fetchData }) => {
   console.log('Catalog Data: ', catalogData);
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [selectedEBook, setSelectedEBook] = useState(null); // Used for editing an existing eBook
-
+  const [searchInput, setSearchInput] = useState('');
+  const [searchBy, setSearchBy] = useState('title'); // Default to 'Title'
+  
   // Function to open the add dialog
   const handleOpenAddDialog = () => {
     setSelectedEBook(null); // Clear selected eBook for adding new eBook
@@ -87,15 +89,19 @@ const EBookCatalog = ({ catalogData, fetchData }) => {
   // Toggle deleted eBook visibility
   const [viewOption, setViewOption] = useState('showNormal'); // Default to show normal eBooks only
 
-  const filteredEbooks = ebooks.filter((ebook) => {
-    if (viewOption === 'showNormal') {
-      return !ebook.deleted; // Show only non-deleted eBooks
-    } else if (viewOption === 'showDeleted') {
-      return true; // Show all eBooks, including deleted
-    } else if (viewOption === 'showOnlyDeleted') {
-      return ebook.deleted; // Show only deleted eBooks
-    }
+  const filteredEbooks = ebooks
+  .filter((ebook) => {
+    if (viewOption === 'showNormal') return !ebook.deleted;
+    if (viewOption === 'showDeleted') return true;
+    if (viewOption === 'showOnlyDeleted') return ebook.deleted;
     return true;
+  })
+  .filter((ebook) => {
+    const searchLower = searchInput.toLowerCase();
+    if (searchBy === 'title') return ebook.ebook_title.toLowerCase().includes(searchLower);
+    if (searchBy === 'isbn') return ebook.ebook_isbn.toLowerCase().includes(searchLower);
+    if (searchBy === 'author') return ebook.ebook_author.toLowerCase().includes(searchLower);
+    return false;
   });
 
   const handleViewChange = (event, newViewOption) => {
@@ -185,6 +191,43 @@ const EBookCatalog = ({ catalogData, fetchData }) => {
 
   return (
     <Paper sx={{ boxShadow: 3, padding: 2, backgroundColor: '#ffffff' }}>
+      <Typography variant="h4" component="h1" gutterBottom>
+            eBook Catalog
+          </Typography>
+
+          <Button variant="contained" color="primary" onClick={handleOpenAddDialog} sx={{ marginBottom: 2 }}>
+            Add New eBook
+          </Button>
+
+    <Grid container spacing={2} sx={{ marginBottom: 3}}>
+      {/* Search Query Input */}
+      <Grid item xs={4}>
+        <TextField
+          label="Search"
+          variant="outlined"
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+          fullWidth
+          sx={{ marginRight: 2 }}
+        />
+      </Grid>
+
+      {/* Search By Dropdown */}
+      <Grid item>
+        <TextField
+          select
+          label="Search By"
+          value={searchBy}
+          onChange={(e) => setSearchBy(e.target.value)}
+          variant="outlined"
+          sx={{ minWidth: 150 }}
+        >
+          <MenuItem value="title">Title</MenuItem>
+          <MenuItem value="isbn">ISBN</MenuItem>
+          <MenuItem value="author">Author</MenuItem>
+        </TextField>
+      </Grid>
+    
       <ToggleButtonGroup
         value={viewOption}
         exclusive
@@ -202,14 +245,7 @@ const EBookCatalog = ({ catalogData, fetchData }) => {
         Deleted Only
         </ToggleButton>
       </ToggleButtonGroup>
-
-      <Typography variant="h4" component="h1" gutterBottom>
-        eBook Catalog
-      </Typography>
-
-      <Button variant="contained" color="primary" onClick={handleOpenAddDialog} sx={{ marginBottom: 2 }}>
-        Add New eBook
-      </Button>
+      </Grid>
 
       {ebooks.length > 0 ? (
         <Grid container spacing={3}>

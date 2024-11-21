@@ -14,7 +14,7 @@ const NavbarComponent = ({ userInfo, onLogout, fetchProfileData }) => {
   }, [fetchProfileData, userInfo]);
 
   return (
-    <Navbar expand="lg" className="bg-body-tertiary" bg="dark" data-bs-theme="dark">
+    <Navbar expand="lg" data-bs-theme="dark"style={{ backgroundColor: '#202632', color: '#ecf0f1', height: '70px'}}>
       <Container>
         <Navbar.Brand href="/">Library</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
