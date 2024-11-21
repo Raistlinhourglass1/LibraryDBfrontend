@@ -189,6 +189,7 @@ function AudioBookEntry({audiobook, onClose, fetchData}) {
             abSummary: '',
             abNotes: ''
         });
+        setIsbn('');
       };
 
     return (

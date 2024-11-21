@@ -160,6 +160,7 @@ function EBookEntry({ ebook, onClose, fetchData }) {
         });
         setError(false);
         setHelperText('');
+        setIsbn('');
     };
 
     return (

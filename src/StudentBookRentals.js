@@ -536,7 +536,7 @@ const handleList = async () => {
                       <TableCell>{row.book_title}</TableCell>
                       <TableCell>{row.author}</TableCell>
                       <TableCell>{calculateFormattedDate(row.date_borrowed).formattedDate}</TableCell>
-                      <TableCell>{calculateFormattedDate(row.date_due).formattedDate}</TableCell>
+                      <TableCell>{calculateFormattedDate(row.date_returned).formattedDate}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

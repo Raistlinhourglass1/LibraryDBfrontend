@@ -221,6 +221,7 @@ function BookEntry({ book, onClose, fetchData }) {
           bSummary: '',
           bNotes: '',
         });
+        setIsbn('');
       };
 
 
